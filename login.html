@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - BarDeli</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 320px;
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #e67e22;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #d35400;
+    }
+    .sso-buttons button {
+      margin: 8px 0;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    .sso-buttons button:hover {
+      background-color: #ddd;
+    }
+    .create-account {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+    .create-account a {
+      color: #e67e22;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form action="booknow.html" method="get">
+      <input type="email" name="email" placeholder="Email Address" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit" action="booknow.html">Login</button>
+    </form>
+
+    <div class="sso-buttons">
+      <p>Or login with:</p>
+      <button onclick="alert('SSO with Google not yet implemented')">Google</button>
+      <button onclick="alert('SSO with Facebook not yet implemented')">Facebook</button>
+      <button onclick="alert('SSO with Apple not yet implemented')">Apple</button>
+    </div>
+
+    <div class="create-account">
+      <p>Don't have an account? <a href="signup.html">Create Account</a></p>
+    </div>
+  </div>
+</body>
+</html>
