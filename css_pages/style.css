@@ -1,0 +1,274 @@
+/* Reset & base */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+	background: #fff8f0;
+	color: #333;
+	line-height: 1.6;
+}
+
+a {
+	text-decoration: none;
+	color: #d35400;
+}
+
+a:hover {
+	color: #e67e22;
+}
+
+/* Container */
+.container {
+	width: 90%;
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 20px 0;
+}
+
+/* Header */
+header {
+	background: #d35400;
+	color: white;
+	padding: 20px 0;
+	text-align: center;
+	letter-spacing: 2px;
+	font-weight: bold;
+	font-size: 2.5rem;
+	position: relative;
+}
+
+/* Menu Toggle */
+.menu-toggle {
+	position: absolute;
+	top: 25px;
+	left: 20px;
+	font-size: 1.8rem;
+	cursor: pointer;
+	color: white;
+	z-index: 1001;
+	background-color: #d35400;
+	border-radius: 5px;
+}
+
+/* Hero Section */
+.hero {
+	background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1470&q=80') no-repeat center/cover;
+	height: 450px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	text-shadow: 1px 1px 4px #000;
+	margin-bottom: 40px;
+	border-radius: 8px;
+}
+
+.hero h1 {
+	font-size: 3rem;
+	margin-bottom: 10px;
+}
+
+.hero p {
+	font-size: 1.3rem;
+	margin-bottom: 20px;
+	max-width: 600px;
+	text-align: center;
+}
+
+.btn-primary {
+	background: #e67e22;
+	color: white;
+	padding: 12px 28px;
+	font-size: 1.1rem;
+	border: none;
+	border-radius: 30px;
+	cursor: pointer;
+	transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+	background: #d35400;
+}
+
+/* About Section */
+#about {
+	text-align: center;
+	margin-bottom: 50px;
+}
+
+#about h2 {
+	margin-bottom: 20px;
+	color: #d35400;
+	font-size: 2rem;
+}
+
+#about p {
+	max-width: 700px;
+	margin: 0 auto;
+	font-size: 1.1rem;
+	color: #444;
+}
+
+/* Services Section */
+#services {
+	margin-bottom: 50px;
+}
+
+#services h2 {
+	text-align: center;
+	color: #d35400;
+	font-size: 2rem;
+	margin-bottom: 30px;
+}
+
+.services-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 30px;
+	justify-content: center;
+}
+
+.service {
+	background: white;
+	border-radius: 10px;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+	flex: 1 1 280px;
+	max-width: 300px;
+	padding: 25px;
+	text-align: center;
+	transition: transform 0.3s ease;
+}
+
+.service:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.service h3 {
+	color: #d35400;
+	margin-bottom: 15px;
+}
+
+.service p {
+	font-size: 1rem;
+	color: #555;
+}
+
+/* Contact Section */
+#contact {
+	background: #d35400;
+	color: white;
+	padding: 40px 20px;
+	text-align: center;
+	border-radius: 8px;
+}
+
+#contact h2 {
+	margin-bottom: 20px;
+	font-size: 2rem;
+}
+
+#contact p {
+	margin-bottom: 15px;
+	font-size: 1.1rem;
+}
+
+#contact a {
+	background: white;
+	color: #d35400;
+	padding: 12px 30px;
+	font-weight: bold;
+	border-radius: 30px;
+	display: inline-block;
+	transition: background 0.3s ease;
+}
+
+#contact a:hover {
+	background: #f39c12;
+	color: white;
+}
+
+/* Footer */
+footer {
+	margin-top: 50px;
+	text-align: center;
+	font-size: 0.9rem;
+	color: #777;
+	padding-bottom: 15px;
+}
+
+/* Sidebar Menu */
+.sidebar {
+	position: fixed;
+	top: 0;
+	left: -300px;
+	width: 280px;
+	height: 100%;
+	background: #fff;
+	box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+	transition: left 0.3s ease;
+	padding: 30px 20px;
+	z-index: 1000;
+	padding-top: 6rem; 
+}
+
+.sidebar.active {
+	left: 0;
+}
+
+.sidebar h2 {
+	color: #d35400;
+	margin-bottom: 20px;
+	font-size: 1.5rem;
+}
+
+.sidebar input {
+	width: 100%;
+	padding: 10px;
+	margin-bottom: 15px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+}
+
+.sidebar button {
+	width: 100%;
+	padding: 10px;
+	background: #d35400;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	margin-bottom: 1rem;
+}
+
+.sidebar button:hover {
+	background: #e67e22;
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	display: none;
+	z-index: 999;
+}
+
+.overlay.active {
+	display: block;
+}
+
+/* Responsive */
+@media(max-width: 768px) {
+	.services-grid {
+		flex-direction: column;
+		align-items: center;
+	}
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bardeli Login</title>
+	<link rel="stylesheet" href="/css_pages/login.css">
+</head>
+<body>
+	<nav class="navbar">
+		<div class="logo">
+			<img src="/images/Logo/BarDeli.png" alt="Company Logo">
+		</div>
+	</nav>
+	
+	<div class="login-section">
+		<div class="login-content">
+			<h1>Login</h1>
+			<div class="login-inputs">
+				<p>Email:</p>
+				<input type="text" id="email" placeholder="Please enter your email">
+	
+				<p>Password:</p>
+				<input type="password" id="password" placeholder="Please enter your password">
+				<div class="password-checkbox">
+					<input type="checkbox" id="password-chkbox" name="password-chkbox" onclick="showPassword()">
+					<label for="password-chkbox"> Show Password</label><br>
+				</div>
+	
+				<div class="login-button">
+					<button id="login">Login</button>
+				</div>
+	
+				<div class="signup">
+					<p>Don't have a profile?</p>
+					<div class="signup-button">
+						<button onclick="window.location.href='/html_pages/signup.html'">Sign Up</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<footer>
+		<p>© 2025 Bardeli Catering</p>
+	</footer>
+
+	<!-- For Firebase -->
+	<script type="module" src="/javascript/login.js"></script>
+	
+	<script>
+
+		function showPassword() {
+			let x = document.getElementById("password");
+			if (x.type === "password") {
+				x.type = "text";
+			} else {
+				x.type = "password";
+			}
+		}
+
+	</script>
+</body>
+</html>
