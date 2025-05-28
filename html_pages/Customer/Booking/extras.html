@@ -11,7 +11,7 @@
 
 <div class="sidebar">
    <div class="logo">
-    <img src="/images/Logo/ BarDeli.png" alt="BarDeli Logo">
+    <img src="/images/Logo/BarDeli.png" alt="BarDeli Logo">
   </div>
   <div class="nav-links">
     <a href="user-home.html" class="nav-item">
@@ -33,68 +33,78 @@
   </div>
   <div class="logout">
     <a href="index.html">
-      <img src="/images/LogoIcons(White)/LogOutIcon-modified.png" alt="Logout">
+      <img src="/images/Icons(White)/LogOutIcon-modified.png" alt="Logout">
       Logout
     </a>
   </div>
 </div>
 
+
 <div class="main-content">
-   <h1>Optional Extras</h1>
-  <div class="form-container">
+  <h1>Optional Extras</h1>
+  <div class="order-box">
     <form id="extrasForm">
-      <div class="extras-list">
-        <div class="extra-item">
-          <input type="checkbox" name="waitstaff" onchange="toggleQuantity(this, 'waitstaffQty')">
-          <label for="waitstaffQty">Waitstaff (R150 each)</label>
-          <input type="number" id="waitstaffQty" min="0" placeholder="Qty" disabled>
-        </div>
-        <div class="extra-item">
-          <input type="checkbox" name="bartenders" onchange="toggleQuantity(this, 'bartendersQty')">
-          <label for="bartendersQty">Bartenders (R150 each)</label>
-          <input type="number" id="bartendersQty" min="0" placeholder="Qty" disabled>
-        </div>
-        <div class="extra-item">
-          <input type="checkbox" name="tables" onchange="toggleQuantity(this, 'tablesQty')">
-          <label for="tablesQty">Tables</label>
-          <input type="number" id="tablesQty" min="0" placeholder="Qty" disabled>
-        </div>
-        <div class="extra-item">
-          <input type="checkbox" name="chairs" onchange="toggleQuantity(this, 'chairsQty')">
-          <label for="chairsQty">Chairs</label>
-          <input type="number" id="chairsQty" min="0" placeholder="Qty" disabled>
-        </div>
-        <div class="extra-item">
-          <input type="checkbox" name="tablecloths" onchange="toggleQuantity(this, 'tableclothsQty')">
-          <label for="tableclothsQty">Tablecloths</label>
-          <input type="number" id="tableclothsQty" min="0" placeholder="Qty" disabled>
-        </div>
-        <div class="extra-item">
-          <input type="checkbox" name="nonalc" onchange="toggleQuantity(this, 'nonalcQty')">
-          <label for="nonalcQty">Non-alcoholic Beverage Package (R20 pp)</label>
-          <input type="number" id="nonalcQty" min="0" placeholder="Qty" disabled>
-        </div>
-        <div class="extra-item">
-          <input type="checkbox" name="beerwine" onchange="toggleQuantity(this, 'beerwineQty')">
-          <label for="beerwineQty">Beer & Wine Package (R100 pp)</label>
-          <input type="number" id="beerwineQty" min="0" placeholder="Qty" disabled>
-        </div>
-        <div class="extra-item">
-          <input type="checkbox" name="fullbar" onchange="toggleQuantity(this, 'fullbarQty')">
-          <label for="fullbarQty">Full Bar Package (R80 pp)</label>
-          <input type="number" id="fullbarQty" min="0" placeholder="Qty" disabled>
-        </div>
-        <div class="extra-item">
-          <input type="checkbox" name="cocktailbar" onchange="toggleQuantity(this, 'cocktailbarQty')">
-          <label for="cocktailbarQty">Cocktail Bar (R60 pp)</label>
-          <input type="checkbox" name="setup" onchange="toggleQuantity(this, 'setupQty')">
-          <label for="setupQty">Event Setup (R300)</label>
-          <input type="checkbox" name="cleanup" onchange="toggleQuantity(this, 'cleanupQty')">
-          <label for="cleanupQty">Event Cleanup (R300)</label>
-          <input type="checkbox" name="delivery" onchange="toggleQuantity(this, 'deliveryQty')">
-          <label for="deliveryQty">Delivery Only (R150)</label>
+      <!-- Staffing Section -->
+      <div class="extras-category">
+        <h3>Staffing</h3>
+        <div class="extras-grid">
+          <div class="extra-item">
+            <input type="checkbox" name="waitstaff" onchange="toggleQuantity(this, 'waitstaffQty')">
+            <label for="waitstaffQty">Waitstaff (R150 each)</label>
+            <input type="number" id="waitstaffQty" min="0" placeholder="Qty" disabled>
+          </div>
+          <div class="extra-item">
+            <input type="checkbox" name="bartenders" onchange="toggleQuantity(this, 'bartendersQty')">
+            <label for="bartendersQty">Bartenders (R150 each)</label>
+            <input type="number" id="bartendersQty" min="0" placeholder="Qty" disabled>
+          </div>
         </div>
       </div>
+
+      <!-- Furniture & Setup Section -->
+      <div class="extras-category">
+        <h3>Furniture & Setup</h3>
+        <div class="extras-grid">
+          <div class="extra-item">
+            <input type="checkbox" name="tables" onchange="toggleQuantity(this, 'tablesQty')">
+            <label for="tablesQty">Tables</label>
+            <input type="number" id="tablesQty" min="0" placeholder="Qty" disabled>
+          </div>
+          <div class="extra-item">
+            <input type="checkbox" name="chairs" onchange="toggleQuantity(this, 'chairsQty')">
+            <label for="chairsQty">Chairs</label>
+            <input type="number" id="chairsQty" min="0" placeholder="Qty" disabled>
+          </div>
+        </div>
+      </div>
+
+      <!-- Beverage Packages Section -->
+      <div class="extras-category">
+        <h3>Beverage Packages</h3>
+        <div class="extras-grid">
+          <div class="extra-item">
+            <input type="checkbox" name="nonalc" onchange="toggleQuantity(this, 'nonalcQty')">
+            <label for="nonalcQty">Non-Alcoholic Package (R20 pp)</label>
+            <input type="number" id="nonalcQty" min="0" placeholder="Qty" disabled>
+          </div>
+          <div class="extra-item">
+            <input type="checkbox" name="beerwine" onchange="toggleQuantity(this, 'beerwineQty')">
+            <label for="beerwineQty">Beer & Wine Package (R100 pp)</label>
+            <input type="number" id="beerwineQty" min="0" placeholder="Qty" disabled>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Services Section -->
+      <div class="extras-category">
+        <h3>Additional Services</h3>
+        <div class="extras-grid">
+          <div class="extra-item"><input type="checkbox" name="delivery"><label>Delivery Only (R150)</label></div>
+          <div class="extra-item"><input type="checkbox" name="setup"><label>Event Setup (R300)</label></div>
+          <div class="extra-item"><input type="checkbox" name="cleanup"><label>Event Cleanup (R300)</label></div>
+        </div>
+      </div>
+
       <div class="bottom-nav-btns">
         <button type="button" onclick="window.location.href='menu-selection.html'" class="nav-btn">Back</button>
         <button type="submit" class="nav-btn">Next</button>
@@ -102,6 +112,7 @@
     </form>
   </div>
 </div>
+
 
 <script>
   function toggleQuantity(checkbox, qtyId) {
@@ -114,6 +125,62 @@
 
   document.getElementById('extrasForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    const extras = {};
+
+    // Staffing
+    if(document.querySelector('input[name="waitstaff"]')?.checked) {
+      extras['Waitstaff'] = {
+        qty: parseInt(document.getElementById('waitstaffQty').value, 10) || 0,
+        price: 150
+      };
+    }
+    if(document.querySelector('input[name="bartenders"]')?.checked) {
+      extras['Bartenders'] = {
+        qty: parseInt(document.getElementById('bartendersQty').value, 10) || 0,
+        price: 150
+      };
+    }
+
+    // Furniture & Setup
+    if(document.querySelector('input[name="tables"]')?.checked) {
+      extras['Tables'] = {
+        qty: parseInt(document.getElementById('tablesQty').value, 10) || 0,
+        price: 0 // Add price if needed
+      };
+    }
+    if(document.querySelector('input[name="chairs"]')?.checked) {
+      extras['Chairs'] = {
+        qty: parseInt(document.getElementById('chairsQty').value, 10) || 0,
+        price: 0 // Add price if needed
+      };
+    }
+
+    // Beverage Packages
+    if(document.querySelector('input[name="nonalc"]')?.checked) {
+      extras['Non-Alcoholic Package'] = {
+        qty: parseInt(document.getElementById('nonalcQty').value, 10) || 0,
+        price: 20
+      };
+    }
+    if(document.querySelector('input[name="beerwine"]')?.checked) {
+      extras['Beer & Wine Package'] = {
+        qty: parseInt(document.getElementById('beerwineQty').value, 10) || 0,
+        price: 100
+      };
+    }
+
+    // Additional Services
+    if(document.querySelector('input[name="delivery"]')?.checked) {
+      extras['Delivery Only'] = { price: 150 };
+    }
+    if(document.querySelector('input[name="setup"]')?.checked) {
+      extras['Event Setup'] = { price: 300 };
+    }
+    if(document.querySelector('input[name="cleanup"]')?.checked) {
+      extras['Event Cleanup'] = { price: 300 };
+    }
+
+    localStorage.setItem('extrasSelections', JSON.stringify(extras));
     window.location.href = 'summary.html';
   });
 </script>

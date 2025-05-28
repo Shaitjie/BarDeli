@@ -49,8 +49,8 @@
         <p>Account Number: 123456789</p>
         <p>Branch Code: 051001</p>
         <p>Reference: BK(YourName)</p>
-        <p>Total Amount: R6500</p>
-        <p> Deposit Due: R3250</p>
+        <p id="totalAmount"></p>
+        <p id="depositDue"></p>
       </div>
 
       <div class="upload-section">
@@ -58,10 +58,89 @@
         <div class="upload-group">
           <input type="file" id="proof" name="proof" />
       </div>
+    </div>
+    <div class = "bottom-nav-btns"> 
+        <button onclick="window"
+    </div>
+    <button class="done-btn" id="doneBtn">DONE</button>
+  </section>
+</main>
 
-      <button class="done-btn">DONE</button>
-    </section>
-  </main>
+<script>
+  // Helper to parse price from string like "R325 per person"
+  function parsePrice(str) {
+    const match = str.match(/R(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
+  // Get event details
+  const eventDetails = JSON.parse(localStorage.getItem('eventDetails')) || {};
+
+  // Get menu selection
+  let menu = localStorage.getItem('selectedMenu');
+  let customMenu = JSON.parse(localStorage.getItem('customMenuSelections') || '[]');
+  let menuPrice = 0;
+
+  if (menu) {
+    menu = JSON.parse(menu);
+    menuPrice = parsePrice(menu.price);
+  } else if (customMenu.length > 0) {
+    menuPrice = customMenu.reduce((sum, item) => {
+      const match = item.match(/R(\d+)/);
+      return sum + (match ? parseInt(match[1], 10) : 0);
+    }, 0);
+  }
+
+  // Get extras
+  const extras = JSON.parse(localStorage.getItem('extrasSelections') || '{}');
+  let extrasTotal = 0;
+  if (extras) {
+    for (const value of Object.values(extras)) {
+      if (value && value.qty && value.price) {
+        extrasTotal += value.qty * value.price;
+      } else if (value && value.price) {
+        extrasTotal += value.price;
+      }
+    }
+  }
+
+  // Calculate totals
+  const guests = parseInt(eventDetails.guests, 10) || 1;
+  const menuTotal = menu ? menuPrice * guests : menuPrice;
+  const total = menuTotal + extrasTotal;
+  const deposit = Math.round(total * 0.5);
+
+  // Display totals
+  document.getElementById('totalAmount').innerHTML = `<strong>Total Amount:</strong> R${total}`;
+  document.getElementById('depositDue').innerHTML = `<strong>Deposit Due:</strong> R${deposit}`;
+
+  document.getElementById('doneBtn').onclick = function() {
+    // Gather all booking details
+    const booking = {
+      eventDetails: JSON.parse(localStorage.getItem('eventDetails') || '{}'),
+      menu: JSON.parse(localStorage.getItem('selectedMenu') || 'null'),
+      customMenu: JSON.parse(localStorage.getItem('customMenuSelections') || '[]'),
+      extras: JSON.parse(localStorage.getItem('extrasSelections') || '{}'),
+      total: document.getElementById('totalAmount').innerText,
+      deposit: document.getElementById('depositDue').innerText,
+      date: new Date().toISOString()
+    };
+
+    // Store in a bookings array
+    let bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+    bookings.push(booking);
+    localStorage.setItem('userBookings', JSON.stringify(bookings));
+
+    // Optionally clear the current booking data
+    // localStorage.removeItem('eventDetails');
+    // localStorage.removeItem('selectedMenu');
+    // localStorage.removeItem('customMenuSelections');
+    // localStorage.removeItem('extrasSelections');
+
+    // Redirect to confirmation page
+    window.location.href = 'confirmation.html';
+  };
+</script>
 
 </body>
 </html>

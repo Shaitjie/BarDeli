@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modify Booking</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sidebar">
+  <div class="logo">
+    <img src="/images/Logo/BarDeli.png" alt="BarDeli Logo">
+  </div>
+  <div class="nav-links">
+    <a href="../customerpage.html" class="nav-item">
+      <img src="/images/Icons(White)/HomeIcon-modified.png" alt="Home">
+      Home
+    </a>
+    <a href="customerbookingpage.html" class="nav-item">
+      <img src="/images/Icons(White)/BookingIcon-modified.png" alt="Booking">
+      Booking
+    </a>
+    <a href="#" class="nav-item">
+      <img src="/images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
+      Notifications
+    </a>
+    <a href="#" class="nav-item">
+      <img src="/images/Icons(White)/ProfileIcon-modified.png" alt="Profile">
+      Profile
+    </a>
+  </div>
+  <div class="logout">
+    <a href="index.html">
+      <img src="/images/Icons(White)/LogOutIcon-modified.png" alt="Logout">
+      Logout
+    </a>
+  </div>
+</div>
+    
+<div class="main-content">
+  <h1>Modify Booking</h1>
+  <div id="bookingsList"></div>
+  <div id="editFormContainer"></div>
+</div>
+<script>
+  function daysUntil(dateStr) {
+    const eventDate = new Date(dateStr);
+    const now = new Date();
+    return Math.ceil((eventDate - now) / (1000 * 60 * 60 * 24));
+  }
+
+  const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+  const listDiv = document.getElementById('bookingsList');
+  const editDiv = document.getElementById('editFormContainer');
+
+  if (bookings.length === 0) {
+    listDiv.innerHTML = "<p>No bookings found.</p>";
+  } else {
+    listDiv.innerHTML = bookings.map((b, i) => {
+      const daysLeft = daysUntil(b.eventDetails.eventDate);
+      return `
+        <div class="form-container" style="margin-bottom:20px;">
+          <p><strong>Date:</strong> ${b.eventDetails.eventDate}</p>
+          <p><strong>Guests:</strong> ${b.eventDetails.guests}</p>
+          <p><strong>Location:</strong> ${b.eventDetails.address}</p>
+          <button ${daysLeft < 4 ? "disabled" : ""} onclick="editBooking(${i})" class="nav-btn">
+            ${daysLeft < 4 ? "Cannot Edit (Less than 3 days)" : "Edit"}
+          </button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.editBooking = function(idx) {
+    const b = bookings[idx];
+    // Only allow editing guests and address in this example
+    editDiv.innerHTML = `
+      <form id="editBookingForm" class="form-container" style="margin-bottom:20px;">
+        <h2>Edit Booking</h2>
+        <label>Number of Guests:
+          <input type="number" id="editGuests" value="${b.eventDetails.guests}" min="1" required>
+        </label><br><br>
+        <label>Event Address:
+          <input type="text" id="editAddress" value="${b.eventDetails.address}" required>
+        </label><br><br>
+        <button type="submit" class="nav-btn">Save Changes</button>
+        <button type="button" class="nav-btn" onclick="cancelEdit()">Cancel</button>
+      </form>
+    `;
+    document.getElementById('editBookingForm').onsubmit = function(e) {
+      e.preventDefault();
+      // Update only allowed fields
+      bookings[idx].eventDetails.guests = document.getElementById('editGuests').value;
+      bookings[idx].eventDetails.address = document.getElementById('editAddress').value;
+      localStorage.setItem('userBookings', JSON.stringify(bookings));
+      alert('Booking updated!');
+      location.reload();
+    };
+  };
+
+  window.cancelEdit = function() {
+    editDiv.innerHTML = '';
+  };
+</script>
+</body>
+</html>

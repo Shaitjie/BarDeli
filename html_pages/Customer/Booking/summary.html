@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Summary</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body, .main-content, .form-container, .invoice-table, .invoice-section-title, .invoice-details {
+      color: white !important;
+      background: #d35400 !important;
+    }
+    .invoice-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+    }
+    .invoice-table th, .invoice-table td {
+      padding: 8px 0;
+      font-size: 1em;
+      color: white !important;
+    }
+    .invoice-table th {
+      text-align: left;
+      border-bottom: 2px solid #d35400;
+      color: #d35400;
+      font-size: 1.1em;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: #d35400;
+    }
+    .invoice-table td.price {
+      text-align: right;
+      font-weight: 600;
+      color: white !important;
+      min-width: 90px;
+    }
+    .invoice-total-row td {
+      border-top: 2px solid #d35400;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: white !important;
+      padding-top: 12px;
+      background: #d35400;
+    }
+    .invoice-section-title {
+      font-size: 1.1em;
+      font-weight: 800;
+      color: #d35400 !important;
+      border-bottom: 2px solid #d35400;
+      margin-top: 28px;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      background: #222 !important;
+    }
+    .invoice-details {
+      margin-bottom: 18px;
+      color: white !important;
+      background: #222 !important;
+    }
+    .deposit-row td {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #ffb84d !important;
+      border-top: 1px dashed #b34700;
+      padding-top: 8px;
+      background: #222 !important;
+    }
+    .form-container {
+      background: #222 !important;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+      padding: 36px 40px 28px 40px;
+      max-width: 600px;
+      width: 100%;
+      margin: 24px auto 0 auto;
+    }
+    .main-content h1 {
+      color: white !important;
+    }
+    .nav-btn {
+      color: white !important;
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar">
+  <!-- ...sidebar code... -->
+   <div class="logo">
+    <img src="/images/Logo/BarDeli.png" alt="BarDeli Logo">
+  </div>
+  <div class="nav-links">
+    <a href="../customerpage.html" class="nav-item">
+      <img src="/images/Icons(White)/HomeIcon-modified.png" alt="Home">
+      Home
+    </a>
+    <a href="customerbookingpage.html" class="nav-item">
+      <img src="/images/Icons(White)/BookingIcon-modified.png" alt="Booking">
+      Booking
+    </a>
+    <a href="#" class="nav-item">
+      <img src="/images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
+      Notifications
+    </a>
+    <a href="#" class="nav-item">
+      <img src="/images/Icons(White)/ProfileIcon-modified.png" alt="Profile">
+      Profile
+    </a>
+  </div>
+  <div class="logout">
+    <a href=".../index.html">
+      <img src="/images/Icons(White)/LogOutIcon-modified.png" alt="Logout">
+      Logout
+    </a>
+  </div>
+</div>
+<div class="main-content">
+  <h1>Booking Summary</h1>
+  <div class="form-container" id="summaryBox">
+    <!-- Summary details will be inserted here -->
+  </div>
+  <div class="bottom-nav-btns">
+    <button onclick="window.location.href='extras.html'" class="nav-btn">Back</button>
+    <button onclick="window.location.href='payment.html'" class="nav-btn">Proceed to Payment</button>
+  </div>
+</div>
+<script>
+  function parsePrice(str) {
+    const match = str.match(/R(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
+  // 1. Get event details
+  const eventDetails = JSON.parse(localStorage.getItem('eventDetails')) || {};
+
+  // 2. Get menu selection
+  let menu = localStorage.getItem('selectedMenu');
+  let customMenu = JSON.parse(localStorage.getItem('customMenuSelections') || '[]');
+  let menuPrice = 0;
+  let menuName = '';
+  let menuRows = '';
+
+  if (menu) {
+    menu = JSON.parse(menu);
+    menuName = menu.title;
+    menuPrice = parsePrice(menu.price);
+    menuRows = `<tr>
+      <td>${menuName} <span style="color:#bbb;font-size:0.95em;">(x${eventDetails.guests || 1})</span></td>
+      <td class="price">R${menuPrice * (parseInt(eventDetails.guests, 10) || 1)}</td>
+    </tr>`;
+  } else if (customMenu.length > 0) {
+    menuName = 'Custom Menu';
+    menuRows = customMenu.map(item => {
+      const price = parsePrice(item);
+      return `<tr>
+        <td>${item}</td>
+        <td class="price">R${price}</td>
+      </tr>`;
+    }).join('');
+    menuPrice = customMenu.reduce((sum, item) => {
+      const match = item.match(/R(\d+)/);
+      return sum + (match ? parseInt(match[1], 10) : 0);
+    }, 0);
+  }
+
+  // 3. Get extras
+  const extras = JSON.parse(localStorage.getItem('extrasSelections') || '{}');
+  let extrasRows = '';
+  let extrasTotal = 0;
+  if (extras) {
+    for (const [key, value] of Object.entries(extras)) {
+      if (value && value.qty && value.price) {
+        extrasRows += `<tr>
+          <td>${key} <span style="color:#bbb;font-size:0.95em;">(x${value.qty})</span></td>
+          <td class="price">R${value.qty * value.price}</td>
+        </tr>`;
+        extrasTotal += value.qty * value.price;
+      } else if (value && value.price) {
+        extrasRows += `<tr>
+          <td>${key}</td>
+          <td class="price">R${value.price}</td>
+        </tr>`;
+        extrasTotal += value.price;
+      }
+    }
+  }
+
+  // 4. Calculate totals
+  const guests = parseInt(eventDetails.guests, 10) || 1;
+  const menuTotal = menu ? menuPrice * guests : menuPrice;
+  const total = menuTotal + extrasTotal;
+  const deposit = Math.round(total * 0.5);
+
+  // 5. Render summary as invoice
+  document.getElementById('summaryBox').innerHTML = `
+    <div class="invoice-details">
+      <div class="invoice-section-title">Event Details</div>
+      <table class="invoice-table">
+        <tr><td>Date</td><td class="price">${eventDetails.eventDate || ''}</td></tr>
+        <tr><td>Time</td><td class="price">${eventDetails.eventTime || ''}</td></tr>
+        <tr><td>Type</td><td class="price">${eventDetails.eventType || ''}</td></tr>
+        <tr><td>Guests</td><td class="price">${guests}</td></tr>
+        <tr><td>Location</td><td class="price">${eventDetails.address || ''}</td></tr>
+      </table>
+    </div>
+    <div class="invoice-section-title">Menu</div>
+    <table class="invoice-table">
+      ${menuRows || '<tr><td colspan="2">No menu selected</td></tr>'}
+      <tr>
+        <td style="font-weight:600;">Menu Subtotal</td>
+        <td class="price" style="font-weight:600;">R${menuTotal}</td>
+      </tr>
+    </table>
+    <div class="invoice-section-title">Extras</div>
+    <table class="invoice-table">
+      ${extrasRows || '<tr><td colspan="2">No extras selected</td></tr>'}
+      <tr>
+        <td style="font-weight:600;">Extras Subtotal</td>
+        <td class="price" style="font-weight:600;">R${extrasTotal}</td>
+      </tr>
+    </table>
+    <div class="invoice-section-title" style="margin-top:30px;">Total</div>
+    <table class="invoice-table">
+      <tr class="invoice-total-row">
+        <td>Total Amount</td>
+        <td class="price">R${total}</td>
+      </tr>
+      <tr class="deposit-row">
+        <td>50% Deposit Required</td>
+        <td class="price">R${deposit}</td>
+      </tr>
+    </table>
+  `;
+</script>
+</body>
+</html>

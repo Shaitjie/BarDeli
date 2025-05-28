@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div class="sidebar">
   <div class="logo">
     <img src="/images/Logo/BarDeli.png" alt="BarDeli Logo">
@@ -42,23 +41,23 @@
 <div class="main-content">
   <h1>Select Your Menu</h1>
   <div class="menu-options">
-    <div class="menu-card" onclick="showModal('Cocktail Menu 1', 'menus/cocktail-menu-1.jpg', 'R325 per person')">
+    <div class="menu-card" onclick="showModal('Cocktail Menu 1', '/images/menus/cocktail-menu-1.jpg', 'R325 per person')">
       <h3>Cocktail Menu 1</h3>
       <div class="price">R325 per person</div>
     </div>
-     <div class="menu-card" onclick="showModal('Cocktail Menu 2', 'menus/cocktail-menu-2.jpg', 'R365 per person')">
+     <div class="menu-card" onclick="showModal('Cocktail Menu 2', '/images/menus/cocktail-menu-2.jpg', 'R365 per person')">
       <h3>Cocktail Menu 2</h3>
       <div class="price">R365 per person</div>
     </div>
-    <div class="menu-card" onclick="showModal('Cocktail Menu 3', 'menus/cocktail-menu-3.jpg', 'R455 per person')">
+    <div class="menu-card" onclick="showModal('Cocktail Menu 3', '/images/menus/cocktail-menu-3.jpg', 'R455 per person')">
       <h3>Cocktail Menu 3</h3>
       <div class="price">R455 per person</div>
     </div>
-    <div class="menu-card" onclick="showModal('High Tea Menu', 'menus/high-tea-menu.jpg', 'R285 per person')">
+    <div class="menu-card" onclick="showModal('High Tea Menu', '/images/menus/high-tea-menu.jpg', 'R285 per person')">
       <h3>High Tea Menu</h3>
       <div class="price">R285 per person</div>
     </div>
-     <div class="menu-card" onclick="showModal('Funeral Menu', 'menus/high-tea-menu.jpg', 'R285 per person')">
+     <div class="menu-card" onclick="showModal('Funeral Menu', '/images/menus/high-tea-menu.jpg', 'R285 per person')">
       <h3>Funeral Menu</h3>
       <div class="price">R285 per person</div>
     </div>
@@ -85,7 +84,7 @@
     <div class="modal-info-area">
       <h2 id="modalTitle"></h2>
       <p id="modalPrice"></p>
-      <button onclick="alert('Menu Selected')">Select This Menu</button>
+      <button onclick="selectMenu(document.getElementById('modalTitle').innerText, document.getElementById('modalPrice').innerText)">Select This Menu</button>
     </div>
   </div>
 </div>
@@ -100,6 +99,11 @@
 
   function closeModal() {
     document.getElementById('menuModal').style.display = 'none';
+  }
+
+  function selectMenu(title, price) {
+    localStorage.setItem('selectedMenu', JSON.stringify({ title, price }));
+    window.location.href = 'extras.html';
   }
 </script>
 

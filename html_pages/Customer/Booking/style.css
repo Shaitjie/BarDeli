@@ -414,16 +414,18 @@ h1 {
 /* Form Styles */
 .form-container {
   background: #d35400;
-  padding: 40px 32px 32px 32px;
+  padding: 30px 32px 32px 32px;
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-  max-width: 520px;
-  width: 100%;
   margin: 40px auto;
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 80%; /* Adjust width without making it too wide */
+  max-width: 700px; /* Prevent overly large forms */
+  margin-left: auto;
+  margin-right: auto;
 }
 .form-container h1 {
   color: #fff;
@@ -440,34 +442,33 @@ h1 {
 .form-row {
   display: flex;
   align-items: center;
+  margin-bottom: 18px;
   gap: 18px;
-  margin-bottom: 0;
-  margin-top: 12px;
 }
 .form-row label {
-  min-width: 120px;
-  font-weight: 600;
-  color: #fff;
+  flex: 0 0 160px;
   text-align: right;
+  font-weight: 600;
+  color: white;
 }
 .form-row input,
 .form-row select {
-  flex: 1;
-  padding: 12px 14px;
-  font-size: 16px;
-  border: 2px solid #fff;
+  flex: 1 1 0;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
   border-radius: 6px;
-  background: #fff;
-  color: #d35400;
-  margin-top: 0;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(211,84,0,0.06);
+  font-size: 1rem;
 }
-.form-row input:focus,
-.form-row select:focus {
-  border-color: #b34700;
-  box-shadow: 0 0 0 2px #ffd9c2;
+
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .form-row label {
+    text-align: left;
+    margin-bottom: 4px;
+  }
 }
 .form-submit-btn {
   margin-top: 28px;
@@ -487,68 +488,6 @@ h1 {
   color: #fff;
 }
 
-/* Extras page */
-.extras-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 32px;
-  max-height: 50vh;
-  overflow-y: auto;
-}
-
-.extra-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Extras page - improved input and label styling */
-.extra-item label {
-  font-weight: 600;
-  color: #fff;         /* <-- Change from #d35400 to #fff */
-  min-width: 180px;
-  margin-right: 10px;
-  font-size: 1em;
-}
-
-.extra-item input[type="checkbox"] {
-  accent-color: #d35400;
-  width: 20px;
-  height: 20px;
-  margin-right: 12px;
-  border-radius: 4px;
-  border: 2px solid #d35400;
-  cursor: pointer;
-}
-
-.extra-item input[type="number"] {
-  width: 80px;
-  padding: 10px 12px;
-  font-size: 1em;
-  border: 2px solid #d35400;
-  border-radius: 6px;
-  background: #fff;
-  color: #d35400;
-  font-weight: 700;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  outline: none;
-  margin-left: 8px;
-  box-shadow: 0 2px 6px rgba(211,84,0,0.06);
-}
-
-.extra-item input[type="number"]:focus {
-  border-color: #b34700;
-  box-shadow: 0 0 0 2px #ffd9c2;
-}
-
-.extra-item input[type="number"]:disabled {
-  background-color: #f5f5f5;
-  color: #aaa;
-  border-style: dashed;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
 
 .button-row {
   margin-top: 20px;
@@ -595,8 +534,11 @@ h1 {
   color: white;
   padding: 2rem;
   border-radius: 1rem;
-  max-width: 100%;
-  margin: 2rem auto;
+  width: 80%; 
+  max-width: 700px; 
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 60px;
 }
 
 /* Headings inside the box */
@@ -667,4 +609,45 @@ input[type="file"] {
 input[type="file"]:hover {
   border-color: #cb4e00;
   background-color: #fef6f0;
+}
+
+.address-container {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.address-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.extras-category {
+  margin-bottom: 16px; /* Reduce excess space */
+}
+
+.extras-category h3 {
+  text-decoration: underline;
+  margin-bottom: 10px;
+}
+
+.extras-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px; /* Less spacing */
+}
+
+.extra-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+}
+
+/* Input box adjustments */
+.extra-item input[type="number"] {
+  width: 70px;
+  padding: 6px;
+  font-size: 0.85em;
 }
