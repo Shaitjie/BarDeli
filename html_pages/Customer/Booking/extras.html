@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Optional Extras</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="sidebar">
+   <div class="logo">
+    <img src="/images/Logo/ BarDeli.png" alt="BarDeli Logo">
+  </div>
+  <div class="nav-links">
+    <a href="user-home.html" class="nav-item">
+      <img src="/images/Icons(White)/HomeIcon-modified.png" alt="Home">
+      Home
+    </a>
+    <a href="booking.html" class="nav-item">
+      <img src="/images/Icons(White)/BookingIcon-modified.png" alt="Booking">
+      Booking
+    </a>
+    <a href="#" class="nav-item">
+      <img src="/images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
+      Notifications
+    </a>
+    <a href="#" class="nav-item">
+      <img src="/images/Icons(White)/ProfileIcon-modified.png" alt="Profile">
+      Profile
+    </a>
+  </div>
+  <div class="logout">
+    <a href="index.html">
+      <img src="/images/LogoIcons(White)/LogOutIcon-modified.png" alt="Logout">
+      Logout
+    </a>
+  </div>
+</div>
+
+<div class="main-content">
+   <h1>Optional Extras</h1>
+  <div class="form-container">
+    <form id="extrasForm">
+      <div class="extras-list">
+        <div class="extra-item">
+          <input type="checkbox" name="waitstaff" onchange="toggleQuantity(this, 'waitstaffQty')">
+          <label for="waitstaffQty">Waitstaff (R150 each)</label>
+          <input type="number" id="waitstaffQty" min="0" placeholder="Qty" disabled>
+        </div>
+        <div class="extra-item">
+          <input type="checkbox" name="bartenders" onchange="toggleQuantity(this, 'bartendersQty')">
+          <label for="bartendersQty">Bartenders (R150 each)</label>
+          <input type="number" id="bartendersQty" min="0" placeholder="Qty" disabled>
+        </div>
+        <div class="extra-item">
+          <input type="checkbox" name="tables" onchange="toggleQuantity(this, 'tablesQty')">
+          <label for="tablesQty">Tables</label>
+          <input type="number" id="tablesQty" min="0" placeholder="Qty" disabled>
+        </div>
+        <div class="extra-item">
+          <input type="checkbox" name="chairs" onchange="toggleQuantity(this, 'chairsQty')">
+          <label for="chairsQty">Chairs</label>
+          <input type="number" id="chairsQty" min="0" placeholder="Qty" disabled>
+        </div>
+        <div class="extra-item">
+          <input type="checkbox" name="tablecloths" onchange="toggleQuantity(this, 'tableclothsQty')">
+          <label for="tableclothsQty">Tablecloths</label>
+          <input type="number" id="tableclothsQty" min="0" placeholder="Qty" disabled>
+        </div>
+        <div class="extra-item">
+          <input type="checkbox" name="nonalc" onchange="toggleQuantity(this, 'nonalcQty')">
+          <label for="nonalcQty">Non-alcoholic Beverage Package (R20 pp)</label>
+          <input type="number" id="nonalcQty" min="0" placeholder="Qty" disabled>
+        </div>
+        <div class="extra-item">
+          <input type="checkbox" name="beerwine" onchange="toggleQuantity(this, 'beerwineQty')">
+          <label for="beerwineQty">Beer & Wine Package (R100 pp)</label>
+          <input type="number" id="beerwineQty" min="0" placeholder="Qty" disabled>
+        </div>
+        <div class="extra-item">
+          <input type="checkbox" name="fullbar" onchange="toggleQuantity(this, 'fullbarQty')">
+          <label for="fullbarQty">Full Bar Package (R80 pp)</label>
+          <input type="number" id="fullbarQty" min="0" placeholder="Qty" disabled>
+        </div>
+        <div class="extra-item">
+          <input type="checkbox" name="cocktailbar" onchange="toggleQuantity(this, 'cocktailbarQty')">
+          <label for="cocktailbarQty">Cocktail Bar (R60 pp)</label>
+          <input type="checkbox" name="setup" onchange="toggleQuantity(this, 'setupQty')">
+          <label for="setupQty">Event Setup (R300)</label>
+          <input type="checkbox" name="cleanup" onchange="toggleQuantity(this, 'cleanupQty')">
+          <label for="cleanupQty">Event Cleanup (R300)</label>
+          <input type="checkbox" name="delivery" onchange="toggleQuantity(this, 'deliveryQty')">
+          <label for="deliveryQty">Delivery Only (R150)</label>
+        </div>
+      </div>
+      <div class="bottom-nav-btns">
+        <button type="button" onclick="window.location.href='menu-selection.html'" class="nav-btn">Back</button>
+        <button type="submit" class="nav-btn">Next</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function toggleQuantity(checkbox, qtyId) {
+    const qtyInput = document.getElementById(qtyId);
+    qtyInput.disabled = !checkbox.checked;
+    if (!checkbox.checked) {
+      qtyInput.value = '';
+    }
+  }
+
+  document.getElementById('extrasForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    window.location.href = 'summary.html';
+  });
+</script>
+
+</body>
+</html>

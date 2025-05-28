@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BarDeli Menu Selection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <img src="/images/Logo/BarDeli.png" alt="BarDeli Logo">
+  </div>
+  <div class="nav-links">
+    <a href="user-home.html" class="nav-item">
+      <img src="/images/Icons(White)/HomeIcon-modified.png" alt="Home">
+      Home
+    </a>
+    <a href="customerbookingpage.html" class="nav-item">
+      <img src="/images/Icons(White)/BookingIcon-modified.png" alt="Booking">
+      Booking
+    </a>
+    <a href="#" class="nav-item">
+      <img src="/images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
+      Notifications
+    </a>
+    <a href="#" class="nav-item">
+      <img src="/images/Icons(White)/ProfileIcon-modified.png" alt="Profile">
+      Profile
+    </a>
+  </div>
+  <div class="logout">
+    <a href="index.html">
+      <img src="/images/Icons(White)/LogOutIcon-modified.png" alt="Logout">
+      Logout
+    </a>
+  </div>
+</div>
+
+<div class="main-content">
+  <h1>Select Your Menu</h1>
+  <div class="menu-options">
+    <div class="menu-card" onclick="showModal('Cocktail Menu 1', 'menus/cocktail-menu-1.jpg', 'R325 per person')">
+      <h3>Cocktail Menu 1</h3>
+      <div class="price">R325 per person</div>
+    </div>
+     <div class="menu-card" onclick="showModal('Cocktail Menu 2', 'menus/cocktail-menu-2.jpg', 'R365 per person')">
+      <h3>Cocktail Menu 2</h3>
+      <div class="price">R365 per person</div>
+    </div>
+    <div class="menu-card" onclick="showModal('Cocktail Menu 3', 'menus/cocktail-menu-3.jpg', 'R455 per person')">
+      <h3>Cocktail Menu 3</h3>
+      <div class="price">R455 per person</div>
+    </div>
+    <div class="menu-card" onclick="showModal('High Tea Menu', 'menus/high-tea-menu.jpg', 'R285 per person')">
+      <h3>High Tea Menu</h3>
+      <div class="price">R285 per person</div>
+    </div>
+     <div class="menu-card" onclick="showModal('Funeral Menu', 'menus/high-tea-menu.jpg', 'R285 per person')">
+      <h3>Funeral Menu</h3>
+      <div class="price">R285 per person</div>
+    </div>
+    <div class="menu-card" onclick="window.location.href='custom-menu.html'">
+      <h3>Custom Menu</h3>
+      <div class="price">Customize Your Selection</div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-nav-btns">
+  <button onclick="window.location.href='event-details.html'" class="nav-btn">Back</button>
+  <button onclick="window.location.href='extras.html'" class="nav-btn">Next</button>
+</div>
+
+
+<!-- Modal -->
+<div class="modal" id="menuModal">
+  <div class="modal-content modal-flex">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-image-area">
+      <img id="modalImage" src="" alt="Menu Image">
+    </div>
+    <div class="modal-info-area">
+      <h2 id="modalTitle"></h2>
+      <p id="modalPrice"></p>
+      <button onclick="alert('Menu Selected')">Select This Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showModal(title, image, price) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalImage').src = image;
+    document.getElementById('modalPrice').innerText = price;
+    document.getElementById('menuModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('menuModal').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
