@@ -5,80 +5,76 @@
   <title>Booking Summary</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body, .main-content, .form-container, .invoice-table, .invoice-section-title, .invoice-details {
-      color: white !important;
-      background: #d35400 !important;
-    }
+   /* Invoice-specific styling only */
     .invoice-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 18px;
+      margin-top: 15px;
+      background: transparent;
     }
-    .invoice-table th, .invoice-table td {
-      padding: 8px 0;
+    
+    .invoice-table th, 
+    .invoice-table td {
+      padding: 12px 8px;
       font-size: 1em;
-      color: white !important;
+      color: white;
+      border: none;
     }
+    
     .invoice-table th {
       text-align: left;
-      border-bottom: 2px solid #d35400;
-      color: #d35400;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
       font-size: 1.1em;
       font-weight: 800;
       letter-spacing: 0.5px;
-      background: #d35400;
+      background: transparent;
     }
+    
+    .invoice-table td {
+      vertical-align: top;
+    }
+    
     .invoice-table td.price {
       text-align: right;
       font-weight: 600;
-      color: white !important;
-      min-width: 90px;
+      color: white;
+      min-width: 120px;
     }
+    
     .invoice-total-row td {
-      border-top: 2px solid #d35400;
-      font-size: 1.2em;
+      border-top: 2px solid white;
+      font-size: 1.3em;
       font-weight: bold;
-      color: white !important;
-      padding-top: 12px;
-      background: #d35400;
+      color: white;
+      padding-top: 15px;
+      background: transparent;
     }
+    
     .invoice-section-title {
-      font-size: 1.1em;
+      font-size: 1.2em;
       font-weight: 800;
-      color: #d35400 !important;
-      border-bottom: 2px solid #d35400;
-      margin-top: 28px;
-      margin-bottom: 8px;
+      color: white;
+      border-bottom: 2px solid white;
+      margin-top: 25px;
+      margin-bottom: 10px;
       letter-spacing: 0.5px;
-      background: #222 !important;
+      background: transparent;
+      padding-bottom: 8px;
     }
+    
     .invoice-details {
-      margin-bottom: 18px;
-      color: white !important;
-      background: #222 !important;
+      margin-bottom: 20px;
+      color: white;
+      background: transparent;
     }
+    
     .deposit-row td {
-      font-size: 1.1em;
+      font-size: 1.2em;
       font-weight: 700;
-      color: #ffb84d !important;
-      border-top: 1px dashed #b34700;
-      padding-top: 8px;
-      background: #222 !important;
-    }
-    .form-container {
-      background: #222 !important;
-      border-radius: 12px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-      padding: 36px 40px 28px 40px;
-      max-width: 600px;
-      width: 100%;
-      margin: 24px auto 0 auto;
-    }
-    .main-content h1 {
-      color: white !important;
-    }
-    .nav-btn {
-      color: white !important;
+      color: white;
+      border-top: 2px white;
+      padding-top: 12px;
+      background: transparent;
     }
   </style>
 </head>
