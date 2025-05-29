@@ -44,9 +44,9 @@ login.addEventListener("click", async function (event) {
 			alert(`Logged in as ${role}`);
 
 			if (role === "Admin") {
-				window.location.href = "/html_pages/Admin/adminpage.html";
+				window.location.href = "/BarDeli/html_pages/Admin/adminpage.html";
 			} else if (role === "Customer") {
-				window.location.href = "/html_pages/Customer/customerpage.html";
+				window.location.href = "/BarDeli/html_pages/Customer/customerpage.html";
 			} else {
 				alert("Unknown role! Cannot redirect.");
 			}
