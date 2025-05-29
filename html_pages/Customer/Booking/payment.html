@@ -128,10 +128,15 @@
       date: new Date().toISOString()
     };
 
-    // Store in a bookings array
+    // Store in a bookings array (for demo/modify-booking, if needed)
     let bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
     bookings.push(booking);
     localStorage.setItem('userBookings', JSON.stringify(bookings));
+
+    // Store in homeBookings for homepage display
+    let homeBookings = JSON.parse(localStorage.getItem('homeBookings') || '[]');
+    homeBookings.push(booking);
+    localStorage.setItem('homeBookings', JSON.stringify(homeBookings));
 
     // Optionally clear the current booking data
     // localStorage.removeItem('eventDetails');
