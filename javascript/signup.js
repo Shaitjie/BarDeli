@@ -48,7 +48,7 @@ signupBtn.addEventListener("click", async function (event) {
 		});
 
 		alert("Sign Up Successful");
-		window.location.href = "/html_pages/login.html";
+		window.location.href = "/BarDeli/html_pages/login.html";
 
 	} catch (error) {
 		console.error("Error during signup:", error);
