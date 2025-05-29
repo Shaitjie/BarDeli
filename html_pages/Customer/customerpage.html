@@ -48,17 +48,54 @@
 		<div class="top-section">
 			<div class="number-of-bookings-made">
 				<h1>Number of Bookings Made</h1>
+				<p id="bookingCount"></p>
 			</div>
 			<div class="last-booking">
 				<h1>Last Booking</h1>
+				<div id="lastBooking"></div>
 			</div>
 		</div>
-		<div class="bottom-section>">
+		<div class="bottom-section">
 			<div class="bookings-made">
 				<h1>Bookings Made</h1>
+				<div id="bookingsMade"></div>
 			</div>
 		</div>
 	</div>
+	<script>
+  // Get bookings created from the flow (saved as 'homeBookings' in localStorage)
+  const homeBookings = JSON.parse(localStorage.getItem('homeBookings') || '[]');
+
+  // Show number of bookings
+  document.getElementById('bookingCount').textContent = homeBookings.length;
+
+  // Show last booking
+  if (homeBookings.length > 0) {
+    const last = homeBookings[homeBookings.length - 1];
+    document.getElementById('lastBooking').innerHTML = `
+      <div>
+        <strong>Date:</strong> ${last.eventDetails.eventDate}<br>
+        <strong>Type:</strong> ${last.eventDetails.eventType}<br>
+        <strong>Guests:</strong> ${last.eventDetails.guests}<br>
+        <strong>Location:</strong> ${last.eventDetails.address}
+      </div>
+    `;
+  } else {
+    document.getElementById('lastBooking').textContent = "No bookings yet.";
+  }
+
+  // Show all bookings
+  document.getElementById('bookingsMade').innerHTML = homeBookings.length === 0
+    ? "<p>No bookings yet.</p>"
+    : homeBookings.map(b => `
+      <div class="form-container" style="margin-bottom:16px;">
+        <strong>Date:</strong> ${b.eventDetails.eventDate}<br>
+        <strong>Type:</strong> ${b.eventDetails.eventType}<br>
+        <strong>Guests:</strong> ${b.eventDetails.guests}<br>
+        <strong>Location:</strong> ${b.eventDetails.address}
+      </div>
+    `).join('');
+</script>
 </body>
 
 </html>

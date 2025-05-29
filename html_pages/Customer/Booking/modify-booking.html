@@ -4,6 +4,41 @@
   <meta charset="UTF-8">
   <title>Modify Booking</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+  #bookingsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: flex-start;
+  }
+  .form-container {
+    flex: 1 1 300px;
+    max-width: 32%;
+    min-width: 280px;
+    box-sizing: border-box;
+    margin-bottom: 0;
+    padding: 24px 20px;
+    border-radius: 12px;
+    /* Add this for the edit form specifically: */
+    max-width: 420px;
+    min-width: 320px;
+    margin: 24px auto;
+  }
+  .edit-btn-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  @media (max-width: 1000px) {
+    .form-container { max-width: 48%; }
+  }
+  @media (max-width: 700px) {
+    .form-container { max-width: 100%; min-width: 0; }
+    .edit-btn-row { flex-direction: column; gap: 10px; }
+  }
+</style>
 </head>
 <body>
 <div class="sidebar">
@@ -42,13 +77,76 @@
   <div id="editFormContainer"></div>
 </div>
 <script>
+  // Use only dummy bookings for demo (do not display new/pending bookings)
+  const bookings = [
+    {
+      eventDetails: {
+        eventDate: "2025-06-20",
+        eventTime: "18:00",
+        eventType: "Birthday",
+        guests: 20,
+        address: "123 Main Street"
+      },
+      menu: { title: "Cocktail Menu 1", price: "R325 per person" },
+      customMenu: [],
+      extras: {
+        "Waitstaff": { qty: 2, price: 150 },
+        "Event Setup": { price: 300 }
+      },
+      total: "Total Amount: R8000",
+      deposit: "Deposit Due: R4000",
+      date: "2025-05-29T12:00:00.000Z"
+    },
+    {
+      eventDetails: {
+        eventDate: "2025-07-01",
+        eventTime: "12:00",
+        eventType: "Baby Shower",
+        guests: 15,
+        address: "456 Oak Avenue"
+      },
+      menu: { title: "High Tea Menu", price: "R285 per person" },
+      customMenu: [],
+      extras: {
+        "Bartenders": { qty: 1, price: 150 }
+      },
+      total: "Total Amount: R5000",
+      deposit: "Deposit Due: R2500",
+      date: "2025-05-29T12:00:00.000Z"
+    },
+    {
+      eventDetails: {
+        eventDate: "2025-06-25",
+        eventTime: "14:00",
+        eventType: "Custom Event",
+        guests: 10,
+        address: "789 Pine Road"
+      },
+      menu: null,
+      customMenu: [
+        "Mini Quiche R50",
+        "Fruit Platter R60"
+      ],
+      extras: {
+        "Event Setup": { price: 300 }
+      },
+      total: "Total Amount: R1100",
+      deposit: "Deposit Due: R550",
+      date: "2025-05-29T12:00:00.000Z"
+    }
+  ];
+
   function daysUntil(dateStr) {
     const eventDate = new Date(dateStr);
     const now = new Date();
     return Math.ceil((eventDate - now) / (1000 * 60 * 60 * 24));
   }
 
-  const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+  function parsePrice(str) {
+    const match = str.match(/R(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
   const listDiv = document.getElementById('bookingsList');
   const editDiv = document.getElementById('editFormContainer');
 
@@ -60,6 +158,7 @@
       return `
         <div class="form-container" style="margin-bottom:20px;">
           <p><strong>Date:</strong> ${b.eventDetails.eventDate}</p>
+          <p><strong>Time:</strong> ${b.eventDetails.eventTime || ''}</p>
           <p><strong>Guests:</strong> ${b.eventDetails.guests}</p>
           <p><strong>Location:</strong> ${b.eventDetails.address}</p>
           <button ${daysLeft < 4 ? "disabled" : ""} onclick="editBooking(${i})" class="nav-btn">
@@ -72,26 +171,149 @@
 
   window.editBooking = function(idx) {
     const b = bookings[idx];
-    // Only allow editing guests and address in this example
+    // Only allow editing guests, address, date, time, and non-drink extras
+    const nonDrinkExtras = Object.entries(b.extras || {}).filter(([key]) =>
+      !key.toLowerCase().includes('drink') && !key.toLowerCase().includes('wine') && !key.toLowerCase().includes('beer')
+    );
     editDiv.innerHTML = `
       <form id="editBookingForm" class="form-container" style="margin-bottom:20px;">
         <h2>Edit Booking</h2>
+        <label>Event Date:
+          <input type="date" id="editDate" value="${b.eventDetails.eventDate}" required>
+        </label><br><br>
+        <label>Event Time:
+          <input type="time" id="editTime" value="${b.eventDetails.eventTime || ''}" required>
+        </label><br><br>
         <label>Number of Guests:
           <input type="number" id="editGuests" value="${b.eventDetails.guests}" min="1" required>
         </label><br><br>
         <label>Event Address:
           <input type="text" id="editAddress" value="${b.eventDetails.address}" required>
         </label><br><br>
-        <button type="submit" class="nav-btn">Save Changes</button>
-        <button type="button" class="nav-btn" onclick="cancelEdit()">Cancel</button>
+        <fieldset>
+          <legend>Edit Extras (excluding drinks):</legend>
+          <div id="extrasFields"></div>
+        </fieldset>
+        <div id="recalcDeposit"></div>
+        <div id="uploadProofSection" style="display:none;">
+          <label>Please upload new proof of payment:</label><br>
+          <input type="file" id="newProof" required>
+        </div>
+        <div class="edit-btn-row">
+          <button type="submit" class="nav-btn">Save Changes</button>
+          <button type="button" class="nav-btn" onclick="cancelEdit()">Cancel</button>
+        </div>
       </form>
     `;
+
+    // Render editable extras (excluding drinks)
+    const extrasFields = document.getElementById('extrasFields');
+    extrasFields.innerHTML = nonDrinkExtras.map(([key, value], i) => `
+      <label>${key} Qty:
+        <input type="number" min="0" id="extraQty${i}" value="${value.qty || 1}">
+        <span style="margin-left:10px;">(R${value.price}${value.qty ? ' each' : ''})</span>
+      </label><br>
+    `).join('');
+
+    // Initial calculation
+    recalcDeposit();
+
+    document.getElementById('editGuests').addEventListener('input', recalcDeposit);
+    document.getElementById('editDate').addEventListener('input', recalcDeposit);
+    document.getElementById('editTime').addEventListener('input', recalcDeposit);
+    document.getElementById('editAddress').addEventListener('input', recalcDeposit);
+    nonDrinkExtras.forEach((_, i) => {
+      document.getElementById(`extraQty${i}`).addEventListener('input', recalcDeposit);
+    });
+
+    function recalcDeposit() {
+      let guests = parseInt(document.getElementById('editGuests').value, 10) || 1;
+      let menuPrice = 0;
+      if (b.menu && b.menu.price) {
+        menuPrice = parsePrice(b.menu.price);
+        menuPrice = menuPrice * guests;
+      } else if (b.customMenu && b.customMenu.length > 0) {
+        menuPrice = b.customMenu.reduce((sum, item) => {
+          const match = item.match(/R(\d+)/);
+          return sum + (match ? parseInt(match[1], 10) : 0);
+        }, 0);
+        menuPrice = menuPrice * guests;
+      }
+      let extrasTotal = 0;
+      nonDrinkExtras.forEach(([key, value], i) => {
+        const qty = parseInt(document.getElementById(`extraQty${i}`).value, 10) || 0;
+        extrasTotal += (value.price || 0) * qty;
+      });
+      const menuTotal = menuPrice;
+      const total = menuTotal + extrasTotal;
+      const deposit = Math.round(total * 0.5);
+
+      document.getElementById('recalcDeposit').innerHTML = `
+        <p><strong>New Deposit (50%):</strong> R${deposit}</p>
+      `;
+
+      // If the new total is greater than the old, require new proof of payment
+      const oldTotal = parseInt((b.total || '').replace(/\D/g, '')) || 0;
+      if (total > oldTotal) {
+        document.getElementById('uploadProofSection').style.display = 'block';
+      } else {
+        document.getElementById('uploadProofSection').style.display = 'none';
+      }
+    }
+
     document.getElementById('editBookingForm').onsubmit = function(e) {
       e.preventDefault();
-      // Update only allowed fields
-      bookings[idx].eventDetails.guests = document.getElementById('editGuests').value;
-      bookings[idx].eventDetails.address = document.getElementById('editAddress').value;
-      localStorage.setItem('userBookings', JSON.stringify(bookings));
+      // Update allowed fields
+      b.eventDetails.eventDate = document.getElementById('editDate').value;
+      b.eventDetails.eventTime = document.getElementById('editTime').value;
+      b.eventDetails.guests = document.getElementById('editGuests').value;
+      b.eventDetails.address = document.getElementById('editAddress').value;
+
+      // Update extras (excluding drinks)
+      nonDrinkExtras.forEach(([key, value], i) => {
+        const qty = parseInt(document.getElementById(`extraQty${i}`).value, 10) || 0;
+        if (!b.extras[key]) b.extras[key] = {};
+        b.extras[key].qty = qty;
+      });
+
+      // Recalculate totals
+      let guests = parseInt(b.eventDetails.guests, 10) || 1;
+      let menuPrice = 0;
+      if (b.menu && b.menu.price) {
+        menuPrice = parsePrice(b.menu.price);
+        menuPrice = menuPrice * guests;
+      } else if (b.customMenu && b.customMenu.length > 0) {
+        menuPrice = b.customMenu.reduce((sum, item) => {
+          const match = item.match(/R(\d+)/);
+          return sum + (match ? parseInt(match[1], 10) : 0);
+        }, 0);
+        menuPrice = menuPrice * guests;
+      }
+      let extrasTotal = 0;
+      nonDrinkExtras.forEach(([key, value], i) => {
+        const qty = parseInt(document.getElementById(`extraQty${i}`).value, 10) || 0;
+        extrasTotal += (value.price || 0) * qty;
+      });
+      const menuTotal = menuPrice;
+      const total = menuTotal + extrasTotal;
+      const deposit = Math.round(total * 0.5);
+
+      b.total = `Total Amount: R${total}`;
+      b.deposit = `Deposit Due: R${deposit}`;
+
+      // If new proof is required, check for file
+      const oldTotal = parseInt((b.total || '').replace(/\D/g, '')) || 0;
+      if (total > oldTotal) {
+        const proofInput = document.getElementById('newProof');
+        if (!proofInput.files.length) {
+          alert('Please upload new proof of payment.');
+          return;
+        }
+        b.newProofUploaded = true;
+      }
+
+      // No saving to localStorage, just update the dummy array for demo
+      bookings[idx] = b;
       alert('Booking updated!');
       location.reload();
     };

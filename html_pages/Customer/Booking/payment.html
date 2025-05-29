@@ -84,11 +84,13 @@
   if (menu) {
     menu = JSON.parse(menu);
     menuPrice = parsePrice(menu.price);
+    menuPrice = menuPrice * (parseInt(eventDetails.guests, 10) || 1);
   } else if (customMenu.length > 0) {
     menuPrice = customMenu.reduce((sum, item) => {
       const match = item.match(/R(\d+)/);
       return sum + (match ? parseInt(match[1], 10) : 0);
     }, 0);
+    menuPrice = menuPrice * (parseInt(eventDetails.guests, 10) || 1);
   }
 
   // Get extras
@@ -106,7 +108,7 @@
 
   // Calculate totals
   const guests = parseInt(eventDetails.guests, 10) || 1;
-  const menuTotal = menu ? menuPrice * guests : menuPrice;
+  const menuTotal = menuPrice; // menuPrice is already multiplied by guests
   const total = menuTotal + extrasTotal;
   const deposit = Math.round(total * 0.5);
 

@@ -148,14 +148,16 @@
     menuRows = customMenu.map(item => {
       const price = parsePrice(item);
       return `<tr>
-        <td>${item}</td>
-        <td class="price">R${price}</td>
+        <td>${item} <span style="color:#bbb;font-size:0.95em;">(x${eventDetails.guests || 1})</span></td>
+        <td class="price">R${price * (parseInt(eventDetails.guests, 10) || 1)}</td>
       </tr>`;
     }).join('');
+    // Multiply the sum of custom menu prices by guest count
     menuPrice = customMenu.reduce((sum, item) => {
       const match = item.match(/R(\d+)/);
       return sum + (match ? parseInt(match[1], 10) : 0);
     }, 0);
+    menuPrice = menuPrice * (parseInt(eventDetails.guests, 10) || 1);
   }
 
   // 3. Get extras
@@ -182,7 +184,7 @@
 
   // 4. Calculate totals
   const guests = parseInt(eventDetails.guests, 10) || 1;
-  const menuTotal = menu ? menuPrice * guests : menuPrice;
+  const menuTotal = menu ? menuPrice * guests : menuPrice; // This line will now work for both menu and customMenu
   const total = menuTotal + extrasTotal;
   const deposit = Math.round(total * 0.5);
 
