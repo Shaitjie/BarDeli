@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bardeli Sign Up</title>
-    <!-- CSS link - adjust path based on your folder structure -->
-     <link rel="stylesheet" href="css_pages/signup.css">
+    <!-- Fixed CSS path -->
+    <link rel="stylesheet" href="../css_pages/signup.css">
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">
-            <!-- Image path - adjust based on your folder structure -->
-            <img src="images/Logo/BarDeli.png" alt="Company Logo">
-            <!-- Fallback text if image doesn't load -->
+            <!-- Fixed image path -->
+            <img src="../images/Logo/BarDeli.png" alt="Company Logo">
             <span style="display: none;">🍽️ BarDeli Catering</span>
         </div>
     </nav>
@@ -58,27 +57,20 @@
     <script>
         function showPassword() {
             let x = document.getElementById("password");
-            if (x.type === "password") {
-                x.type = "text";
-            } else {
-                x.type = "password";
-            }
+            x.type = x.type === "password" ? "text" : "password";
         }
     </script>
 
-    <!-- Supabase configuration and signup handler -->
+    <!-- Supabase signup handler with console logging -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        // Supabase credentials
         const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co'
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
 
         const supabase = createClient(supabaseUrl, supabaseKey)
 
-        // Wait for DOM to load
         document.addEventListener('DOMContentLoaded', function() {
-            // Get form elements
             const signupButton = document.getElementById('signup')
             const fullname = document.getElementById('fullname')
             const phone = document.getElementById('phone')
@@ -86,22 +78,18 @@
             const email = document.getElementById('email')
             const password = document.getElementById('password')
 
-            // Handle signup click
             signupButton.addEventListener('click', async (e) => {
-                e.preventDefault() // Prevent any default form submission
+                e.preventDefault()
 
-                // Basic validation
                 if (!fullname.value || !phone.value || !email.value || !password.value) {
                     alert('Please fill in all fields');
                     return;
                 }
 
-                // Disable button during processing
                 signupButton.disabled = true;
                 signupButton.textContent = 'Signing up...';
 
                 try {
-                    // Insert user into Supabase
                     const { data, error } = await supabase
                         .from('users')
                         .insert([{
@@ -109,20 +97,22 @@
                             phone: phone.value,
                             role: role.value,
                             email: email.value,
-                            passwordhash: password.value // Note: In production, hash the password before storing!
+                            passwordhash: password.value
                         }])
+
+                    console.log('Supabase Response Data:', data)
+                    console.log('Supabase Response Error:', error)
 
                     if (error) {
                         alert('Signup failed: ' + error.message)
                     } else {
                         alert('Signup successful! Redirecting to login...')
-                        // Adjust this path based on your folder structure
                         window.location.href = "login.html"
                     }
                 } catch (err) {
-                    alert('An error occurred: ' + err.message)
+                    console.error('Unexpected error:', err)
+                    alert('An unexpected error occurred: ' + err.message)
                 } finally {
-                    // Re-enable button
                     signupButton.disabled = false;
                     signupButton.textContent = 'Sign Up';
                 }
