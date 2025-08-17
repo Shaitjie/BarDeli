@@ -1,64 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Signup - BarDeli</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f1f1f1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .form-container {
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 300px;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #e67e22;
-      border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #d35400;
-    }
-    p {
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    a {
-      color: #e67e22;
-      text-decoration: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bardeli Sign Up</title>
+    <!-- CSS link - adjust path based on your folder structure -->
+     <link rel="stylesheet" href="css_pages/signup.css">
 </head>
 <body>
-  <div class="form-container">
-    <h2>Create Account</h2>
-    <form action="dashboard.html" method="get">
-      <input type="text" name="fullname" placeholder="Full Name" required>
-      <input type="email" name="email" placeholder="Email Address" required>
-      <input type="password" name="password" placeholder="Create Password" required>
-      <button type="submit">Sign Up</button>
-    </form>
-    <p>Already have an account? <a href="login.html">Login here</a></p>
-  </div>
+    <nav class="navbar">
+        <div class="logo">
+            <!-- Image path - adjust based on your folder structure -->
+            <img src="images/Logo/BarDeli.png" alt="Company Logo">
+            <!-- Fallback text if image doesn't load -->
+            <span style="display: none;">🍽️ BarDeli Catering</span>
+        </div>
+    </nav>
+    
+    <div class="signup-section">
+        <div class="signup-content">
+            <h1>Sign Up</h1>
+            <div class="signup-inputs">
+                <form id="signupForm">
+                    <p>Full Name:</p>
+                    <input type="text" id="fullname" placeholder="Please enter your name and surname" required>
+                    
+                    <p>Phone:</p>
+                    <input type="tel" id="phone" placeholder="Please enter your phone number, eg: 079 121 2348" required>
+                    
+                    <p>Role:</p>
+                    <select id="role" required>
+                        <option value="Customer">Customer</option>
+                    </select>
+                    
+                    <p>Email:</p>
+                    <input type="email" id="email" placeholder="Please enter your email" required>
+                    
+                    <p>Password:</p>
+                    <input type="password" id="password" placeholder="Please enter a password" required>
+                    <div class="password-checkbox">
+                        <input type="checkbox" id="password-chkbox" name="password-chkbox" onclick="showPassword()">
+                        <label for="password-chkbox">Show Password</label>
+                    </div>
+                </form>
+                <div class="signup-button">
+                    <button id="signup">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2025 Bardeli Catering</p>
+    </footer>
+
+    <!-- Password toggle function -->
+    <script>
+        function showPassword() {
+            let x = document.getElementById("password");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+
+    <!-- Supabase configuration and signup handler -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        // Supabase credentials
+        const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
+
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get form elements
+            const signupButton = document.getElementById('signup')
+            const fullname = document.getElementById('fullname')
+            const phone = document.getElementById('phone')
+            const role = document.getElementById('role')
+            const email = document.getElementById('email')
+            const password = document.getElementById('password')
+
+            // Handle signup click
+            signupButton.addEventListener('click', async (e) => {
+                e.preventDefault() // Prevent any default form submission
+
+                // Basic validation
+                if (!fullname.value || !phone.value || !email.value || !password.value) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                // Disable button during processing
+                signupButton.disabled = true;
+                signupButton.textContent = 'Signing up...';
+
+                try {
+                    // Insert user into Supabase
+                    const { data, error } = await supabase
+                        .from('users')
+                        .insert([{
+                            fullname: fullname.value,
+                            phone: phone.value,
+                            role: role.value,
+                            email: email.value,
+                            passwordhash: password.value // Note: In production, hash the password before storing!
+                        }])
+
+                    if (error) {
+                        alert('Signup failed: ' + error.message)
+                    } else {
+                        alert('Signup successful! Redirecting to login...')
+                        // Adjust this path based on your folder structure
+                        window.location.href = "login.html"
+                    }
+                } catch (err) {
+                    alert('An error occurred: ' + err.message)
+                } finally {
+                    // Re-enable button
+                    signupButton.disabled = false;
+                    signupButton.textContent = 'Sign Up';
+                }
+            })
+        })
+    </script>
 </body>
 </html>
-
