@@ -4,14 +4,14 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Bardeli Login</title>
-	<!-- Fixed: Corrected relative path for CSS -->
- <link rel="stylesheet" href="css_pages/login.css">
+	<!-- Fixed: Correct path from html_pages/login.html to css_pages/ -->
+	<link rel="stylesheet" href="../css_pages/login.css">
 </head>
 <body>
 	<!-- Navigation -->
 	<nav class="navbar">
 		<div class="logo">
-			<!-- Fixed: Corrected relative path for logo -->
+			<!-- Fixed: Correct path from html_pages/login.html to images/ -->
 			<img src="../images/Logo/BarDeli.png" alt="Company Logo">
 		</div>
 	</nav>
@@ -37,8 +37,8 @@
 				<div class="signup">
 					<p>Don't have a profile?</p>
 					<div class="signup-button">
-						<!-- Fixed: Corrected relative path for signup -->
-						<button onclick="window.location.href='./customer/signup.html'">Sign Up</button>
+						<!-- Fixed: Correct path to signup.html -->
+						<button onclick="window.location.href='customer/signup.html'">Sign Up</button>
 					</div>
 				</div>
 			</div>
@@ -87,8 +87,8 @@
 				
 				if (data.passwordhash === password) { // Plain text comparison
 					alert('Login successful!');
-					// Fixed: Corrected relative path for customer page
-					window.location.href = './customer/customerpage.html';
+					// Fixed: Correct path to customerpage.html
+					window.location.href = 'customer/customerpage.html';
 				} else {
 					alert('Incorrect password');
 				}
@@ -101,4 +101,3 @@
 	</script>
 </body>
 </html>
-
