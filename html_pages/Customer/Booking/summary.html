@@ -3,194 +3,216 @@
 <head>
   <meta charset="UTF-8">
   <title>Booking Summary</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-   /* Invoice-specific styling only */
-    .invoice-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      background: transparent;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #333;
     }
-    
-    .invoice-table th, 
-    .invoice-table td {
-      padding: 12px 8px;
-      font-size: 1em;
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #ff7f00;
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+    }
+
+    .sidebar .logo img {
+      width: 150px;
+      margin: 0 auto 30px auto;
+      display: block;
+    }
+
+    .sidebar .nav-links a {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      text-decoration: none;
       color: white;
-      border: none;
+      font-weight: 500;
+      margin-bottom: 5px;
     }
-    
-    .invoice-table th {
-      text-align: left;
-      border-bottom: 2px solid rgba(255,255,255,0.3);
-      font-size: 1.1em;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      background: transparent;
+
+    .sidebar .nav-links a img {
+      width: 20px;
+      margin-right: 12px;
     }
-    
-    .invoice-table td {
-      vertical-align: top;
-    }
-    
-    .invoice-table td.price {
-      text-align: right;
-      font-weight: 600;
+
+    .sidebar .logout a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
       color: white;
-      min-width: 120px;
+      padding: 20px;
+      border-top: 1px solid rgba(255,255,255,0.5);
     }
-    
-    .invoice-total-row td {
-      border-top: 2px solid white;
-      font-size: 1.3em;
-      font-weight: bold;
-      color: white;
-      padding-top: 15px;
-      background: transparent;
+
+    .sidebar .logout img {
+      width: 20px;
+      margin-right: 10px;
     }
-    
+
+    /* Main content */
+    .main-content {
+      margin-left: 270px;
+      padding: 40px 30px;
+    }
+
+    h1 {
+      color: #ff7f00;
+      margin-bottom: 20px;
+    }
+
+    /* Invoice tables */
     .invoice-section-title {
       font-size: 1.2em;
       font-weight: 800;
-      color: white;
-      border-bottom: 2px solid white;
+      color: #ff7f00;
+      border-bottom: 2px solid #ff7f00;
       margin-top: 25px;
       margin-bottom: 10px;
       letter-spacing: 0.5px;
-      background: transparent;
       padding-bottom: 8px;
     }
-    
-    .invoice-details {
-      margin-bottom: 20px;
-      color: white;
-      background: transparent;
+
+    .invoice-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
     }
-    
+
+    .invoice-table th,
+    .invoice-table td {
+      padding: 10px 8px;
+      text-align: left;
+    }
+
+    .invoice-table td.price {
+      text-align: right;
+    }
+
+    .invoice-total-row td,
     .deposit-row td {
-      font-size: 1.2em;
       font-weight: 700;
+      font-size: 1.1em;
+    }
+
+    /* Buttons */
+    .bottom-nav-btns {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .nav-btn {
+      padding: 12px 24px;
+      font-size: 1.05em;
+      font-weight: 600;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px;
+      background-color: #ff7f00;
       color: white;
-      border-top: 2px white;
-      padding-top: 12px;
-      background: transparent;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    .nav-btn:hover {
+      background-color: #e67300;
     }
   </style>
 </head>
 <body>
-<div class="sidebar">
-  <!-- ...sidebar code... -->
-   <div class="logo">
-    <img src="/BarDeli/images/Logo/BarDeli.png" alt="BarDeli Logo">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <img src="../../../images/Logo/BarDeli.png" alt="BarDeli Logo">
+    </div>
+    <div class="nav-links">
+      <a href="../customerpage.html">
+        <img src="../../../images/Icons(White)/HomeIcon-modified.png" alt="Home"> Home
+      </a>
+      <a href="./customerbookingpage.html">
+        <img src="../../../images/Icons(White)/BookingIcon-modified.png" alt="Booking"> Booking
+      </a>
+      <a href="../Notifications/customernotificationpage.html">
+        <img src="../../../images/Icons(White)/NotificationIcon-modified.png" alt="Notifications"> Notifications
+      </a>
+      <a href="../Profile/customerprofilepage.html">
+        <img src="../../../images/Icons(White)/ProfileIcon-modified.png" alt="Profile"> Profile
+      </a>
+    </div>
+    <div class="logout">
+      <a href="../../index.html">
+        <img src="../../../images/Icons(White)/LogOutIcon-modified.png" alt="Logout"> Logout
+      </a>
+    </div>
   </div>
-  <div class="nav-links">
-    <a href="../customerpage.html" class="nav-item">
-      <img src="/BarDeli/images/Icons(White)/HomeIcon-modified.png" alt="Home">
-      Home
-    </a>
-    <a href="customerbookingpage.html" class="nav-item">
-      <img src="/BarDeli/images/Icons(White)/BookingIcon-modified.png" alt="Booking">
-      Booking
-    </a>
-    <a href="#" class="nav-item">
-      <img src="/BarDeli/images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
-      Notifications
-    </a>
-    <a href="#" class="nav-item">
-      <img src="/BarDeli/images/Icons(White)/ProfileIcon-modified.png" alt="Profile">
-      Profile
-    </a>
-  </div>
-  <div class="logout">
-    <a href=".../index.html">
-      <img src="/BarDeli/images/Icons(White)/LogOutIcon-modified.png" alt="Logout">
-      Logout
-    </a>
-  </div>
-</div>
-<div class="main-content">
-  <h1>Booking Summary</h1>
-  <div class="form-container" id="summaryBox">
-    <!-- Summary details will be inserted here -->
-  </div>
-  <div class="bottom-nav-btns">
-    <button onclick="window.location.href='extras.html'" class="nav-btn">Back</button>
-    <button onclick="window.location.href='payment.html'" class="nav-btn">Proceed to Payment</button>
-  </div>
-</div>
-<script>
-  function parsePrice(str) {
-    const match = str.match(/R(\d+)/);
-    return match ? parseInt(match[1], 10) : 0;
-  }
 
-  // 1. Get event details
-  const eventDetails = JSON.parse(localStorage.getItem('eventDetails')) || {};
+  <!-- Main content -->
+  <div class="main-content">
+    <h1>Booking Summary</h1>
+    <div id="summaryBox"></div>
 
-  // 2. Get menu selection
-  let menu = localStorage.getItem('selectedMenu');
-  let customMenu = JSON.parse(localStorage.getItem('customMenuSelections') || '[]');
-  let menuPrice = 0;
-  let menuName = '';
-  let menuRows = '';
+    <div class="bottom-nav-btns">
+      <button onclick="window.location.href='extras.html'" class="nav-btn">Back</button>
+      <button onclick="window.location.href='payment.html'" class="nav-btn">Accept quote</button>
+    </div>
+  </div>
 
-  if (menu) {
-    menu = JSON.parse(menu);
-    menuName = menu.title;
-    menuPrice = parsePrice(menu.price);
-    menuRows = `<tr>
-      <td>${menuName} <span style="color:#bbb;font-size:0.95em;">(x${eventDetails.guests || 1})</span></td>
-      <td class="price">R${menuPrice * (parseInt(eventDetails.guests, 10) || 1)}</td>
-    </tr>`;
-  } else if (customMenu.length > 0) {
-    menuName = 'Custom Menu';
-    menuRows = customMenu.map(item => {
-      const price = parsePrice(item);
-      return `<tr>
-        <td>${item} <span style="color:#bbb;font-size:0.95em;">(x${eventDetails.guests || 1})</span></td>
-        <td class="price">R${price * (parseInt(eventDetails.guests, 10) || 1)}</td>
-      </tr>`;
-    }).join('');
-    // Multiply the sum of custom menu prices by guest count
-    menuPrice = customMenu.reduce((sum, item) => {
-      const match = item.match(/R(\d+)/);
-      return sum + (match ? parseInt(match[1], 10) : 0);
-    }, 0);
-    menuPrice = menuPrice * (parseInt(eventDetails.guests, 10) || 1);
-  }
+  <script>
+    function parsePrice(str) {
+      const match = str.match(/R(\d+)/);
+      return match ? parseInt(match[1], 10) : 0;
+    }
 
-  // 3. Get extras
-  const extras = JSON.parse(localStorage.getItem('extrasSelections') || '{}');
-  let extrasRows = '';
-  let extrasTotal = 0;
-  if (extras) {
+    const eventDetails = JSON.parse(localStorage.getItem('eventDetails')) || {};
+    let menu = JSON.parse(localStorage.getItem('selectedMenu') || 'null');
+    let customMenu = JSON.parse(localStorage.getItem('customMenuSelections') || '[]');
+    const extras = JSON.parse(localStorage.getItem('extrasSelections') || '{}');
+    const guests = parseInt(eventDetails.guests, 10) || 1;
+
+    // Menu breakdown
+    let menuRows = '';
+    let menuTotal = 0;
+    if (menu) {
+      const menuPrice = parsePrice(menu.price) * guests;
+      menuRows = `<tr><td>${menu.title} (x${guests})</td><td class="price">R${menuPrice}</td></tr>`;
+      menuTotal = menuPrice;
+    } else if (customMenu.length) {
+      customMenu.forEach(item => {
+        const price = parsePrice(item) * guests;
+        menuRows += `<tr><td>${item} (x${guests})</td><td class="price">R${price}</td></tr>`;
+        menuTotal += price;
+      });
+    }
+
+    // Extras breakdown
+    let extrasRows = '';
+    let extrasTotal = 0;
     for (const [key, value] of Object.entries(extras)) {
       if (value && value.qty && value.price) {
-        extrasRows += `<tr>
-          <td>${key} <span style="color:#bbb;font-size:0.95em;">(x${value.qty})</span></td>
-          <td class="price">R${value.qty * value.price}</td>
-        </tr>`;
-        extrasTotal += value.qty * value.price;
+        const totalPrice = value.qty * value.price;
+        extrasRows += `<tr><td>${key} (x${value.qty})</td><td class="price">R${totalPrice}</td></tr>`;
+        extrasTotal += totalPrice;
       } else if (value && value.price) {
-        extrasRows += `<tr>
-          <td>${key}</td>
-          <td class="price">R${value.price}</td>
-        </tr>`;
+        extrasRows += `<tr><td>${key}</td><td class="price">R${value.price}</td></tr>`;
         extrasTotal += value.price;
       }
     }
-  }
 
-  // 4. Calculate totals
-  const guests = parseInt(eventDetails.guests, 10) || 1;
-  const menuTotal = menu ? menuPrice * guests : menuPrice; // This line will now work for both menu and customMenu
-  const total = menuTotal + extrasTotal;
-  const deposit = Math.round(total * 0.5);
+    const total = menuTotal + extrasTotal;
+    const deposit = Math.round(total * 0.5);
 
-  // 5. Render summary as invoice
-  document.getElementById('summaryBox').innerHTML = `
-    <div class="invoice-details">
+    // Render summary
+    document.getElementById('summaryBox').innerHTML = `
       <div class="invoice-section-title">Event Details</div>
       <table class="invoice-table">
         <tr><td>Date</td><td class="price">${eventDetails.eventDate || ''}</td></tr>
@@ -199,35 +221,31 @@
         <tr><td>Guests</td><td class="price">${guests}</td></tr>
         <tr><td>Location</td><td class="price">${eventDetails.address || ''}</td></tr>
       </table>
-    </div>
-    <div class="invoice-section-title">Menu</div>
-    <table class="invoice-table">
-      ${menuRows || '<tr><td colspan="2">No menu selected</td></tr>'}
-      <tr>
-        <td style="font-weight:600;">Menu Subtotal</td>
-        <td class="price" style="font-weight:600;">R${menuTotal}</td>
-      </tr>
-    </table>
-    <div class="invoice-section-title">Extras</div>
-    <table class="invoice-table">
-      ${extrasRows || '<tr><td colspan="2">No extras selected</td></tr>'}
-      <tr>
-        <td style="font-weight:600;">Extras Subtotal</td>
-        <td class="price" style="font-weight:600;">R${extrasTotal}</td>
-      </tr>
-    </table>
-    <div class="invoice-section-title" style="margin-top:30px;">Total</div>
-    <table class="invoice-table">
-      <tr class="invoice-total-row">
-        <td>Total Amount</td>
-        <td class="price">R${total}</td>
-      </tr>
-      <tr class="deposit-row">
-        <td>50% Deposit Required</td>
-        <td class="price">R${deposit}</td>
-      </tr>
-    </table>
-  `;
-</script>
+
+      <div class="invoice-section-title">Menu</div>
+      <table class="invoice-table">
+        ${menuRows || '<tr><td colspan="2">No menu selected</td></tr>'}
+        <tr class="invoice-total-row">
+          <td>Menu Subtotal</td>
+          <td class="price">R${menuTotal}</td>
+        </tr>
+      </table>
+
+      <div class="invoice-section-title">Extras</div>
+      <table class="invoice-table">
+        ${extrasRows || '<tr><td colspan="2">No extras selected</td></tr>'}
+        <tr class="invoice-total-row">
+          <td>Extras Subtotal</td>
+          <td class="price">R${extrasTotal}</td>
+        </tr>
+      </table>
+
+      <div class="invoice-section-title">Total</div>
+      <table class="invoice-table">
+        <tr class="invoice-total-row"><td>Total Amount</td><td class="price">R${total}</td></tr>
+        <tr class="deposit-row"><td>50% Deposit Required</td><td class="price">R${deposit}</td></tr>
+      </table>
+    `;
+  </script>
 </body>
 </html>

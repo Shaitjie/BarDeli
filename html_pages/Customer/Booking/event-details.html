@@ -8,32 +8,41 @@
   <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
-
 <div class="sidebar">
   <div class="logo">
-    <img src="/BarDeli/images/Logo/BarDeli.png" alt="BarDeli Logo">
+    <!-- Go up three folders to root BarDeli, then into images/Logo -->
+    <img src="../../../images/Logo/BarDeli.png" alt="BarDeli Logo">
   </div>
   <div class="nav-links">
+    <!-- Home page -->
     <a href="../customerpage.html" class="nav-item">
-      <img src="/BarDeli/images/Icons(White)/HomeIcon-modified.png" alt="Home">
+      <img src="../../../images/Icons(White)/HomeIcon-modified.png" alt="Home">
       Home
     </a>
-    <a href="customerbookingpage.html" class="nav-item">
-      <img src="/BarDeli/images/Icons(White)/BookingIcon-modified.png" alt="Booking">
+
+    <!-- Booking page (current page) -->
+    <a href="./customerbookingpage.html" class="nav-item">
+      <img src="../../../images/Icons(White)/BookingIcon-modified.png" alt="Booking">
       Booking
     </a>
+
+    <!-- Notifications page -->
     <a href="../Notifications/customernotificationpage.html" class="nav-item">
-      <img src="/BarDeli/images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
+      <img src="../../../images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
       Notifications
     </a>
+
+    <!-- Profile page -->
     <a href="../Profile/customerprofilepage.html" class="nav-item">
-      <img src="/BarDeli/images/Icons(White)/LogOutIcon-modified.png" alt="Profile">
+      <img src="../../../images/Icons(White)/ProfileIcon-modified.png" alt="Profile">
       Profile
     </a>
   </div>
+
+  <!-- Logout -->
   <div class="logout">
-    <a href="index.html">
-      <img src="/BarDeli/images/Icons(White)/LogOutIcon-modified.png" alt="Logout">
+    <a href="../../index.html">
+      <img src="../../../images/Icons(White)/LogOutIcon-modified.png" alt="Logout">
       Logout
     </a>
   </div>
