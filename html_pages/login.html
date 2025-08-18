@@ -4,15 +4,17 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Bardeli Login</title>
-	<link rel="stylesheet" href="/BarDeli/css_pages/login.css">
+	<link rel="stylesheet" href="../../css_pages/login.css">
 </head>
 <body>
+	<!-- Navigation -->
 	<nav class="navbar">
 		<div class="logo">
-			<img src="/BarDeli/images/Logo/BarDeli.png" alt="Company Logo">
+			<img src="../../images/Logo/BarDeli.png" alt="Company Logo">
 		</div>
 	</nav>
 	
+	<!-- Login Section -->
 	<div class="login-section">
 		<div class="login-content">
 			<h1>Login</h1>
@@ -22,43 +24,75 @@
 	
 				<p>Password:</p>
 				<input type="password" id="password" placeholder="Please enter your password">
+
 				<div class="password-checkbox">
-					<input type="checkbox" id="password-chkbox" name="password-chkbox" onclick="showPassword()">
+					<input type="checkbox" id="password-chkbox">
 					<label for="password-chkbox"> Show Password</label><br>
 				</div>
-	
+
 				<div class="login-button">
-					<button id="login" onclick="window.location.href='/BarDeli/html_pages/Customer/customerpage.html'">Login</button>
+					<button id="loginBtn" type="button">Login</button>
 				</div>
-	
+				
 				<div class="signup">
 					<p>Don't have a profile?</p>
 					<div class="signup-button">
-						<button onclick="window.location.href='/BarDeli/html_pages/signup.html'">Sign Up</button>
+						<button onclick="window.location.href='../signup.html'">Sign Up</button>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	
+	<!-- Footer -->
 	<footer>
 		<p>© 2025 Bardeli Catering</p>
 	</footer>
 
-	<!-- For Firebase -->
-	<!--<script type="module" src="/BarDeli/javascript/login.js"></script>-->
-	
-	<script>
+	<!-- Script -->
+	<script type="module">
+		import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-		function showPassword() {
+		const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
+		const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
+		const supabase = createClient(supabaseUrl, supabaseKey);
+
+		// Show/Hide password
+		document.getElementById("password-chkbox").addEventListener("click", () => {
 			let x = document.getElementById("password");
-			if (x.type === "password") {
-				x.type = "text";
+			x.type = x.type === "password" ? "text" : "password";
+		});
+
+		// Login check
+		async function login() {
+			const email = document.getElementById("email").value;
+			const password = document.getElementById("password").value;
+
+			if (!email || !password) {
+				alert("Please enter both email and password");
+				return;
+			}
+
+			const { data, error } = await supabase
+				.from('users') // Replace with your table name
+				.select('*')
+				.eq('email', email)
+				.single();
+
+			if (error || !data) {
+				alert('User not found');
+				return;
+			}
+
+			if (data.password === password) { // Plain text comparison
+				alert('Login successful!');
+				window.location.href = 'Customer/customerpage.html';
 			} else {
-				x.type = "password";
+				alert('Incorrect password');
 			}
 		}
 
+		document.getElementById("loginBtn").addEventListener("click", login);
 	</script>
 </body>
 </html>
