@@ -37,7 +37,7 @@
 				<div class="signup">
 					<p>Don't have a profile?</p>
 					<div class="signup-button">
-						<button onclick="window.location.href='../signup.html'">Sign Up</button>
+						<button onclick="window.location.href='signup.html'">Sign Up</button>
 					</div>
 				</div>
 			</div>
@@ -84,7 +84,7 @@
 				return;
 			}
 
-			if (data.password === password) { // Plain text comparison
+			if (data.passwordhash === password) { // Plain text comparison
 				alert('Login successful!');
 				window.location.href = 'Customer/customerpage.html';
 			} else {
