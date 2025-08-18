@@ -14,6 +14,8 @@
 			<!-- Fixed: Correct path from html_pages/login.html to images/ -->
 			<img src="../images/Logo/BarDeli.png" alt="Company Logo">
 		</div>
+		<!-- Add home button -->
+		<a href="../index.html" style="color: white; text-decoration: none; margin-left: auto;">Home</a>
 	</nav>
 	
 	<!-- Login Section -->
@@ -37,7 +39,7 @@
 				<div class="signup">
 					<p>Don't have a profile?</p>
 					<div class="signup-button">
-						<!-- Fixed: Correct path to signup.html -->
+						<!-- Fixed: Correct path from html_pages/login.html to signup.html -->
 						<button onclick="window.location.href='customer/signup.html'">Sign Up</button>
 					</div>
 				</div>
@@ -75,25 +77,27 @@
 			
 			try {
 				const { data, error } = await supabase
-					.from('users') // Replace with your table name
+					.from('users')
 					.select('*')
 					.eq('email', email)
 					.single();
 				
 				if (error || !data) {
 					alert('User not found');
+					console.error('Supabase error:', error);
 					return;
 				}
 				
-				if (data.passwordhash === password) { // Plain text comparison
+				if (data.passwordhash === password) {
 					alert('Login successful!');
-					// Fixed: Correct path to customerpage.html
+					// Fixed: Correct path from html_pages/login.html to customerpage.html
 					window.location.href = 'customer/customerpage.html';
 				} else {
 					alert('Incorrect password');
 				}
 			} catch (err) {
 				alert('Login error: ' + err.message);
+				console.error('Login error:', err);
 			}
 		}
 		
