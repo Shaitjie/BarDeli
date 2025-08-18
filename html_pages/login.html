@@ -4,13 +4,15 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Bardeli Login</title>
-	<link rel="stylesheet" href="../../css_pages/login.css">
+	<!-- Fixed: Corrected relative path for CSS -->
+	<link rel="stylesheet" href="../css_pages/login.css">
 </head>
 <body>
 	<!-- Navigation -->
 	<nav class="navbar">
 		<div class="logo">
-			<img src="../../images/Logo/BarDeli.png" alt="Company Logo">
+			<!-- Fixed: Corrected relative path for logo -->
+			<img src="../images/Logo/BarDeli.png" alt="Company Logo">
 		</div>
 	</nav>
 	
@@ -24,12 +26,10 @@
 	
 				<p>Password:</p>
 				<input type="password" id="password" placeholder="Please enter your password">
-
 				<div class="password-checkbox">
 					<input type="checkbox" id="password-chkbox">
 					<label for="password-chkbox"> Show Password</label><br>
 				</div>
-
 				<div class="login-button">
 					<button id="loginBtn" type="button">Login</button>
 				</div>
@@ -37,7 +37,8 @@
 				<div class="signup">
 					<p>Don't have a profile?</p>
 					<div class="signup-button">
-						<button onclick="window.location.href='signup.html'">Sign Up</button>
+						<!-- Fixed: Corrected relative path for signup -->
+						<button onclick="window.location.href='./customer/signup.html'">Sign Up</button>
 					</div>
 				</div>
 			</div>
@@ -48,50 +49,54 @@
 	<footer>
 		<p>© 2025 Bardeli Catering</p>
 	</footer>
-
+	
 	<!-- Script -->
 	<script type="module">
 		import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
 		const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
 		const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
 		const supabase = createClient(supabaseUrl, supabaseKey);
-
+		
 		// Show/Hide password
 		document.getElementById("password-chkbox").addEventListener("click", () => {
 			let x = document.getElementById("password");
 			x.type = x.type === "password" ? "text" : "password";
 		});
-
+		
 		// Login check
 		async function login() {
 			const email = document.getElementById("email").value;
 			const password = document.getElementById("password").value;
-
+			
 			if (!email || !password) {
 				alert("Please enter both email and password");
 				return;
 			}
-
-			const { data, error } = await supabase
-				.from('users') // Replace with your table name
-				.select('*')
-				.eq('email', email)
-				.single();
-
-			if (error || !data) {
-				alert('User not found');
-				return;
-			}
-
-			if (data.passwordhash === password) { // Plain text comparison
-				alert('Login successful!');
-				window.location.href = 'Customer/customerpage.html';
-			} else {
-				alert('Incorrect password');
+			
+			try {
+				const { data, error } = await supabase
+					.from('users') // Replace with your table name
+					.select('*')
+					.eq('email', email)
+					.single();
+				
+				if (error || !data) {
+					alert('User not found');
+					return;
+				}
+				
+				if (data.passwordhash === password) { // Plain text comparison
+					alert('Login successful!');
+					// Fixed: Corrected relative path for customer page
+					window.location.href = './customer/customerpage.html';
+				} else {
+					alert('Incorrect password');
+				}
+			} catch (err) {
+				alert('Login error: ' + err.message);
 			}
 		}
-
+		
 		document.getElementById("loginBtn").addEventListener("click", login);
 	</script>
 </body>
