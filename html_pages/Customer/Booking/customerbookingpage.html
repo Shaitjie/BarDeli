@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Booking Page</title>
-    <!-- CSS with fallback paths -->
-    <link rel="stylesheet" href="./customerbooking.css">
-    <link rel="stylesheet" href="../../../css_pages/Customer/Booking/customerbooking.css">
     <style>
-        /* Embedded CSS as fallback */
         body {
             margin: 0;
             padding: 0;
@@ -59,6 +55,11 @@
 
         .menu-item:hover {
             background-color: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+
+        .menu-item.current-page {
+            background-color: rgba(255,255,255,0.2);
             border-left-color: white;
         }
 
@@ -196,53 +197,32 @@
                 font-size: 16px;
             }
         }
-
-        /* Loading state for images */
-        img {
-            transition: opacity 0.3s ease;
-        }
-
-        img:not([src]), img[src=""] {
-            opacity: 0;
-        }
-
-        /* Error handling for broken images */
-        .menu-item img:not([src*="data:"]) {
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>') no-repeat center;
-            background-size: contain;
-        }
     </style>
 </head>
 <body>
     <nav class="sidebar-menu">
         <div class="sidebar-menu-icon">
-            <!-- Logo with multiple fallback paths -->
-            <img id="logo" alt="BarDeli Logo" onerror="handleImageError(this, 'logo')">
+            <img src="../../../images/Logo/BarDeli.png" alt="BarDeli Logo" onerror="this.style.display='none'">
         </div>
         <div class="sidebar-links">
-            <!-- Home -->
-            <a href="#" class="menu-item" onclick="navigateTo('home')">
-                <img id="home-icon" alt="Home" onerror="handleImageError(this, 'home')">
+            <a href="../customerpage.html" class="menu-item">
+                <img src="../../../images/Icons(White)/HomeIcon-modified.png" alt="Home" onerror="this.style.display='none'">
                 <p>Home</p>
             </a>
-            <!-- Booking (current page) -->
-            <a href="#" class="menu-item current-page" onclick="navigateTo('booking')">
-                <img id="booking-icon" alt="Booking" onerror="handleImageError(this, 'booking')">
+            <a href="./customerbookingpage.html" class="menu-item current-page">
+                <img src="../../../images/Icons(White)/BookingIcon-modified.png" alt="Booking" onerror="this.style.display='none'">
                 <p>Booking</p>
             </a>
-            <!-- Notifications -->
-            <a href="#" class="menu-item" onclick="navigateTo('notifications')">
-                <img id="notification-icon" alt="Notifications" onerror="handleImageError(this, 'notifications')">
+            <a href="../Notifications/customernotificationpage.html" class="menu-item">
+                <img src="../../../images/Icons(White)/NotificationIcon-modified.png" alt="Notifications" onerror="this.style.display='none'">
                 <p>Notifications</p>
             </a>
-            <!-- Profile -->
-            <a href="#" class="menu-item" onclick="navigateTo('profile')">
-                <img id="profile-icon" alt="Profile" onerror="handleImageError(this, 'profile')">
+            <a href="../Profile/customerprofilepage.html" class="menu-item">
+                <img src="../../../images/Icons(White)/ProfileIcon-modified.png" alt="Profile" onerror="this.style.display='none'">
                 <p>Profile</p>
             </a>
-            <!-- Log Out -->
-            <a href="#" class="menu-item" onclick="navigateTo('logout')">
-                <img id="logout-icon" alt="Log Out" onerror="handleImageError(this, 'logout')">
+            <a href="../../index.html" class="menu-item">
+                <img src="../../../images/Icons(White)/LogOutIcon-modified.png" alt="Log Out" onerror="this.style.display='none'">
                 <p>Log Out</p>
             </a>
         </div>
@@ -250,200 +230,9 @@
     <div class="make-and-modify-section">
         <h1 class="bookingpage-heading">Booking Page</h1>
         <div class="make-and-modify-buttons">
-            <button onclick="navigateToBooking('make')">Make Booking</button>
-            <button onclick="navigateToBooking('modify')">Modify Booking</button>
+            <button onclick="window.location.href='event-details.html'">Make Booking</button>
+            <button onclick="window.location.href='modify-booking.html'">Modify Booking</button>
         </div>
     </div>
-
-    <script>
-        // Path configuration for different environments
-        const pathConfig = {
-            // GitHub Pages paths (adjust if your repo name is different)
-            github: {
-                base: '/BarDeli',
-                images: '/BarDeli/images',
-                pages: '/BarDeli/html_pages'
-            },
-            // Local development paths
-            local: {
-                base: '.',
-                images: './images',
-                pages: './html_pages'
-            },
-            // Relative paths (fallback)
-            relative: {
-                base: '../../../',
-                images: '../../../images',
-                pages: '../../../html_pages'
-            }
-        };
-
-        // Detect current environment
-        function getCurrentEnvironment() {
-            const hostname = window.location.hostname;
-            const pathname = window.location.pathname;
-            
-            if (hostname.includes('github.io') || hostname.includes('github.com')) {
-                return 'github';
-            } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
-                return 'local';
-            } else {
-                return 'relative';
-            }
-        }
-
-        // Get current path configuration
-        const currentEnv = getCurrentEnvironment();
-        const paths = pathConfig[currentEnv];
-
-        // Image sources with fallbacks
-        const imageSources = {
-            logo: [
-                `${paths.images}/Logo/BarDeli.png`,
-                './images/Logo/BarDeli.png',
-                '../../../images/Logo/BarDeli.png'
-            ],
-            home: [
-                `${paths.images}/Icons(White)/HomeIcon-modified.png`,
-                './images/Icons(White)/HomeIcon-modified.png',
-                '../../../images/Icons(White)/HomeIcon-modified.png'
-            ],
-            booking: [
-                `${paths.images}/Icons(White)/BookingIcon-modified.png`,
-                './images/Icons(White)/BookingIcon-modified.png',
-                '../../../images/Icons(White)/BookingIcon-modified.png'
-            ],
-            notifications: [
-                `${paths.images}/Icons(White)/NotificationIcon-modified.png`,
-                './images/Icons(White)/NotificationIcon-modified.png',
-                '../../../images/Icons(White)/NotificationIcon-modified.png'
-            ],
-            profile: [
-                `${paths.images}/Icons(White)/ProfileIcon-modified.png`,
-                './images/Icons(White)/ProfileIcon-modified.png',
-                '../../../images/Icons(White)/ProfileIcon-modified.png'
-            ],
-            logout: [
-                `${paths.images}/Icons(White)/LogOutIcon-modified.png`,
-                './images/Icons(White)/LogOutIcon-modified.png',
-                '../../../images/Icons(White)/LogOutIcon-modified.png'
-            ]
-        };
-
-        // Page navigation paths
-        const navigationPaths = {
-            home: [
-                `${paths.pages}/Customer/customerpage.html`,
-                './customerpage.html',
-                '../customerpage.html'
-            ],
-            booking: [
-                `${paths.pages}/Customer/Booking/customerbookingpage.html`,
-                './customerbookingpage.html',
-                '#'
-            ],
-            notifications: [
-                `${paths.pages}/Customer/Notifications/customernotificationpage.html`,
-                './Notifications/customernotificationpage.html',
-                '../Notifications/customernotificationpage.html'
-            ],
-            profile: [
-                `${paths.pages}/Customer/Profile/customerprofilepage.html`,
-                './Profile/customerprofilepage.html',
-                '../Profile/customerprofilepage.html'
-            ],
-            logout: [
-                `${paths.base}/index.html`,
-                './index.html',
-                '../../../index.html'
-            ]
-        };
-
-        // Booking navigation paths
-        const bookingPaths = {
-            make: [
-                `${paths.pages}/Customer/Booking/event-details.html`,
-                './event-details.html',
-                './event-details.html'
-            ],
-            modify: [
-                `${paths.pages}/Customer/Booking/modify-booking.html`,
-                './modify-booking.html',
-                './modify-booking.html'
-            ]
-        };
-
-        // Load images with fallback
-        function loadImageWithFallback(imgElement, sources, index = 0) {
-            if (index >= sources.length) {
-                console.warn(`Could not load image: ${imgElement.id}`);
-                imgElement.style.display = 'none';
-                return;
-            }
-
-            imgElement.onload = function() {
-                imgElement.style.opacity = '1';
-            };
-
-            imgElement.onerror = function() {
-                if (index + 1 < sources.length) {
-                    loadImageWithFallback(imgElement, sources, index + 1);
-                } else {
-                    imgElement.style.display = 'none';
-                }
-            };
-
-            imgElement.src = sources[index];
-        }
-
-        // Handle image errors
-        function handleImageError(imgElement, type) {
-            const sources = imageSources[type];
-            if (sources) {
-                loadImageWithFallback(imgElement, sources, 1);
-            }
-        }
-
-        // Navigation function with fallback
-        function navigateTo(page) {
-            if (page === 'booking') return; // Current page
-            
-            const paths = navigationPaths[page];
-            if (paths && paths.length > 0) {
-                // Try the first path, if it fails, the browser will handle it
-                window.location.href = paths[0];
-            }
-        }
-
-        // Booking navigation with fallback
-        function navigateToBooking(type) {
-            const paths = bookingPaths[type];
-            if (paths && paths.length > 0) {
-                window.location.href = paths[0];
-            }
-        }
-
-        // Initialize images when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load all images with fallbacks
-            Object.keys(imageSources).forEach(key => {
-                const imgElement = document.getElementById(key + (key === 'logo' ? '' : '-icon'));
-                if (imgElement) {
-                    loadImageWithFallback(imgElement, imageSources[key]);
-                }
-            });
-
-            // Add current page styling
-            const currentPageItem = document.querySelector('.current-page');
-            if (currentPageItem) {
-                currentPageItem.style.backgroundColor = 'rgba(255,255,255,0.2)';
-                currentPageItem.style.borderLeftColor = 'white';
-            }
-        });
-
-        // Console log for debugging
-        console.log('Environment:', currentEnv);
-        console.log('Paths config:', paths);
-    </script>
 </body>
 </html>
