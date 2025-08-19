@@ -5,247 +5,255 @@
   <title>Booking Summary</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #fff;
-      color: #333;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 250px;
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background-color: #ff7f00;
-      display: flex;
-      flex-direction: column;
-      padding-top: 20px;
-    }
-
-    .sidebar .logo img {
-      width: 150px;
-      margin: 0 auto 30px auto;
-      display: block;
-    }
-
-    .sidebar .nav-links a {
-      display: flex;
-      align-items: center;
-      padding: 12px 20px;
-      text-decoration: none;
-      color: white;
-      font-weight: 500;
-      margin-bottom: 5px;
-    }
-
-    .sidebar .nav-links a img {
-      width: 20px;
-      margin-right: 12px;
-    }
-
-    .sidebar .logout a {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      color: white;
-      padding: 20px;
-      border-top: 1px solid rgba(255,255,255,0.5);
-    }
-
-    .sidebar .logout img {
-      width: 20px;
-      margin-right: 10px;
-    }
-
-    /* Main content */
-    .main-content {
-      margin-left: 270px;
-      padding: 40px 30px;
-    }
-
-    h1 {
-      color: #ff7f00;
-      margin-bottom: 20px;
-    }
-
-    /* Invoice tables */
-    .invoice-section-title {
-      font-size: 1.2em;
-      font-weight: 800;
-      color: #ff7f00;
-      border-bottom: 2px solid #ff7f00;
-      margin-top: 25px;
-      margin-bottom: 10px;
-      letter-spacing: 0.5px;
-      padding-bottom: 8px;
-    }
-
-    .invoice-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 15px;
-    }
-
-    .invoice-table th,
-    .invoice-table td {
-      padding: 10px 8px;
-      text-align: left;
-    }
-
-    .invoice-table td.price {
-      text-align: right;
-    }
-
-    .invoice-total-row td,
-    .deposit-row td {
-      font-weight: 700;
-      font-size: 1.1em;
-    }
-
-    /* Buttons */
-    .bottom-nav-btns {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .nav-btn {
-      padding: 12px 24px;
-      font-size: 1.05em;
-      font-weight: 600;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 10px;
-      background-color: #ff7f00;
-      color: white;
-      border: none;
-      transition: background 0.2s;
-    }
-
-    .nav-btn:hover {
-      background-color: #e67300;
+    body { margin: 0; font-family: Arial, sans-serif; background-color: #fff; color: #333; }
+    .sidebar { width: 250px; height: 100vh; position: fixed; top: 0; left: 0; background-color: #ff7f00; display: flex; flex-direction: column; padding-top: 20px; }
+    .sidebar .logo img { width: 150px; margin: 0 auto 30px auto; display: block; }
+    .sidebar .nav-links a { display: flex; align-items: center; padding: 12px 20px; text-decoration: none; color: white; font-weight: 500; margin-bottom: 5px; }
+    .sidebar .nav-links a img { width: 20px; margin-right: 12px; }
+    .sidebar .logout { margin-top: auto; }
+    .sidebar .logout a { display: flex; align-items: center; text-decoration: none; color: white; padding: 20px; border-top: 1px solid rgba(255,255,255,0.5); }
+    .sidebar .logout img { width: 20px; margin-right: 10px; }
+    .main-content { margin-left: 270px; padding: 40px 30px; }
+    h1 { color: #ff7f00; margin-bottom: 20px; }
+    .invoice-section-title { font-size: 1.2em; font-weight: 800; color: #ff7f00; border-bottom: 2px solid #ff7f00; margin-top: 25px; margin-bottom: 10px; letter-spacing: 0.5px; padding-bottom: 8px; }
+    .invoice-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    .invoice-table th, .invoice-table td { padding: 10px 8px; text-align: left; border-bottom: 1px solid #eee; }
+    .invoice-table td.price { text-align: right; }
+    .invoice-total-row td, .deposit-row td { font-weight: 700; font-size: 1.1em; background-color: #f9f9f9; }
+    .bottom-nav-btns { text-align: center; margin-top: 30px; }
+    .nav-btn { padding: 12px 24px; font-size: 1.05em; font-weight: 600; border-radius: 5px; cursor: pointer; margin: 10px; background-color: #ff7f00; color: white; border: none; transition: background 0.2s; }
+    .nav-btn:hover { background-color: #e67300; }
+    .nav-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+    .error-message { color: #d32f2f; background-color: #ffebee; padding: 10px; border-radius: 4px; margin: 10px 0; }
+    .success-message { color: #2e7d32; background-color: #e8f5e8; padding: 10px; border-radius: 4px; margin: 10px 0; }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .sidebar { width: 100%; height: auto; position: relative; }
+      .main-content { margin-left: 0; padding: 20px; }
     }
   </style>
 </head>
 <body>
+
   <!-- Sidebar -->
   <div class="sidebar">
     <div class="logo">
-      <img src="../../../images/Logo/BarDeli.png" alt="BarDeli Logo">
+      <img src="../../../images/Logo/BarDeli.png" alt="BarDeli Logo" onerror="this.style.display='none'">
     </div>
     <div class="nav-links">
-      <a href="../customerpage.html">
-        <img src="../../../images/Icons(White)/HomeIcon-modified.png" alt="Home"> Home
-      </a>
-      <a href="./customerbookingpage.html">
-        <img src="../../../images/Icons(White)/BookingIcon-modified.png" alt="Booking"> Booking
-      </a>
-      <a href="../Notifications/customernotificationpage.html">
-        <img src="../../../images/Icons(White)/NotificationIcon-modified.png" alt="Notifications"> Notifications
-      </a>
-      <a href="../Profile/customerprofilepage.html">
-        <img src="../../../images/Icons(White)/ProfileIcon-modified.png" alt="Profile"> Profile
-      </a>
+      <a href="../customerpage.html"><img src="../../../images/Icons(White)/HomeIcon-modified.png" alt="Home" onerror="this.style.display='none'"> Home</a>
+      <a href="./customerbookingpage.html"><img src="../../../images/Icons(White)/BookingIcon-modified.png" alt="Booking" onerror="this.style.display='none'"> Booking</a>
+      <a href="../Notifications/customernotificationpage.html"><img src="../../../images/Icons(White)/NotificationIcon-modified.png" alt="Notifications" onerror="this.style.display='none'"> Notifications</a>
+      <a href="../Profile/customerprofilepage.html"><img src="../../../images/Icons(White)/ProfileIcon-modified.png" alt="Profile" onerror="this.style.display='none'"> Profile</a>
     </div>
     <div class="logout">
-      <a href="../../index.html">
-        <img src="../../../images/Icons(White)/LogOutIcon-modified.png" alt="Logout"> Logout
-      </a>
+      <a href="../../index.html"><img src="../../../images/Icons(White)/LogOutIcon-modified.png" alt="Logout" onerror="this.style.display='none'"> Logout</a>
     </div>
   </div>
 
   <!-- Main content -->
   <div class="main-content">
     <h1>Booking Summary</h1>
+    <div id="errorMessage"></div>
     <div id="summaryBox"></div>
 
     <div class="bottom-nav-btns">
       <button onclick="window.location.href='extras.html'" class="nav-btn">Back</button>
-      <button onclick="window.location.href='payment.html'" class="nav-btn">Accept quote</button>
+      <button class="nav-btn" id="acceptQuoteBtn">Accept Quote</button>
     </div>
   </div>
 
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
+    
+    // Initialize Supabase client
+    const { createClient } = supabase;
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
     function parsePrice(str) {
-      const match = str.match(/R(\d+)/);
+      if (!str) return 0;
+      const match = str.toString().match(/R?(\d+)/);
       return match ? parseInt(match[1], 10) : 0;
     }
 
-    const eventDetails = JSON.parse(localStorage.getItem('eventDetails')) || {};
-    let menu = JSON.parse(localStorage.getItem('selectedMenu') || 'null');
-    let customMenu = JSON.parse(localStorage.getItem('customMenuSelections') || '[]');
-    const extras = JSON.parse(localStorage.getItem('extrasSelections') || '{}');
-    const guests = parseInt(eventDetails.guests, 10) || 1;
-
-    // Menu breakdown
-    let menuRows = '';
-    let menuTotal = 0;
-    if (menu) {
-      const menuPrice = parsePrice(menu.price) * guests;
-      menuRows = `<tr><td>${menu.title} (x${guests})</td><td class="price">R${menuPrice}</td></tr>`;
-      menuTotal = menuPrice;
-    } else if (customMenu.length) {
-      customMenu.forEach(item => {
-        const price = parsePrice(item) * guests;
-        menuRows += `<tr><td>${item} (x${guests})</td><td class="price">R${price}</td></tr>`;
-        menuTotal += price;
-      });
+    function showError(message) {
+      document.getElementById('errorMessage').innerHTML = `<div class="error-message">${message}</div>`;
     }
 
-    // Extras breakdown
-    let extrasRows = '';
-    let extrasTotal = 0;
-    for (const [key, value] of Object.entries(extras)) {
-      if (value && value.qty && value.price) {
-        const totalPrice = value.qty * value.price;
-        extrasRows += `<tr><td>${key} (x${value.qty})</td><td class="price">R${totalPrice}</td></tr>`;
-        extrasTotal += totalPrice;
-      } else if (value && value.price) {
-        extrasRows += `<tr><td>${key}</td><td class="price">R${value.price}</td></tr>`;
-        extrasTotal += value.price;
+    function showSuccess(message) {
+      document.getElementById('errorMessage').innerHTML = `<div class="success-message">${message}</div>`;
+    }
+
+    function loadBookingSummary() {
+      try {
+        // Get data from localStorage with fallbacks
+        const eventDetails = JSON.parse(localStorage.getItem('eventDetails') || '{}');
+        const menu = JSON.parse(localStorage.getItem('selectedMenu') || 'null');
+        const customMenu = JSON.parse(localStorage.getItem('customMenuSelections') || '[]');
+        const extras = JSON.parse(localStorage.getItem('extrasSelections') || '{}');
+        const guests = parseInt(eventDetails.guests, 10) || 1;
+
+        // Validate essential data
+        if (!eventDetails.eventDate || !eventDetails.eventTime) {
+          showError('Missing event details. Please go back and complete your booking.');
+          document.getElementById('acceptQuoteBtn').disabled = true;
+          return;
+        }
+
+        // Menu breakdown
+        let menuRows = '';
+        let menuTotal = 0;
+        if (menu && menu.title && menu.price) {
+          const menuPrice = parsePrice(menu.price) * guests;
+          menuRows = `<tr><td>${menu.title} (x${guests})</td><td class="price">R${menuPrice}</td></tr>`;
+          menuTotal = menuPrice;
+        } else if (customMenu.length) {
+          customMenu.forEach(item => {
+            if (item) {
+              const price = parsePrice(item) * guests;
+              menuRows += `<tr><td>${item} (x${guests})</td><td class="price">R${price}</td></tr>`;
+              menuTotal += price;
+            }
+          });
+        }
+
+        // Extras breakdown
+        let extrasRows = '';
+        let extrasTotal = 0;
+        for (const [key, value] of Object.entries(extras)) {
+          if (value && typeof value === 'object') {
+            if (value.qty && value.price) {
+              const totalPrice = value.qty * value.price;
+              extrasRows += `<tr><td>${key} (x${value.qty})</td><td class="price">R${totalPrice}</td></tr>`;
+              extrasTotal += totalPrice;
+            } else if (value.price) {
+              extrasRows += `<tr><td>${key}</td><td class="price">R${value.price}</td></tr>`;
+              extrasTotal += value.price;
+            }
+          }
+        }
+
+        const total = menuTotal + extrasTotal;
+        const deposit = Math.round(total * 0.5);
+
+        // Render summary
+        document.getElementById('summaryBox').innerHTML = `
+          <div class="invoice-section-title">Event Details</div>
+          <table class="invoice-table">
+            <tr><td>Date</td><td class="price">${eventDetails.eventDate || 'Not specified'}</td></tr>
+            <tr><td>Time</td><td class="price">${eventDetails.eventTime || 'Not specified'}</td></tr>
+            <tr><td>Type</td><td class="price">${eventDetails.eventType || 'Not specified'}</td></tr>
+            <tr><td>Guests</td><td class="price">${guests}</td></tr>
+            <tr><td>Location</td><td class="price">${eventDetails.address || 'Not specified'}</td></tr>
+          </table>
+
+          <div class="invoice-section-title">Menu</div>
+          <table class="invoice-table">
+            ${menuRows || '<tr><td colspan="2">No menu selected</td></tr>'}
+            <tr class="invoice-total-row">
+              <td>Menu Subtotal</td>
+              <td class="price">R${menuTotal}</td>
+            </tr>
+          </table>
+
+          <div class="invoice-section-title">Extras</div>
+          <table class="invoice-table">
+            ${extrasRows || '<tr><td colspan="2">No extras selected</td></tr>'}
+            <tr class="invoice-total-row">
+              <td>Extras Subtotal</td>
+              <td class="price">R${extrasTotal}</td>
+            </tr>
+          </table>
+
+          <div class="invoice-section-title">Total</div>
+          <table class="invoice-table">
+            <tr class="invoice-total-row"><td>Total Amount</td><td class="price">R${total}</td></tr>
+            <tr class="deposit-row"><td>50% Deposit Required</td><td class="price">R${deposit}</td></tr>
+          </table>
+        `;
+
+        // Store total and deposit for payment page
+        localStorage.setItem('bookingTotal', total.toString());
+        localStorage.setItem('bookingDeposit', deposit.toString());
+
+      } catch (error) {
+        console.error('Error loading booking summary:', error);
+        showError('Error loading booking data. Please try again.');
       }
     }
 
-    const total = menuTotal + extrasTotal;
-    const deposit = Math.round(total * 0.5);
+    // Submit booking to Supabase
+    async function submitBooking() {
+      try {
+        const acceptBtn = document.getElementById('acceptQuoteBtn');
+        acceptBtn.disabled = true;
+        acceptBtn.textContent = 'Processing...';
 
-    // Render summary
-    document.getElementById('summaryBox').innerHTML = `
-      <div class="invoice-section-title">Event Details</div>
-      <table class="invoice-table">
-        <tr><td>Date</td><td class="price">${eventDetails.eventDate || ''}</td></tr>
-        <tr><td>Time</td><td class="price">${eventDetails.eventTime || ''}</td></tr>
-        <tr><td>Type</td><td class="price">${eventDetails.eventType || ''}</td></tr>
-        <tr><td>Guests</td><td class="price">${guests}</td></tr>
-        <tr><td>Location</td><td class="price">${eventDetails.address || ''}</td></tr>
-      </table>
+        const userid = 47; // Hardcoded user ID
+        const eventDetails = JSON.parse(localStorage.getItem('eventDetails') || '{}');
+        const guests = parseInt(eventDetails.guests, 10) || 1;
+        const total = parseInt(localStorage.getItem('bookingTotal') || '0');
+        const deposit = parseInt(localStorage.getItem('bookingDeposit') || '0');
 
-      <div class="invoice-section-title">Menu</div>
-      <table class="invoice-table">
-        ${menuRows || '<tr><td colspan="2">No menu selected</td></tr>'}
-        <tr class="invoice-total-row">
-          <td>Menu Subtotal</td>
-          <td class="price">R${menuTotal}</td>
-        </tr>
-      </table>
+        // Validate required fields
+        if (!eventDetails.eventDate || !eventDetails.eventTime || !eventDetails.eventType) {
+          throw new Error('Missing required event details');
+        }
 
-      <div class="invoice-section-title">Extras</div>
-      <table class="invoice-table">
-        ${extrasRows || '<tr><td colspan="2">No extras selected</td></tr>'}
-        <tr class="invoice-total-row">
-          <td>Extras Subtotal</td>
-          <td class="price">R${extrasTotal}</td>
-        </tr>
-      </table>
+        const bookingData = {
+          userid,
+          eventdate: eventDetails.eventDate,
+          eventtime: eventDetails.eventTime,
+          eventtype: eventDetails.eventType,
+          guestcount: guests,
+          location: eventDetails.address || '',
+          totalcost: total,
+          depositpaid: deposit,
+          status: 'Pending'
+        };
 
-      <div class="invoice-section-title">Total</div>
-      <table class="invoice-table">
-        <tr class="invoice-total-row"><td>Total Amount</td><td class="price">R${total}</td></tr>
-        <tr class="deposit-row"><td>50% Deposit Required</td><td class="price">R${deposit}</td></tr>
-      </table>
-    `;
+        const { data, error } = await supabaseClient
+          .from('booking')
+          .insert([bookingData])
+          .select();
+
+        if (error) {
+          throw error;
+        }
+
+        if (data && data.length > 0) {
+          showSuccess('Booking saved successfully!');
+          localStorage.setItem('currentBookingId', data[0].bookingid || data[0].id);
+          
+          // Redirect after a short delay
+          setTimeout(() => {
+            window.location.href = 'payment.html';
+          }, 1500);
+        } else {
+          throw new Error('No data returned from booking insertion');
+        }
+
+      } catch (error) {
+        console.error('Booking submission error:', error);
+        showError('Error saving booking: ' + error.message);
+        
+        // Re-enable button
+        const acceptBtn = document.getElementById('acceptQuoteBtn');
+        acceptBtn.disabled = false;
+        acceptBtn.textContent = 'Accept Quote';
+      }
+    }
+
+    // Initialize page when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      loadBookingSummary();
+      document.getElementById('acceptQuoteBtn').addEventListener('click', submitBooking);
+    });
   </script>
+
 </body>
 </html>
