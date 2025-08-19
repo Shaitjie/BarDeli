@@ -1,61 +1,449 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Customer Booking Page</title>
-	<link rel="stylesheet" href="/css_pages/Customer/Booking/customerbooking.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Booking Page</title>
+    <!-- CSS with fallback paths -->
+    <link rel="stylesheet" href="./customerbooking.css">
+    <link rel="stylesheet" href="../../../css_pages/Customer/Booking/customerbooking.css">
+    <style>
+        /* Embedded CSS as fallback */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+        }
 
+        .sidebar-menu {
+            width: 250px;
+            height: 100vh;
+            background-color: #ff7f00;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-menu-icon {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-menu-icon img {
+            width: 150px;
+            height: auto;
+            max-width: 80%;
+        }
+
+        .sidebar-links {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: white;
+            transition: background-color 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+
+        .menu-item img {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+        }
+
+        .menu-item p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .make-and-modify-section {
+            margin-left: 250px;
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .bookingpage-heading {
+            color: #ff7f00;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .make-and-modify-buttons {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .make-and-modify-buttons button {
+            background-color: #ff7f00;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .make-and-modify-buttons button:hover {
+            background-color: #e67300;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .make-and-modify-buttons button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar-menu {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 10px 0;
+            }
+
+            .sidebar-menu-icon {
+                margin-bottom: 0;
+                margin-right: 20px;
+            }
+
+            .sidebar-menu-icon img {
+                width: 80px;
+            }
+
+            .sidebar-links {
+                flex-direction: row;
+                overflow-x: auto;
+                flex: 1;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                min-width: 80px;
+                text-align: center;
+                padding: 10px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+
+            .menu-item:hover {
+                border-left: none;
+                border-bottom-color: white;
+            }
+
+            .menu-item img {
+                margin-right: 0;
+                margin-bottom: 5px;
+                width: 20px;
+                height: 20px;
+            }
+
+            .menu-item p {
+                font-size: 12px;
+            }
+
+            .make-and-modify-section {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .bookingpage-heading {
+                font-size: 2rem;
+                margin-bottom: 30px;
+            }
+
+            .make-and-modify-buttons {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .make-and-modify-buttons button {
+                min-width: 100%;
+                padding: 15px 30px;
+                font-size: 16px;
+            }
+        }
+
+        /* Loading state for images */
+        img {
+            transition: opacity 0.3s ease;
+        }
+
+        img:not([src]), img[src=""] {
+            opacity: 0;
+        }
+
+        /* Error handling for broken images */
+        .menu-item img:not([src*="data:"]) {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>') no-repeat center;
+            background-size: contain;
+        }
+    </style>
 </head>
 <body>
-	<nav class="sidebar-menu">
-    <div class="sidemar-menu-icon">
-        <!-- Go up three folders to BarDeli root, then into images/Logo -->
-        <img src="../../../images/Logo/BarDeli.png" alt="BarDeli Logo">
+    <nav class="sidebar-menu">
+        <div class="sidebar-menu-icon">
+            <!-- Logo with multiple fallback paths -->
+            <img id="logo" alt="BarDeli Logo" onerror="handleImageError(this, 'logo')">
+        </div>
+        <div class="sidebar-links">
+            <!-- Home -->
+            <a href="#" class="menu-item" onclick="navigateTo('home')">
+                <img id="home-icon" alt="Home" onerror="handleImageError(this, 'home')">
+                <p>Home</p>
+            </a>
+            <!-- Booking (current page) -->
+            <a href="#" class="menu-item current-page" onclick="navigateTo('booking')">
+                <img id="booking-icon" alt="Booking" onerror="handleImageError(this, 'booking')">
+                <p>Booking</p>
+            </a>
+            <!-- Notifications -->
+            <a href="#" class="menu-item" onclick="navigateTo('notifications')">
+                <img id="notification-icon" alt="Notifications" onerror="handleImageError(this, 'notifications')">
+                <p>Notifications</p>
+            </a>
+            <!-- Profile -->
+            <a href="#" class="menu-item" onclick="navigateTo('profile')">
+                <img id="profile-icon" alt="Profile" onerror="handleImageError(this, 'profile')">
+                <p>Profile</p>
+            </a>
+            <!-- Log Out -->
+            <a href="#" class="menu-item" onclick="navigateTo('logout')">
+                <img id="logout-icon" alt="Log Out" onerror="handleImageError(this, 'logout')">
+                <p>Log Out</p>
+            </a>
+        </div>
+    </nav>
+    <div class="make-and-modify-section">
+        <h1 class="bookingpage-heading">Booking Page</h1>
+        <div class="make-and-modify-buttons">
+            <button onclick="navigateToBooking('make')">Make Booking</button>
+            <button onclick="navigateToBooking('modify')">Modify Booking</button>
+        </div>
     </div>
 
-    <div class="sidebar-links">
+    <script>
+        // Path configuration for different environments
+        const pathConfig = {
+            // GitHub Pages paths (adjust if your repo name is different)
+            github: {
+                base: '/BarDeli',
+                images: '/BarDeli/images',
+                pages: '/BarDeli/html_pages'
+            },
+            // Local development paths
+            local: {
+                base: '.',
+                images: './images',
+                pages: './html_pages'
+            },
+            // Relative paths (fallback)
+            relative: {
+                base: '../../../',
+                images: '../../../images',
+                pages: '../../../html_pages'
+            }
+        };
 
-        <!-- Go up two folders to Customer, then down to html_pages/Customer/customerpage.html -->
-        <a href="../customerpage.html" class="menu-item">
-            <img src="../../../images/Icons(White)/HomeIcon-modified.png" alt="Home">
-            <p>Home</p>
-        </a>
+        // Detect current environment
+        function getCurrentEnvironment() {
+            const hostname = window.location.hostname;
+            const pathname = window.location.pathname;
+            
+            if (hostname.includes('github.io') || hostname.includes('github.com')) {
+                return 'github';
+            } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'local';
+            } else {
+                return 'relative';
+            }
+        }
 
-        <!-- Booking page is the current page -->
-        <a href="./customerbookingpage.html" class="menu-item">
-            <img src="../../../images/Icons(White)/BookingIcon-modified.png" alt="Booking">
-            <p>Booking</p>
-        </a>
+        // Get current path configuration
+        const currentEnv = getCurrentEnvironment();
+        const paths = pathConfig[currentEnv];
 
-        <!-- Notifications page -->
-        <a href="../Notifications/customernotificationpage.html" class="menu-item">
-            <img src="../../../images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
-            <p>Notifications</p>
-        </a>
+        // Image sources with fallbacks
+        const imageSources = {
+            logo: [
+                `${paths.images}/Logo/BarDeli.png`,
+                './images/Logo/BarDeli.png',
+                '../../../images/Logo/BarDeli.png'
+            ],
+            home: [
+                `${paths.images}/Icons(White)/HomeIcon-modified.png`,
+                './images/Icons(White)/HomeIcon-modified.png',
+                '../../../images/Icons(White)/HomeIcon-modified.png'
+            ],
+            booking: [
+                `${paths.images}/Icons(White)/BookingIcon-modified.png`,
+                './images/Icons(White)/BookingIcon-modified.png',
+                '../../../images/Icons(White)/BookingIcon-modified.png'
+            ],
+            notifications: [
+                `${paths.images}/Icons(White)/NotificationIcon-modified.png`,
+                './images/Icons(White)/NotificationIcon-modified.png',
+                '../../../images/Icons(White)/NotificationIcon-modified.png'
+            ],
+            profile: [
+                `${paths.images}/Icons(White)/ProfileIcon-modified.png`,
+                './images/Icons(White)/ProfileIcon-modified.png',
+                '../../../images/Icons(White)/ProfileIcon-modified.png'
+            ],
+            logout: [
+                `${paths.images}/Icons(White)/LogOutIcon-modified.png`,
+                './images/Icons(White)/LogOutIcon-modified.png',
+                '../../../images/Icons(White)/LogOutIcon-modified.png'
+            ]
+        };
 
-        <!-- Profile page -->
-        <a href="../Profile/customerprofilepage.html" class="menu-item">
-            <img src="../../../images/Icons(White)/ProfileIcon-modified.png" alt="Profile">
-            <p>Profile</p>
-        </a>
+        // Page navigation paths
+        const navigationPaths = {
+            home: [
+                `${paths.pages}/Customer/customerpage.html`,
+                './customerpage.html',
+                '../customerpage.html'
+            ],
+            booking: [
+                `${paths.pages}/Customer/Booking/customerbookingpage.html`,
+                './customerbookingpage.html',
+                '#'
+            ],
+            notifications: [
+                `${paths.pages}/Customer/Notifications/customernotificationpage.html`,
+                './Notifications/customernotificationpage.html',
+                '../Notifications/customernotificationpage.html'
+            ],
+            profile: [
+                `${paths.pages}/Customer/Profile/customerprofilepage.html`,
+                './Profile/customerprofilepage.html',
+                '../Profile/customerprofilepage.html'
+            ],
+            logout: [
+                `${paths.base}/index.html`,
+                './index.html',
+                '../../../index.html'
+            ]
+        };
 
-        <!-- Log Out -->
-        <a href="../../../index.html" class="menu-item">
-            <img src="../../../images/Icons(White)/LogOutIcon-modified.png" alt="Log Out">
-            <p>Log Out</p>
-        </a>
+        // Booking navigation paths
+        const bookingPaths = {
+            make: [
+                `${paths.pages}/Customer/Booking/event-details.html`,
+                './event-details.html',
+                './event-details.html'
+            ],
+            modify: [
+                `${paths.pages}/Customer/Booking/modify-booking.html`,
+                './modify-booking.html',
+                './modify-booking.html'
+            ]
+        };
 
-    </div>
-</nav>
+        // Load images with fallback
+        function loadImageWithFallback(imgElement, sources, index = 0) {
+            if (index >= sources.length) {
+                console.warn(`Could not load image: ${imgElement.id}`);
+                imgElement.style.display = 'none';
+                return;
+            }
 
+            imgElement.onload = function() {
+                imgElement.style.opacity = '1';
+            };
 
-	<div class="make-and-modify-section">
-		<h1 class="bookingpage-heading">Booking Page</h1>
-		<div class="make-and-modify-buttons">
-			<button onclick="window.location.href='event-details.html'">Make Booking</button>
-			<button onclick="window.location.href='modify-booking.html'">Modify Booking</button>
-		</div>
-	</div>
+            imgElement.onerror = function() {
+                if (index + 1 < sources.length) {
+                    loadImageWithFallback(imgElement, sources, index + 1);
+                } else {
+                    imgElement.style.display = 'none';
+                }
+            };
+
+            imgElement.src = sources[index];
+        }
+
+        // Handle image errors
+        function handleImageError(imgElement, type) {
+            const sources = imageSources[type];
+            if (sources) {
+                loadImageWithFallback(imgElement, sources, 1);
+            }
+        }
+
+        // Navigation function with fallback
+        function navigateTo(page) {
+            if (page === 'booking') return; // Current page
+            
+            const paths = navigationPaths[page];
+            if (paths && paths.length > 0) {
+                // Try the first path, if it fails, the browser will handle it
+                window.location.href = paths[0];
+            }
+        }
+
+        // Booking navigation with fallback
+        function navigateToBooking(type) {
+            const paths = bookingPaths[type];
+            if (paths && paths.length > 0) {
+                window.location.href = paths[0];
+            }
+        }
+
+        // Initialize images when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load all images with fallbacks
+            Object.keys(imageSources).forEach(key => {
+                const imgElement = document.getElementById(key + (key === 'logo' ? '' : '-icon'));
+                if (imgElement) {
+                    loadImageWithFallback(imgElement, imageSources[key]);
+                }
+            });
+
+            // Add current page styling
+            const currentPageItem = document.querySelector('.current-page');
+            if (currentPageItem) {
+                currentPageItem.style.backgroundColor = 'rgba(255,255,255,0.2)';
+                currentPageItem.style.borderLeftColor = 'white';
+            }
+        });
+
+        // Console log for debugging
+        console.log('Environment:', currentEnv);
+        console.log('Paths config:', paths);
+    </script>
 </body>
 </html>
