@@ -2,87 +2,89 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Customer Page</title>
-	<link rel="stylesheet" href="../../css_pages/Customer/customerpage.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Page</title>
+    <!-- GitHub Pages compliant absolute path -->
+    <link rel="stylesheet" href="../../css_pages/Customer/customerpage.css">
 
-	<style>
-		/* Make booking info white, bold, bigger, and add space above */
-		#bookingCount,
-		#lastBooking,
-		#bookingsMade {
-			color: #fff;
-			font-weight: bold;
-			font-size: 1.25rem; /* or 20px */
-			margin-top: 18px;
-		}
-	</style>
+
+    <style>
+        /* Make booking info white, bold, bigger, and add space above */
+        #bookingCount,
+        #lastBooking,
+        #bookingsMade {
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.25rem;
+            margin-top: 18px;
+        }
+    </style>
 </head>
 
 <body>
-	<nav class="sidebar-menu">
-		<div class="sidemar-menu-icon">
-			<img src="../../images/Logo/BarDeli.png" alt="BarDeli Logo">
-		</div>
-		<div class="sidebar-links">
+    <nav class="sidebar-menu">
+        <div class="sidemar-menu-icon">
+            <img src="/BarDeli/images/Logo/BarDeli.png" alt="BarDeli Logo">
+        </div>
+        <div class="sidebar-links">
 
-			<a href="./customerpage.html" class="menu-item">
-				<img src="../../images/Icons(White)/HomeIcon-modified.png" alt="Home">
-				<p>Home</p>
-			</a>
+            <a href="/BarDeli/html_pages/Customer/customerpage.html" class="menu-item">
+                <img src="/BarDeli/images/Icons(White)/HomeIcon-modified.png" alt="Home">
+                <p>Home</p>
+            </a>
 
-			<a href="./Booking/customerbookingpage.html" class="menu-item">
-				<img src="../../images/Icons(White)/BookingIcon-modified.png" alt="Booking">
-				<p>Booking</p>
-			</a>
+            <a href="/BarDeli/html_pages/Customer/Booking/customerbookingpage.html" class="menu-item">
+                <img src="/BarDeli/images/Icons(White)/BookingIcon-modified.png" alt="Booking">
+                <p>Booking</p>
+            </a>
 
-			<a href="./Notifications/customernotificationpage.html" class="menu-item">
-				<img src="../../images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
-				<p>Notifications</p>
-			</a>
+            <a href="/BarDeli/html_pages/Customer/Notifications/customernotificationpage.html" class="menu-item">
+                <img src="/BarDeli/images/Icons(White)/NotificationIcon-modified.png" alt="Notifications">
+                <p>Notifications</p>
+            </a>
 
-			<a href="./Profile/customerprofilepage.html" class="menu-item">
-				<img src="../../images/Icons(White)/ProfileIcon-modified.png" alt="Profile">
-				<p>Profile</p>
-			</a>
+            <a href="/BarDeli/html_pages/Customer/Profile/customerprofilepage.html" class="menu-item">
+                <img src="/BarDeli/images/Icons(White)/ProfileIcon-modified.png" alt="Profile">
+                <p>Profile</p>
+            </a>
 
-			<a href="../../index.html" class="menu-item">
-				<img src="../../images/Icons(White)/LogOutIcon-modified.png" alt="Log Out">
-				<p>Log Out</p>
-			</a>
+            <a href="/BarDeli/index.html" class="menu-item">
+                <img src="/BarDeli/images/Icons(White)/LogOutIcon-modified.png" alt="Log Out">
+                <p>Log Out</p>
+            </a>
 
-		</div>
-	</nav>
+        </div>
+    </nav>
 
-	<div class="homepage">
-		<h1 class="homepage-heading">Home Page</h1>
-		<div class="top-section">
-			<div class="number-of-bookings-made">
-				<h1>Number of Bookings Made</h1>
-				<p id="bookingCount"></p>
-			</div>
-			<div class="last-booking">
-				<h1>Last Booking</h1>
-				<div id="lastBooking"></div>
-			</div>
-		</div>
-		<div class="bottom-section">
-			<div class="bookings-made">
-				<h1>Bookings Made</h1>
-				<div id="bookingsMade"></div>
-			</div>
-		</div>
-	</div>
+    <div class="homepage">
+        <h1 class="homepage-heading">Home Page</h1>
+        <div class="top-section">
+            <div class="number-of-bookings-made">
+                <h1>Number of Bookings Made</h1>
+                <p id="bookingCount"></p>
+            </div>
+            <div class="last-booking">
+                <h1>Last Booking</h1>
+                <div id="lastBooking"></div>
+            </div>
+        </div>
+        <div class="bottom-section">
+            <div class="bookings-made">
+                <h1>Bookings Made</h1>
+                <div id="bookingsMade"></div>
+            </div>
+        </div>
+    </div>
 
-	<script>
-		const homeBookings = JSON.parse(localStorage.getItem('homeBookings') || '[]');
+    <script>
+        const homeBookings = JSON.parse(localStorage.getItem('homeBookings') || '[]');
 
-		document.getElementById('bookingCount').textContent = homeBookings.length;
+        document.getElementById('bookingCount').textContent = homeBookings.length;
 
-		if (homeBookings.length > 0) {
-			const last = homeBookings[homeBookings.length - 1];
-			document.getElementById('lastBooking').innerHTML = `
+        if (homeBookings.length > 0) {
+            const last = homeBookings[homeBookings.length - 1];
+            document.getElementById('lastBooking').innerHTML = `
         <div>
           <strong>Date:</strong> ${last.eventDetails.eventDate}<br>
           <strong>Type:</strong> ${last.eventDetails.eventType}<br>
@@ -90,13 +92,13 @@
           <strong>Location:</strong> ${last.eventDetails.address}
         </div>
       `;
-		} else {
-			document.getElementById('lastBooking').textContent = "No bookings yet.";
-		}
+        } else {
+            document.getElementById('lastBooking').textContent = "No bookings yet.";
+        }
 
-		document.getElementById('bookingsMade').innerHTML = homeBookings.length === 0
-			? "<p>No bookings yet.</p>"
-			: homeBookings.map(b => `
+        document.getElementById('bookingsMade').innerHTML = homeBookings.length === 0
+            ? "<p>No bookings yet.</p>"
+            : homeBookings.map(b => `
         <div class="form-container" style="margin-bottom:16px;">
           <strong>Date:</strong> ${b.eventDetails.eventDate}<br>
           <strong>Type:</strong> ${b.eventDetails.eventType}<br>
@@ -104,7 +106,8 @@
           <strong>Location:</strong> ${b.eventDetails.address}
         </div>
       `).join('');
-	</script>
+    </script>
 </body>
 
 </html>
+
