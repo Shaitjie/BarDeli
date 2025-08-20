@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BarDeli Booking Flow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-inter bg-gray-50">
+
+<!-- Sidebar -->
+<nav class="fixed top-0 left-0 h-full w-56 bg-orange-600 flex flex-col justify-between py-6">
+  <div>
+    <!-- Logo -->
+    <div class="flex justify-center mb-6">
+      <img src="../../../images/Logo/BarDeli.png" class="h-24 w-auto" alt="Logo">
+    </div>
+
+    <!-- Navigation Links -->
+    <div class="flex flex-col space-y-2">
+      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        Home
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded bg-orange-800">
+        Booking
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        Notifications
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        Profile
+      </a>
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <div class="flex justify-center">
+    <a href="../../../index.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+      Logout
+    </a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="ml-56 p-8 max-w-4xl">
+  <h1 class="text-3xl font-extrabold text-orange-600 mb-8">New Booking</h1>
+
+  <!-- Progress Bar -->
+  <div class="mb-6">
+    <div class="flex justify-between mb-1 text-sm font-medium text-gray-700">
+        <span id="stepText">Step 1 of 5</span>
+    </div>
+    <div class="w-full bg-gray-300 rounded-full h-2">
+        <div id="progressBar" class="bg-orange-600 h-2 rounded-full" style="width: 20%"></div>
+    </div>
+  </div>
+
+  <form id="bookingForm" class="space-y-6">
+
+    <!-- Step 1: Event Details & Guest Info -->
+    <div class="step">
+      <h2 class="text-xl font-bold mb-4">Event Details & Guest Info</h2>
+      <div class="space-y-4">
+        <input type="text" id="eventName" placeholder="Event Name" class="w-full p-3 rounded border border-gray-300">
+        <input type="date" id="eventDate" class="w-full p-3 rounded border border-gray-300">
+        <input type="time" id="eventTime" class="w-full p-3 rounded border border-gray-300">
+        <select id="eventType" class="w-full p-3 rounded border border-gray-300">
+          <option value="">Event Type</option>
+          <option>Corporate</option>
+          <option>Birthday</option>
+          <option>Wedding</option>
+          <option>Funeral</option>
+          <option>Other</option>
+        </select>
+        <input type="number" id="guests" min="1" placeholder="Number of Guests" class="w-full p-3 rounded border border-gray-300">
+        <input type="text" id="address" placeholder="Event Location" class="w-full p-3 rounded border border-gray-300">
+      </div>
+      <div class="flex justify-end mt-6">
+        <button type="button" onclick="nextStep()" class="px-6 py-3 bg-orange-600 text-white font-bold rounded hover:bg-orange-500">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Menu Selection -->
+    <div class="step hidden">
+      <h2 class="text-xl font-bold mb-4">Menu Selection</h2>
+      <div id="menuList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Sample Fixed Menu Card (Backenders replace with Supabase fetch) -->
+        <div class="p-4 border rounded hover:shadow cursor-pointer" onclick="openMenuModal('fixedMenu1')">
+          <h3 class="font-bold">Fixed Menu 1</h3>
+          <p>Price per person: $20</p>
+        </div>
+        <div class="p-4 border rounded hover:shadow cursor-pointer" onclick="openMenuModal('fixedMenu2')">
+          <h3 class="font-bold">Fixed Menu 2</h3>
+          <p>Price per person: $25</p>
+        </div>
+        <!-- Custom Menu -->
+        <div class="p-4 border rounded hover:shadow cursor-pointer" onclick="selectCustomMenu()">
+          <h3 class="font-bold">Custom Menu</h3>
+          <p>Select individual items</p>
+        </div>
+      </div>
+      <div class="flex justify-between mt-6">
+        <button type="button" onclick="prevStep()" class="px-6 py-3 bg-gray-300 text-gray-700 font-bold rounded hover:bg-gray-200">Back</button>
+        <button type="button" onclick="nextStep()" class="px-6 py-3 bg-orange-600 text-white font-bold rounded hover:bg-orange-500">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Extras & Services -->
+    <div class="step hidden">
+      <h2 class="text-xl font-bold mb-4">Extras & Services</h2>
+      <div id="extrasList" class="space-y-2">
+        <!-- Backenders replace these with Supabase fetch -->
+        <label class="flex items-center gap-3"><input type="checkbox" data-price="100" data-quantity="1"> Wait Staff</label>
+        <label class="flex items-center gap-3"><input type="checkbox" data-price="50" data-quantity="1"> Drinks Delivery</label>
+        <label class="flex items-center gap-3"><input type="checkbox" data-price="200" data-quantity="1"> Event Setup</label>
+        <label class="flex items-center gap-3"><input type="checkbox" data-price="75" data-quantity="0"> Rentals (AV, furniture)</label>
+      </div>
+      <div class="flex justify-between mt-6">
+        <button type="button" onclick="prevStep()" class="px-6 py-3 bg-gray-300 text-gray-700 font-bold rounded hover:bg-gray-200">Back</button>
+        <button type="button" onclick="nextStep()" class="px-6 py-3 bg-orange-600 text-white font-bold rounded hover:bg-orange-500">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Summary -->
+    <div class="step hidden">
+      <h2 class="text-xl font-bold mb-4">Summary</h2>
+      <div id="summaryDetails" class="space-y-2 border p-4 rounded max-h-80 overflow-y-auto">
+        <!-- JS will populate selected event, menus, extras, totals -->
+      </div>
+      <div class="flex justify-between mt-6">
+        <button type="button" onclick="prevStep()" class="px-6 py-3 bg-gray-300 text-gray-700 font-bold rounded hover:bg-gray-200">Back</button>
+        <button type="button" onclick="nextStep()" class="px-6 py-3 bg-orange-600 text-white font-bold rounded hover:bg-orange-500">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Payment Upload -->
+    <div class="step hidden">
+      <h2 class="text-xl font-bold mb-4">Payment Upload</h2>
+      <div id="paymentSummary" class="space-y-2 border p-4 rounded mb-4">
+        <p><strong>Total:</strong> $<span id="totalAmount">0</span></p>
+        <p><strong>Deposit (50%):</strong> $<span id="depositAmount">0</span></p>
+        <p><strong>Bank Details:</strong> Account Number: 123456789, Bank: XYZ Bank</p>
+      <input type="file" id="paymentProof" class="w-full p-3 border border-gray-300 rounded mb-4">
+      <div class="flex justify-between mt-6">
+        <button type="button" onclick="prevStep()" class="px-6 py-3 bg-gray-300 text-gray-700 font-bold rounded hover:bg-gray-200">Back</button>
+        <button type="submit" class="px-6 py-3 bg-orange-600 text-white font-bold rounded hover:bg-orange-500">Submit Booking</button>
+      </div>
+    </div>
+
+  </form>
+</main>
+
+<script>
+const steps = document.querySelectorAll('.step');
+let currentStep = 0;
+showStep(currentStep);
+
+function showStep(index) {
+  steps.forEach((step, i) => step.classList.toggle('hidden', i !== index));
+  document.getElementById('stepText').innerText = `Step ${index+1} of 5`;
+  document.getElementById('progressBar').style.width = `${((index+1)/5)*100}%`;
+}
+
+function nextStep() {
+  if(currentStep < steps.length - 1) {
+    if(currentStep === 2) populateSummary(); // Extras → Summary
+    if(currentStep === 3) populatePaymentSummary(); // Summary → Payment
+    currentStep++;
+  }
+  showStep(currentStep);
+}
+
+function prevStep() {
+  if(currentStep > 0) currentStep--;
+  showStep(currentStep);
+}
+
+// ------------------ Summary ------------------
+function populateSummary() {
+  const summaryDiv = document.getElementById('summaryDetails');
+  summaryDiv.innerHTML = '';
+
+  // Event Info
+  summaryDiv.innerHTML += `<p><strong>Event Name:</strong> ${document.getElementById('eventName').value}</p>`;
+  summaryDiv.innerHTML += `<p><strong>Date:</strong> ${document.getElementById('eventDate').value}</p>`;
+  summaryDiv.innerHTML += `<p><strong>Time:</strong> ${document.getElementById('eventTime').value}</p>`;
+  summaryDiv.innerHTML += `<p><strong>Type:</strong> ${document.getElementById('eventType').value}</p>`;
+  summaryDiv.innerHTML += `<p><strong>Guests:</strong> ${document.getElementById('guests').value}</p>`;
+  summaryDiv.innerHTML += `<p><strong>Address:</strong> ${document.getElementById('address').value}</p>`;
+
+  // TODO: Backenders replace the following with selected menus & extras from Supabase
+  summaryDiv.innerHTML += `<p><strong>Menus Selected:</strong> Fixed Menu 1, Custom Menu</p>`;
+  summaryDiv.innerHTML += `<p><strong>Extras Selected:</strong> Wait Staff, Drinks Delivery</p>`;
+
+  // Calculate totals (mock calculation)
+  const total = calculateTotal();
+  const deposit = total * 0.5;
+
+  summaryDiv.innerHTML += `<p><strong>Total:</strong> $${total}</p>`;
+  summaryDiv.innerHTML += `<p><strong>Deposit (50%):</strong> $${deposit}</p>`;
+}
+
+// ------------------ Payment Summary ------------------
+function populatePaymentSummary() {
+  const total = calculateTotal();
+  const deposit = total * 0.5;
+  document.getElementById('totalAmount').innerText = total;
+  document.getElementById('depositAmount').innerText = deposit;
+}
+
+// ------------------ Total Calculation ------------------
+function calculateTotal() {
+  // TODO: Backenders replace with real calculation from selected menus/extras
+  return 500; // Mock total
+}
+
+// ------------------ Mock Submission ------------------
+document.getElementById('bookingForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  // TODO: Backenders replace with Supabase insert call
+  alert('Booking submitted (mock)');
+  window.location.href = "booking-confirmation.html"; // <-- Redirect after submit
+});
+
+// ------------------ Menu Modals ------------------
+function openMenuModal(menuId) {
+  alert(`Open modal for ${menuId} - Backenders should populate items from Supabase`);
+}
+function selectCustomMenu() {
+  alert('Open custom menu selection - Backenders should populate items from Supabase');
+}
+</script>
+
+</body>
+</html>

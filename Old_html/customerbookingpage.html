@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Booking Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+        }
+
+        .sidebar-menu {
+            width: 250px;
+            height: 100vh;
+            background-color: #ff7f00;
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-menu-icon {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-menu-icon img {
+            width: 150px;
+            height: auto;
+            max-width: 80%;
+        }
+
+        .sidebar-links {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: white;
+            transition: background-color 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: white;
+        }
+
+        .menu-item.current-page {
+            background-color: rgba(255,255,255,0.2);
+            border-left-color: white;
+        }
+
+        .menu-item img {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+        }
+
+        .menu-item p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .make-and-modify-section {
+            margin-left: 250px;
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .bookingpage-heading {
+            color: #ff7f00;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .make-and-modify-buttons {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .make-and-modify-buttons button {
+            background-color: #ff7f00;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .make-and-modify-buttons button:hover {
+            background-color: #e67300;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .make-and-modify-buttons button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar-menu {
+                width: 100%;
+                height: auto;
+                position: relative;
+                flex-direction: row;
+                padding: 10px 0;
+            }
+
+            .sidebar-menu-icon {
+                margin-bottom: 0;
+                margin-right: 20px;
+            }
+
+            .sidebar-menu-icon img {
+                width: 80px;
+            }
+
+            .sidebar-links {
+                flex-direction: row;
+                overflow-x: auto;
+                flex: 1;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                min-width: 80px;
+                text-align: center;
+                padding: 10px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+
+            .menu-item:hover {
+                border-left: none;
+                border-bottom-color: white;
+            }
+
+            .menu-item img {
+                margin-right: 0;
+                margin-bottom: 5px;
+                width: 20px;
+                height: 20px;
+            }
+
+            .menu-item p {
+                font-size: 12px;
+            }
+
+            .make-and-modify-section {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .bookingpage-heading {
+                font-size: 2rem;
+                margin-bottom: 30px;
+            }
+
+            .make-and-modify-buttons {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .make-and-modify-buttons button {
+                min-width: 100%;
+                padding: 15px 30px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar-menu">
+        <div class="sidebar-menu-icon">
+            <img src="../../../images/Logo/BarDeli.png" alt="BarDeli Logo" onerror="this.style.display='none'">
+        </div>
+        <div class="sidebar-links">
+            <a href="../customerpage.html" class="menu-item">
+                <img src="../../../images/Icons(White)/HomeIcon-modified.png" alt="Home" onerror="this.style.display='none'">
+                <p>Home</p>
+            </a>
+            <a href="./customerbookingpage.html" class="menu-item current-page">
+                <img src="../../../images/Icons(White)/BookingIcon-modified.png" alt="Booking" onerror="this.style.display='none'">
+                <p>Booking</p>
+            </a>
+            <a href="../Notifications/customernotificationpage.html" class="menu-item">
+                <img src="../../../images/Icons(White)/NotificationIcon-modified.png" alt="Notifications" onerror="this.style.display='none'">
+                <p>Notifications</p>
+            </a>
+            <a href="../Profile/customerprofilepage.html" class="menu-item">
+                <img src="../../../images/Icons(White)/ProfileIcon-modified.png" alt="Profile" onerror="this.style.display='none'">
+                <p>Profile</p>
+            </a>
+            <a href="../../index.html" class="menu-item">
+                <img src="../../../images/Icons(White)/LogOutIcon-modified.png" alt="Log Out" onerror="this.style.display='none'">
+                <p>Log Out</p>
+            </a>
+        </div>
+    </nav>
+    <div class="make-and-modify-section">
+        <h1 class="bookingpage-heading">Booking Page</h1>
+        <div class="make-and-modify-buttons">
+            <button onclick="window.location.href='event-details.html'">Make Booking</button>
+            <button onclick="window.location.href='modify-booking.html'">Modify Booking</button>
+        </div>
+    </div>
+</body>
+</html>
