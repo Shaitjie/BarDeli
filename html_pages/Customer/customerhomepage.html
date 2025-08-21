@@ -118,9 +118,9 @@
 
 			// 2. Query your Users table to get the full name
 			let { data: profile, error } = await supabase
-				.from("Users")              // your table name
-				.select("FullName")         // column you want
-				.eq("UserID", user.id)      // match auth user's id with your UserID
+				.from("users")              // your table name
+				.select("fullname")         // column you want
+				.eq("userid", user.id)      // match auth user's id with your UserID
 				.single();
 
 			if (error) {
@@ -128,7 +128,7 @@
 			}
 
 			// 3. Update the dashboard with FullName (or fallback)
-			document.getElementById("customerName").textContent = profile?.FullName || "Customer";
+			document.getElementById("customerName").textContent = profile?.fullname || "Customer";
 		}
 
 
@@ -182,3 +182,4 @@
 	
 </body>
 </html>
+
