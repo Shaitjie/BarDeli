@@ -8,22 +8,6 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<!--TailWind CSS CDN-->
 	<script src="https://cdn.tailwindcss.com"></script>
-	<script type="module">
-		import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
-		const supabaseUrl = "https://fawlfsukrqrucrrxrjvq.supabase.co";
-		const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8";
-		window.supabase = createClient(supabaseUrl, supabaseKey);
-
-		async function initDashboard() {
-			await loadCustomer();
-			await loadBookings();
-		}
-
-		initDashboard();
-
-	</script>
-
 </head>
 <body>
 	<!-- Sidebar -->
@@ -107,7 +91,20 @@
 		</div>
 	</main>
 	
-	<script>
+	<script type="module">
+		import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+		const supabaseUrl = "https://fawlfsukrqrucrrxrjvq.supabase.co";
+		const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8";
+		window.supabase = createClient(supabaseUrl, supabaseKey);
+
+		async function initDashboard() {
+			await loadCustomer();
+			await loadBookings();
+		}
+
+		initDashboard();
+		
 		async function loadCustomer() {
 			// 1. Get the logged-in user from Supabase Auth
 			const { data: { user } } = await supabase.auth.getUser();
@@ -182,6 +179,7 @@
 	
 </body>
 </html>
+
 
 
 
