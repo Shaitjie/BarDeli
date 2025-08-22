@@ -124,6 +124,7 @@
         return;
       }
 
+      //Loads customer name on dashboard
       async function loadCustomerName() {
         if (!userData?.fullname) {
           const { data, error } = await supabase
@@ -140,18 +141,19 @@
         }
     }
 
+      //Load customer info function callback
     loadCustomerName();
 
       // Total Bookings
       document.getElementById("totalBookings").textContent = bookings.length || 0;
 
-      // Last Booking
+      // Last Booking - Retrieves last booking made by a customer and displays it in the last booking card on the dashboard
       const lastBooking = bookings[0];
       document.getElementById("lastDate").textContent = lastBooking ? `Date: ${lastBooking.event_date}` : "Date: none";
       document.getElementById("lastGuests").textContent = lastBooking ? `Number of Guests: ${lastBooking.guests}` : "Number of Guests: none";
       document.getElementById("lastLocation").textContent = lastBooking ? `Location: ${lastBooking.location}` : "Location: none";
 
-      // Recent Bookings
+      // Recent Bookings - Retrieves a customers last bookings to display in the recent bookings section
       const recentDiv = document.getElementById("Recent-bookings");
       recentDiv.innerHTML = "";
 
@@ -178,4 +180,5 @@
   </script>
 </body>
 </html>
+
 
