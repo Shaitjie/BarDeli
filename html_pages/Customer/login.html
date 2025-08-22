@@ -96,7 +96,8 @@
   // Save user info (at least email or id)
   localStorage.setItem("user", JSON.stringify({
     id: data.id,
-    email: data.email
+    email: data.email,
+	fullname: data.fullname
   }));
 
   window.location.href = 'customerhomepage.html';
