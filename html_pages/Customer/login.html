@@ -6,17 +6,16 @@
 	<title>Bardeli Login</title>
 	<!-- Fixed: Correct path from html_pages/login.html to css_pages/ -->
 	<link rel="stylesheet" href="../../css_pages/Customer/login.css">
-
 </head>
 <body>
 	<!-- Navigation -->
 	<nav class="navbar">
 		<div class="logo">
 			<!-- Fixed: Correct path from html_pages/login.html to images/ -->
-			<img src="../images/Logo/BarDeli.png" alt="Company Logo">
+			<img src="../../images/Logo/BarDeli.png" alt="Company Logo">
 		</div>
 		<!-- Add home button -->
-		<a href="../index.html" style="color: white; text-decoration: none; margin-left: auto;">Home</a>
+		<a href="../../index.html" style="color: white; text-decoration: none; margin-left: auto;">Home</a>
 	</nav>
 	
 	<!-- Login Section -->
@@ -33,16 +32,17 @@
 					<input type="checkbox" id="password-chkbox">
 					<label for="password-chkbox"> Show Password</label><br>
 				</div>
+
 				<div class="login-button">
+					<!-- Fixed: Removed direct redirect onclick -->
 					<button id="loginBtn" type="button">Login</button>
 				</div>
-				
+
 				<div class="signup">
 					<p>Don't have a profile?</p>
 					<div class="signup-button">
 						<!-- Fixed: Correct path from html_pages/login.html to signup.html -->
 						<button onclick="window.location.href='signup.html'">Sign Up</button>
-
 					</div>
 				</div>
 			</div>
@@ -67,10 +67,10 @@
 			x.type = x.type === "password" ? "text" : "password";
 		});
 		
-		// Login check
+		// Login check (plaintext version for now)
 		async function login() {
-			const email = document.getElementById("email").value;
-			const password = document.getElementById("password").value;
+			const email = document.getElementById("email").value.trim();
+			const password = document.getElementById("password").value.trim();
 			
 			if (!email || !password) {
 				alert("Please enter both email and password");
@@ -91,10 +91,19 @@
 				}
 				
 				if (data.passwordhash === password) {
-					alert('Login successful!');
-					// Fixed: Correct path from html_pages/login.html to Customerpage.html
-					window.location.href = 'customerhomepage.html';
-				} else {
+  alert('Login successful!');
+  
+  // Save user info (at least email or id)
+  localStorage.setItem("user", JSON.stringify({
+    id: data.id,
+    email: data.email
+  }));
+
+  window.location.href = 'customerhomepage.html';
+
+
+				} 
+				else {
 					alert('Incorrect password');
 				}
 			} catch (err) {
@@ -107,5 +116,3 @@
 	</script>
 </body>
 </html>
-
-
