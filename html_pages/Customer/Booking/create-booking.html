@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.24.0/dist/supabase.min.js"></script>
+<script type="module" src="./Create-booking.js"></script>
+
+
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BarDeli Booking Flow</title>
@@ -85,20 +90,12 @@
     <div class="step hidden">
       <h2 class="text-xl font-bold mb-4">Menu Selection</h2>
       <div id="menuList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Sample Fixed Menu Card (Backenders replace with Supabase fetch) -->
-        <div class="p-4 border rounded hover:shadow cursor-pointer" onclick="openMenuModal('fixedMenu1')">
-          <h3 class="font-bold">Fixed Menu 1</h3>
-          <p>Price per person: $20</p>
-        </div>
-        <div class="p-4 border rounded hover:shadow cursor-pointer" onclick="openMenuModal('fixedMenu2')">
-          <h3 class="font-bold">Fixed Menu 2</h3>
-          <p>Price per person: $25</p>
-        </div>
-        <!-- Custom Menu -->
-        <div class="p-4 border rounded hover:shadow cursor-pointer" onclick="selectCustomMenu()">
-          <h3 class="font-bold">Custom Menu</h3>
-          <p>Select individual items</p>
-        </div>
+        <!-- REMOVE these hardcoded cards -->
+  <!-- <div class="p-4 border rounded hover:shadow cursor-pointer" onclick="openMenuModal('fixedMenu1')"> ... </div> -->
+
+        
+       
+       
       </div>
       <div class="flex justify-between mt-6">
         <button type="button" onclick="prevStep()" class="px-6 py-3 bg-gray-300 text-gray-700 font-bold rounded hover:bg-gray-200">Back</button>
@@ -231,6 +228,8 @@ function selectCustomMenu() {
   alert('Open custom menu selection - Backenders should populate items from Supabase');
 }
 </script>
+
+<script type="module" src="./menu.js"></script>
 
 </body>
 </html>
