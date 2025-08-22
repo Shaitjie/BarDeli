@@ -124,6 +124,24 @@
         return;
       }
 
+      async function loadCustomerName() {
+        if (!userData?.fullname) {
+          const { data, error } = await supabase
+            .from("users")
+            .select("fullname")
+            .eq("id", userData.id)
+            .single();
+
+          if (!error && data) {
+            document.getElementById("customerName").textContent = data.fullname;
+          } else {
+          document.getElementById("customerName").textContent = "Customer";
+          }
+        }
+    }
+
+    loadCustomerName();
+
       // Total Bookings
       document.getElementById("totalBookings").textContent = bookings.length || 0;
 
@@ -160,3 +178,4 @@
   </script>
 </body>
 </html>
+
