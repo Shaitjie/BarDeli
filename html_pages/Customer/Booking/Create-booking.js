@@ -61,3 +61,6 @@ export function selectCustomMenu() {
 
 // ------------------ Auto load menu on page load ------------------
 window.addEventListener('DOMContentLoaded', loadMenuItems);
+
+
+
