@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Customer Homepage</title>
+	<!--Font Awesome-->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+		integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!--TailWind CSS CDN-->
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+	<!-- Sidebar -->
+	<nav class="fixed top-0 left-0 h-full w-56 bg-orange-600 flex flex-col justify-between py-6">
+		<div>
+			<!-- Logo -->
+			<div class="flex justify-center mb-6">
+				<img src="images/BarDeli.png" class="h-24 w-auto" alt="Logo">
+			</div>
+
+			<!-- Navigation Links -->
+			<div class="flex flex-col space-y-2">
+				<a href="homepage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+					<i class="fa-regular fa-house"></i> Home
+				</a>
+				<a href="#" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+					<i class="fa-regular fa-calendar"></i> Booking
+				</a>
+				<a href="customernotificationspage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+					<i class="fa-regular fa-bell"></i> Notifications
+				</a>
+				<a href="customerprofilepage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded bg-orange-800">
+					<i class="fa-regular fa-user"></i> Profile
+				</a>
+			</div>
+		</div>
+
+		<!-- Logout -->
+		<div class="flex justify-center">
+			<a href="" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+				<i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+			</a>
+		</div>
+	</nav>
+
+	<!-- Main Content -->
+	<main class="ml-56 p-8 fixed">
+		<h1 class="text-5xl font-black text-orange-600">Profile</h1>
+		<p class="text-sm font-bold text-orange-600 mt-[10px]">Manage your account information</p>
+
+		<div class="space-y-10 mt-7">
+			<!-- Profile Form -->
+			<form class="bg-[#EA580C] rounded-2xl w-[500px] p-8 space-y-10 ">
+
+				<!-- Full Name -->
+				<div>
+					<label class="block font-bold mb-2 text-white text-2xl">Full Name</label>
+
+					<div class="relative">
+						<!-- Icon -->
+						<i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-[#EA580C]"></i>
+
+						<!-- Input with extra left padding so text doesn't overlap icon -->
+						<input id="profile-fullname" type="text" placeholder="Enter your new full name" class="w-full text-2xl font-semibold border-2 border-orange-600 placeholder-orange-600 text-orange-600 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#EA580C]"/>
+					</div>
+				</div>
+
+				<!-- Email -->
+				<div>
+					<label class="block font-bold mb-2 text-white text-2xl">Email</label>
+				
+					<div class="relative">
+						<!-- Icon -->
+						<i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-[#EA580C]"></i>
+				
+						<!-- Input with extra left padding so text doesn't overlap icon -->
+						<input id="profile-email" type="text" placeholder="Enter your new email" class="w-full text-2xl font-semibold border-2 border-orange-600 placeholder-orange-600 text-orange-600 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#EA580C]" />
+					</div>
+				</div>
+
+				<!-- Phone -->
+				<div>
+					<label class="block font-bold mb-2 text-white text-2xl">Phone</label>
+				
+					<div class="relative">
+						<!-- Icon -->
+						<i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-[#EA580C]"></i>
+				
+						<!-- Input with extra left padding so text doesn't overlap icon -->
+						<input id="profile-phone" type="text" placeholder="Enter your new phone number" class="w-full text-2xl font-semibold border-2 border-orange-600 placeholder-orange-600 text-orange-600 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#EA580C]" maxlength="10"/>
+					</div>
+				</div>
+
+				<!-- Password -->
+				<!-- <div>
+					<label class="block font-bold mb-2 text-white text-3xl">Password</label>
+				
+					<div class="relative">
+						
+						<i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-[#EA580C]"></i>
+				
+						
+						<input id="profile-fullname" type="text" placeholder="Enter your new password" class="w-full border-2 border-orange-600 placeholder-orange-600 text-orange-600 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#EA580C]" />
+					</div>
+				</div> -->
+
+				<p class="text-white">*The current placeholder text is you'r current information</p>
+
+				<p class="text-white">*Go to the field you want to edit your information and enter the new data. When you are done click the Save Changes button to update your profile's information.</p>
+
+
+				<!-- Save Button -->
+				<div>
+					<button type="submit"
+						class="w-full bg-white border-2 text-3xl border-orange-600 text-center text-orange-600 font-bold py-3 rounded-lg hover:border-white hover:bg-orange-800 hover:text-white transition mt-5">
+						Save Changes
+					</button>
+				</div>
+			</form>
+		</div>
+
+	</main>
+
+	<!-- JS -->
+	<script>
+		function togglePassword() {
+			const passwordField = document.getElementById("password");
+			passwordField.type = passwordField.type === "password" ? "text" : "password";
+		}
+	</script>
+
+	<script>
+		// Initialize Supabase client
+		const supabaseUrl = "https://fawlfsukrqrucrrxrjvq.supabase.co";   // <-- replace with your project URL
+		const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8";              // <-- replace with your anon public key
+		const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+		// Example: assume you already have the user ID (from login/session)
+		async function loadUserProfile() {
+			// Get logged in user
+			const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+			if (userError || !user) {
+				console.error("No logged-in user:", userError);
+				return;
+			}
+
+			const userId = user.id; // Supabase Auth UID (if you linked it with your user table)
+
+			// Fetch user profile from your custom user table
+			const { data, error } = await supabase
+				.from("user")
+				.select("fullname, email, phone")
+				.eq("userid", userId) // match with your schema’s PK
+				.single();
+
+			if (error) {
+				console.error("Error fetching user profile:", error);
+				return;
+			}
+
+			// Populate placeholders
+			document.getElementById("profile-fullname").placeholder = data.fullname || "Enter your new full name";
+			document.getElementById("profile-email").placeholder = data.email || "Enter your new email";
+			document.getElementById("profile-phone").placeholder = data.phone || "Enter your new phone number";
+		}
+
+		// Handle update on Save Changes
+		document.querySelector("form").addEventListener("submit", async (e) => {
+			e.preventDefault();
+
+			const { data: { user } } = await supabase.auth.getUser();
+			if (!user) return;
+
+			const userId = user.id;
+
+			// Grab values from inputs (only update if user typed something)
+			const fullname = document.getElementById("profile-fullname").value.trim();
+			const email = document.getElementById("profile-email").value.trim();
+			const phone = document.getElementById("profile-phone").value.trim();
+
+			const updates = {};
+			if (fullname) updates.fullname = fullname;
+			if (email) updates.email = email;
+			if (phone) updates.phone = phone;
+
+			if (Object.keys(updates).length === 0) {
+				alert("No changes made.");
+				return;
+			}
+
+			const { error } = await supabase
+				.from("user")
+				.update(updates)
+				.eq("userid", userId);
+
+			if (error) {
+				console.error("Error updating profile:", error);
+				alert("Failed to update profile.");
+			} else {
+				alert("Profile updated successfully!");
+				// Reload placeholders
+				loadUserProfile();
+				// Clear the input values (so placeholder shows again)
+				document.getElementById("profile-fullname").value = "";
+				document.getElementById("profile-email").value = "";
+				document.getElementById("profile-phone").value = "";
+			}
+		});
+
+		// Load profile on page ready
+		window.onload = loadUserProfile;
+	</script>
+
+
+</body>
+</html>
