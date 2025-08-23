@@ -11,6 +11,8 @@
   <title>BarDeli Booking Flow</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <!--Font Awesome-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="font-inter bg-gray-50">
 
@@ -24,17 +26,17 @@
 
     <!-- Navigation Links -->
     <div class="flex flex-col space-y-2">
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
-        Home
+      <a href="customerhomepage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        <i class="fa-regular fa-house"></i> Home
       </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded bg-orange-800">
-        Booking
+      <a href="create-booking.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded bg-orange-800">
+        <i class="fa-regular fa-calendar"></i> Booking
+      </a>
+      <a href="customernotificationspage" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        <i class="fa-regular fa-bell"></i> Notifications
       </a>
       <a href="#" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
-        Notifications
-      </a>
-      <a href="#" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
-        Profile
+        <i class="fa-regular fa-user"></i> Profile
       </a>
     </div>
   </div>
@@ -42,7 +44,7 @@
   <!-- Logout -->
   <div class="flex justify-center">
     <a href="../../../index.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
-      Logout
+      <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
     </a>
   </div>
 </nav>
