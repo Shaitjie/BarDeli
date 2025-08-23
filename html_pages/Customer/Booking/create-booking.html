@@ -241,7 +241,8 @@ function populateSummary(){
 
   const menuTotal = selectedMenus.reduce((sum,m) => sum + parseFloat(m.price), 0);
   const extrasTotal = selectedExtras.reduce((sum,e) => sum + parseFloat(e.price), 0);
-  const total = menuTotal + extrasTotal;
+  const guests = parseInt(document.getElementById('guests').value) || 1;
+  const total = (menuTotal + extrasTotal)*guests;
   const deposit = total * 0.5;
 
   summaryDiv.innerHTML += `<hr class="my-4">`;
