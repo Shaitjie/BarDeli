@@ -12,11 +12,24 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
     integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    /* Toast animation */
+    #toast {
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      pointer-events: none;
+    }
+    #toast.show {
+      opacity: 1;
+    }
+  </style>
 </head>
 <body class="font-inter bg-gray-50">
 
 <!-- Toast Notification -->
-<div id="toast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center">
+<div id="toast" 
+     class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center">
   <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
   </svg>
@@ -106,7 +119,7 @@
     <div class="step hidden">
       <h2 class="text-xl font-bold mb-4">Extras & Services</h2>
       <div id="extrasList" class="space-y-2">
-        <!-- Extra items dynamically loaded -->
+        <!-- Extra items dynamically loaded (with checkboxes) -->
       </div>
       <div class="flex justify-between mt-6">
         <button type="button" onclick="prevStep()" class="px-6 py-3 bg-gray-300 text-gray-700 font-bold rounded hover:bg-gray-200">Back</button>
@@ -169,22 +182,28 @@ function prevStep(){ if(currentStep>0) currentStep--; showStep(currentStep); }
 
 // Handle clicks for menu/extras
 document.body.addEventListener("click", e => {
-  const menuItem = e.target.closest("#menuList > div");
-  const extraItem = e.target.closest("#extrasList > div");
+  // Handle extras with checkboxes
+  if(e.target.type === "checkbox" && e.target.closest("#extrasList > div")){
+    const extraItem = e.target.closest("#extrasList > div");
+    if(e.target.checked){
+      extraItem.classList.add("selected");
+      updateSelectedItems("extra");
+      showToast(`${extraItem.dataset.itemname || "Extra"} saved to cart!`);
+    } else {
+      extraItem.classList.remove("selected");
+      updateSelectedItems("extra");
+      showToast(`${extraItem.dataset.itemname || "Extra"} removed from cart!`);
+    }
+    return;
+  }
 
+  // Handle menu cards (no checkbox)
+  const menuItem = e.target.closest("#menuList > div");
   if(menuItem){
     const isSelected = menuItem.classList.contains("selected");
     menuItem.classList.toggle("selected");
     updateSelectedItems("menu");
     const name = menuItem.dataset.itemname || menuItem.querySelector('h3')?.textContent || "Menu Item";
-    showToast(!isSelected ? `${name} saved to cart!` : `${name} removed from cart!`);
-  }
-
-  if(extraItem){
-    const isSelected = extraItem.classList.contains("selected");
-    extraItem.classList.toggle("selected");
-    updateSelectedItems("extra");
-    const name = extraItem.dataset.itemname || extraItem.querySelector('h3')?.textContent || "Extra Item";
     showToast(!isSelected ? `${name} saved to cart!` : `${name} removed from cart!`);
   }
 });
@@ -217,8 +236,9 @@ function showToast(message){
   const toast = document.getElementById("toast");
   const toastMessage = document.getElementById("toastMessage");
   toastMessage.innerText = message;
+
   toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"), 2500);
+  setTimeout(()=>toast.classList.remove("show"), 2000); // fade out after 2s
 }
 
 // Populate Summary
@@ -274,5 +294,3 @@ document.getElementById('bookingForm').addEventListener('submit', e=>{
 <script type="module" src="./menu.js"></script>
 </body>
 </html>
-
-
