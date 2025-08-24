@@ -93,12 +93,13 @@
 				if (data.passwordhash === password) {
   alert('Login successful!');
   
-  // Save user info (at least email or id)
-  localStorage.setItem("user", JSON.stringify({
-    id: data.id,
+localStorage.setItem("user", JSON.stringify({
+    id: data.userid,    // <-- use 'userid' from your table
     email: data.email,
-	fullname: data.fullname //Save user fullname
-  }));
+    fullname: data.fullname
+}));
+
+ 
 
   window.location.href = 'customerhomepage.html';
 

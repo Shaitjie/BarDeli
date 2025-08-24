@@ -103,80 +103,71 @@
     const userData = JSON.parse(localStorage.getItem("user"));
 
     // Update Dashboard Name
-    document.getElementById("customerName").textContent = userData?.fullname || "Customer";
+document.getElementById("customerName").textContent = userData?.fullname || "Customer";
 
-    // Logout button
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("user");
-      window.location.href = "login.html";
-    });
+// Load bookings
+async function loadBookings() {
+  if (!userData?.id) {
+    console.error("User data not available");
+    return;
+  }
 
-    // Load bookings
-    async function loadBookings() {
-      const { data: bookings, error } = await supabase
-        .from("Booking")
-        .select("*")
-        .eq("UserID", userData.id)
-        .order("EventDate", { ascending: false });
+  try {
+    const { data: bookings, error } = await supabase
+      .from("booking")
+      .select("*")
+      .eq("userid", Number(userData.id))
+      .order("eventdate", { ascending: false });
 
-      if (error) {
-        console.error("Error fetching bookings:", error);
-        return;
-      }
-
-      //Loads customer name on dashboard
-      async function loadCustomerName() {
-        if (!userData?.fullname) {
-          const { data, error } = await supabase
-            .from("users")
-            .select("fullname")
-            .eq("id", userData.id)
-            .single();
-
-          if (!error && data) {
-            document.getElementById("customerName").textContent = data.fullname;
-          } else {
-          document.getElementById("customerName").textContent = "Customer";
-          }
-        }
+    if (error) {
+      console.error("Error fetching bookings:", error);
+      // Set default values when there's an error
+      document.getElementById("totalBookings").textContent = "0";
+      document.getElementById("lastDate").textContent = "Date: none";
+      document.getElementById("lastGuests").textContent = "Number of Guests: none";
+      document.getElementById("lastLocation").textContent = "Location: none";
+      return;
     }
 
-      //Load customer info function callback
-    loadCustomerName();
+    // Total Bookings
+    document.getElementById("totalBookings").textContent = bookings?.length || 0;
 
-      // Total Bookings
-      document.getElementById("totalBookings").textContent = bookings.length || 0;
+    // Last Booking
+    const lastBooking = bookings?.[0];
+    document.getElementById("lastDate").textContent = `Date: ${lastBooking?.eventdate || "none"}`;
+    document.getElementById("lastGuests").textContent = `Number of Guests: ${lastBooking?.guestcount || "none"}`;
+    document.getElementById("lastLocation").textContent = `Location: ${lastBooking?.location || "none"}`;
 
-      // Last Booking - Retrieves last booking made by a customer and displays it in the last booking card on the dashboard
-      const lastBooking = bookings[0];
-      document.getElementById("lastDate").textContent = lastBooking ? `Date: ${lastBooking.event_date}` : "Date: none";
-      document.getElementById("lastGuests").textContent = lastBooking ? `Number of Guests: ${lastBooking.guests}` : "Number of Guests: none";
-      document.getElementById("lastLocation").textContent = lastBooking ? `Location: ${lastBooking.location}` : "Location: none";
-
-      // Recent Bookings - Retrieves a customers last bookings to display in the recent bookings section
-      const recentDiv = document.getElementById("Recent-bookings");
+    // Recent Bookings
+    const recentDiv = document.getElementById("Recent-bookings");
+    if (recentDiv) {
       recentDiv.innerHTML = "";
 
-      bookings.forEach(b => {
+      bookings?.forEach(b => {
         const card = `
           <div class="bg-orange-400 rounded-xl p-4 mb-4 flex flex-col gap-2 relative">
-            <span class="absolute top-3 right-3 bg-orange-700 font-bold px-3 py-1 rounded-lg text-sm">${b.event_type}</span>
+            <span class="absolute top-3 right-3 bg-orange-700 font-bold px-3 py-1 rounded-lg text-sm">${b.eventtype || 'Event'}</span>
             <p class="absolute top-3 left-3 font-bold text-2xl flex justify-center text-center">
-              <i class="fa-regular fa-calendar text-3xl mr-1"></i> Event Date: ${b.event_date}
+              <i class="fa-regular fa-calendar text-3xl mr-1"></i> Event Date: ${b.eventdate || 'TBD'}
             </p>
             <div class="grid grid-cols-2 gap-x-6 p-1 mt-10">
-              <p class="font-bold mb-2"><i class="fa-solid fa-users mr-1.5"></i> Number of Guests: ${b.guests} Guests</p>
-              <p class="font-bold mb-2"><i class="fa-solid fa-utensils mr-1.5"></i> Menu Type: ${b.menu_type}</p>
-              <p class="font-bold"><i class="fa-solid fa-location-dot mr-1.5"></i> Event Location: ${b.location}</p>
-              <p class="font-bold"><i class="fa-regular fa-clock mr-1.5"></i> Event Time: ${b.event_time}</p>
+              <p class="font-bold mb-2"><i class="fa-solid fa-users mr-1.5"></i> Number of Guests: ${b.guestcount || 0} Guests</p>
+              <p class="font-bold mb-2"><i class="fa-solid fa-utensils mr-1.5"></i> Menu Type: ${b.menu_type || 'Standard'}</p>
+              <p class="font-bold"><i class="fa-solid fa-location-dot mr-1.5"></i> Event Location: ${b.location || 'TBD'}</p>
+              <p class="font-bold"><i class="fa-regular fa-clock mr-1.5"></i> Event Time: ${b.eventtime || 'TBD'}</p>
             </div>
           </div>
         `;
         recentDiv.insertAdjacentHTML("beforeend", card);
       });
     }
+  } catch (err) {
+    console.error("Unexpected error loading bookings:", err);
+  }
+}
 
-    loadBookings();
+// Call the functions
+loadBookings();
   </script>
 </body>
 </html>
