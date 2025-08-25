@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BarDeli Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bardeli-orange': '#d35400',
+                        'bardeli-dark': '#e55a2b',
+                        'bardeli-light': '#ff8f66'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for enhanced visual effects */
+        .nav-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.15);
+        }
+        
+        .icon-glow {
+            filter: drop-shadow(0 0 8px rgba(255, 107, 53, 0.3));
+        }
+        
+        .dashboard-grid {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header-bg {
+            background: linear-gradient(135deg, #d35400 0%, #db704c 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="header-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-white tracking-wide">BarDeli Admin Dashboard</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-white text-sm">Welcome, Admin</span>
+                    <button id="logoutBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
+            <p class="text-gray-600">Manage your BarDeli catering business operations</p>
+        </div>
+
+        <!-- Navigation Cards Grid -->
+        <div class="dashboard-nav dashboard-grid">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Admin Profile Card -->
+                <div class="nav-card bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                    <a href="admin-profile.html" class="block p-6 hover:bg-gray-50 transition-colors duration-200">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <span class="icon text-3xl icon-glow">👤</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Admin Profile</h3>
+                                <p class="text-sm text-gray-500">Manage your admin account settings and preferences</p>
+                            </div>
+                            <div class="text-bardeli-orange">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Manage Menu Card -->
+                <div class="nav-card bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                    <a href="manage-menu.html" class="block p-6 hover:bg-gray-50 transition-colors duration-200">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <span class="icon text-3xl icon-glow">🍽️</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Manage Menu</h3>
+                                <p class="text-sm text-gray-500">Create, read, update, and archive menu items</p>
+                            </div>
+                            <div class="text-bardeli-orange">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Manage Events Card -->
+                <div class="nav-card bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                    <a href="manage-events.html" class="block p-6 hover:bg-gray-50 transition-colors duration-200">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <span class="icon text-3xl icon-glow">📅</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Manage Events</h3>
+                                <p class="text-sm text-gray-500">Schedule and organize catering events and bookings</p>
+                            </div>
+                            <div class="text-bardeli-orange">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Manage Staff Card -->
+                <div class="nav-card bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                    <a href="manage-staff.html" class="block p-6 hover:bg-gray-50 transition-colors duration-200">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <span class="icon text-3xl icon-glow">🧑‍🍳</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Manage Staff</h3>
+                                <p class="text-sm text-gray-500">Handle staff schedules, roles, and assignments</p>
+                            </div>
+                            <div class="text-bardeli-orange">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Staff Assignment Card -->
+                <div class="nav-card bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <a href="staff-assignment.html" class="block p-6 hover:bg-gray-50 transition-colors duration-200">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0">
+                            <span class="icon text-3xl icon-glow">👥</span>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1">Staff Assignment</h3>
+                            <p class="text-sm text-gray-500">Assign staff members to events and manage schedules</p>
+                        </div>
+                        <div class="text-bardeli-orange">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+                </div>
+                
+                <!-- Reports Card -->
+                <div class="nav-card bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                    <a href="reports.html" class="block p-6 hover:bg-gray-50 transition-colors duration-200">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <span class="icon text-3xl icon-glow">📊</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Reports</h3>
+                                <p class="text-sm text-gray-500">Generate business reports from database analytics</p>
+                            </div>
+                            <div class="text-bardeli-orange">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Messages Card -->
+                <div class="nav-card bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                    <a href="messages.html" class="block p-6 hover:bg-gray-50 transition-colors duration-200">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <span class="icon text-3xl icon-glow">💬</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Messages</h3>
+                                <p class="text-sm text-gray-500">View and respond to customer messages and inquiries</p>
+                            </div>
+                            <div class="text-bardeli-orange">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="absolute top-2 right-2">
+                            <span id="messagesBadge" class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full hidden">0</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Notifications Card -->
+                <div class="nav-card bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                    <a href="notifications.html" class="block p-6 hover:bg-gray-50 transition-colors duration-200">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <span class="icon text-3xl icon-glow">🔔</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Notifications</h3>
+                                <p class="text-sm text-gray-500">View system alerts and important messages</p>
+                            </div>
+                            <div class="text-bardeli-orange">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="absolute top-2 right-2">
+                            <span id="notificationsBadge" class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full hidden">0</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Quick Stats Card -->
+                <div class="nav-card bg-gradient-to-br from-bardeli-orange to-bardeli-dark rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                    <div class="p-6 text-white">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <span class="text-3xl">📈</span>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold mb-1">Quick Stats</h3>
+                                <p class="text-sm text-white text-opacity-90">Today's overview at a glance</p>
+                                <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                        <div class="font-semibold">Active Events</div>
+                                        <div id="activeEventsCount" class="text-2xl font-bold">0</div>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold">New Bookings</div>
+                                        <div id="newBookingsCount" class="text-2xl font-bold">0</div>
+                                    </div>
+                                </div>
+                                <!-- Space for database connection -->
+                                <div class="mt-2 text-xs text-white text-opacity-70">
+                                    <!-- TODO: Connect to database to fetch real-time stats -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for enhanced interactions -->
+    <script>
+        // Logout functionality - redirect to home/landing page
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            // You can add a confirmation dialog here if needed
+            if (confirm('Are you sure you want to logout?')) {
+                // Replace 'index.html' with your actual landing page file name
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Add click feedback for navigation cards
+        document.querySelectorAll('.nav-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Add a subtle click animation
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Function to update statistics from database
+        // TODO: Replace with actual database calls
+        function updateQuickStats() {
+            // Placeholder for database connection
+            // When you connect to database, replace these with actual queries
+            const activeEvents = 0; // SELECT COUNT(*) FROM events WHERE status='active' AND date=TODAY
+            const newBookings = 0;  // SELECT COUNT(*) FROM bookings WHERE created_date=TODAY
+            
+            document.getElementById('activeEventsCount').textContent = activeEvents;
+            document.getElementById('newBookingsCount').textContent = newBookings;
+        }
+
+        // Function to update notifications badge
+        function updateNotificationsBadge(count) {
+            const badge = document.getElementById('notificationsBadge');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // Function to update messages badge
+        function updateMessagesBadge(count) {
+            const badge = document.getElementById('messagesBadge');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('BarDeli Admin Dashboard loaded');
+            
+            // Update stats on page load
+            updateQuickStats();
+            
+            // TODO: When database is connected, add these calls:
+            // updateNotificationsBadge(getUnreadNotificationsCount());
+            // updateMessagesBadge(getUnreadMessagesCount());
+            
+            // For now, hide the badges since counts are 0
+            updateNotificationsBadge(0);
+            updateMessagesBadge(0);
+        });
+
+        // TODO: Add these functions when database is available
+        /*
+        function getUnreadNotificationsCount() {
+            // Database query to get unread notifications count
+            return 0;
+        }
+
+        function getUnreadMessagesCount() {
+            // Database query to get unread messages count
+            return 0;
+        }
+        */
+    </script>
+</body>
+</html>
