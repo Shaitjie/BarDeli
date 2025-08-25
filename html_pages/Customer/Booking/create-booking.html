@@ -8,6 +8,9 @@
   <title>BarDeli Booking Flow</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.24.0/dist/supabase.min.js"></script>
+</head>
+<body>
   <!--Font Awesome-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
     integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
@@ -24,8 +27,13 @@
       opacity: 1;
     }
   </style>
+
+  
+
 </head>
+
 <body class="font-inter bg-gray-50">
+
 
 <!-- Toast Notification -->
 <div id="toast" 
@@ -35,6 +43,7 @@
   </svg>
   <span id="toastMessage">Item saved to cart!</span>
 </div>
+
 
 <!-- Sidebar -->
 <nav class="fixed top-0 left-0 h-full w-56 bg-orange-600 flex flex-col justify-between py-6">
@@ -154,6 +163,50 @@
 
   </form>
 </main>
+!-- ✅ Supabase Booking Submit -->
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  document.getElementById("bookingForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      alert("User not logged in!");
+      return;
+    }
+
+    const bookingData = {
+      userid: user.id,
+      eventdate: document.getElementById("eventDate").value || null,
+      eventtime: document.getElementById("eventTime").value || null,
+      eventtype: document.getElementById("eventType").value || null,
+      guestcount: document.getElementById("guests").value || null,
+      location: document.getElementById("address").value || null,
+      totalcost: localStorage.getItem("bookingTotal") || null,
+      depositpaid: localStorage.getItem("depositPaid") || 0,
+      status: "Pending"
+    };
+
+    const { data, error } = await supabase
+      .from("booking")
+      .insert([bookingData]);
+
+    if (error) {
+      console.error("❌ Error inserting booking:", error);
+      alert("Booking failed! Check console.");
+    } else {
+      alert("✅ Booking submitted successfully!");
+      console.log("Inserted booking:", data);
+    }
+  });
+</script>
+
+
 
 <script>
 const steps = document.querySelectorAll('.step');
