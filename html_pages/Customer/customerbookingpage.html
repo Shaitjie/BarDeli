@@ -88,9 +88,9 @@
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-   const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co'
-   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
-   const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const userData = JSON.parse(localStorage.getItem("user"));
     let bookingToCancel = null;
@@ -119,23 +119,21 @@
               <p><i class="fa-solid fa-location-dot mr-1"></i> ${b.location || "TBD"}</p>
             </div>
             <div class="flex gap-2 mt-4 md:mt-0">
-              <a href="modify-booking.html?id=${b.id}" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500">Edit</a>
-              <button data-id="${b.id}" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500 cancelBtn">Cancel</button>
+              <a href="modify-booking.html?id=${b.bookingid}" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500">Edit</a>
+              <button data-id="${b.bookingid}" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500 cancelBtn">Cancel</button>
             </div>
           `;
           container.appendChild(card);
         });
 
-      // Add cancel button listeners
       document.querySelectorAll(".cancelBtn").forEach(btn => {
         btn.addEventListener("click", e => {
-          bookingToCancel = e.target.dataset.id;
+          bookingToCancel = e.currentTarget.dataset.id; // reliable
           document.getElementById("cancelModal").classList.remove("hidden");
         });
       });
     }
 
-    // Modal buttons
     document.getElementById("cancelNo").addEventListener("click", () => {
       bookingToCancel = null;
       document.getElementById("cancelModal").classList.add("hidden");
@@ -143,7 +141,10 @@
 
     document.getElementById("cancelYes").addEventListener("click", async () => {
       if (!bookingToCancel) return;
-      const { error } = await supabase.from("booking").update({ status: "cancelled" }).eq("id", bookingToCancel);
+      const { error } = await supabase
+        .from("booking")
+        .update({ status: "cancelled" })
+        .eq("bookingid", bookingToCancel); // updated PK column
       if (error) alert("Error cancelling booking");
       bookingToCancel = null;
       document.getElementById("cancelModal").classList.add("hidden");
