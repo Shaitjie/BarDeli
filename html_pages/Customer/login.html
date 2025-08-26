@@ -79,7 +79,7 @@
 			
 			try {
 				const { data, error } = await supabase
-					.from('users')
+					.from('customerAccounts')
 					.select('*')
 					.eq('email', email)
 					.single();

@@ -113,7 +113,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 			const userId = userData.id; // integer userid from login storage
 
 			const { data, error } = await supabase
-				.from("users")
+				.from("customerAccounts")
 				.select("fullname, email, phone")
 				.eq("userid", parseInt(userId))
 				.single();
@@ -145,7 +145,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 			if (Object.keys(updates).length === 0) return alert("No changes made.");
 
 			const { error } = await supabase
-				.from("users")
+				.from("customerAccounts")
 				.update(updates)
 				.eq("userid", parseInt(userId));
 

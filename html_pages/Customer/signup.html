@@ -91,7 +91,7 @@
 
                 try {
                     const { data, error } = await supabase
-                        .from('users')
+                        .from('customerAccounts')
                         .insert([{
                             fullname: fullname.value,
                             phone: phone.value,
