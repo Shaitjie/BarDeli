@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Customer Homepage</title>
 
-  <!-- Check if user is logged in (manual login using localStorage) -->
   <script>
     const user = localStorage.getItem("user");
     if (!user) {
@@ -24,7 +23,7 @@
     <div>
       <!-- Logo -->
       <div class="flex justify-center mb-6">
-        <img src="/BarDeli/images/Logo/BarDeli.png" class="h-24 w-auto" alt="Logo">
+        <img src="../../images/Logo/BarDeli.png" class="h-24 w-auto" alt="Logo">
       </div>
 
       <!-- Navigation Links -->
@@ -32,7 +31,7 @@
         <a href="customerhomepage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded bg-orange-800">
           <i class="fa-regular fa-house"></i> Home
         </a>
-        <a href="./Booking/create-booking.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        <a href="customerbookingpage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
           <i class="fa-regular fa-calendar"></i> Booking
         </a>
         <a href="customernotificationspage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
@@ -54,7 +53,7 @@
 
   <!--Customer Dashboard-->
   <main class="ml-56 p-8 fixed w-[calc(100%-14rem)]">
-    <h1 class="text-5xl font-black text-orange-600">Welcome to your Dashboard - <span id="customerName">Loading...</span></h1>
+    <h1 class="text-5xl font-black text-orange-600">Welcome <span id="customerName">Loading...</span></h1>
     <p class="text-sm font-bold text-orange-600 mt-[10px]">Here's an overview of your catering bookings</p>
 
     <!--Summary Blocks-->

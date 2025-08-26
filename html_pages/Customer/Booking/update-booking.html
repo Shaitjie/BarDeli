@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Booking</title>
+
+  <!-- Tailwind CSS & Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+    integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
+
+  <style>
+    #toast { opacity: 0; transition: opacity 0.5s ease-in-out; pointer-events: none; }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body class="font-inter bg-gray-50">
+
+<div id="toast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center">
+  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+  </svg>
+  <span id="toastMessage">Item saved to cart!</span>
+</div>
+
+<nav class="fixed top-0 left-0 h-full w-56 bg-orange-600 flex flex-col justify-between py-6">
+  <div>
+    <div class="flex justify-center mb-6">
+      <img src="../../../images/Logo/BarDeli.png" class="h-24 w-auto" alt="Logo">
+    </div>
+    <div class="flex flex-col space-y-2">
+      <a href="../customerhomepage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        <i class="fa-regular fa-house"></i> Home
+      </a>
+      <a href="../customerbookingpage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded bg-orange-800">
+        <i class="fa-regular fa-calendar"></i> Booking
+      </a>
+      <a href="../customernotificationspage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        <i class="fa-regular fa-bell"></i> Notifications
+      </a>
+      <a href="../customerprofilepage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        <i class="fa-regular fa-user"></i> Profile
+      </a>
+    </div>
+  </div>
+  <div class="flex justify-center">
+    <a href="../../../index.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+      Logout
+    </a>
+  </div>
+</nav>
+
+<main class="ml-56 p-8 max-w-4xl">
+  <h1 class="text-3xl font-extrabold text-orange-600 mb-8">Update Booking</h1>
+
+  <form id="updateBookingForm" class="space-y-6">
+
+    <div class="space-y-4">
+      <label class="block">
+        <span class="font-bold text-gray-700">Event Date</span>
+        <input type="date" id="eventDate" class="w-full p-3 rounded border border-gray-300">
+      </label>
+      <label class="block">
+        <span class="font-bold text-gray-700">Event Time</span>
+        <input type="time" id="eventTime" class="w-full p-3 rounded border border-gray-300">
+      </label>
+      <label class="block">
+        <span class="font-bold text-gray-700">Number of Guests</span>
+        <input type="number" id="guests" min="1" class="w-full p-3 rounded border border-gray-300">
+      </label>
+      <label class="block">
+        <span class="font-bold text-gray-700">Event Location</span>
+        <input type="text" id="address" class="w-full p-3 rounded border border-gray-300">
+      </label>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-between mt-6">
+      <button type="button" id="cancelBtn"
+              class="px-6 py-3 bg-gray-300 text-gray-700 font-bold rounded hover:bg-gray-200">
+        Cancel
+      </button>
+      <button type="submit" class="px-6 py-3 bg-orange-600 text-white font-bold rounded hover:bg-orange-500">
+        Update Booking
+      </button>
+    </div>
+  </form>
+</main>
+
+<!-- Confirmation Modal for Cancel -->
+<div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 max-w-sm w-full text-center">
+    <h2 class="text-xl font-bold mb-4">Leave Without Saving?</h2>
+    <p class="mb-6">Are you sure you want to leave without saving your changes?</p>
+    <div class="flex justify-around">
+      <button id="modalCancel" class="px-6 py-2 bg-gray-300 rounded hover:bg-gray-200">No, stay</button>
+      <button id="modalConfirm" class="px-6 py-2 bg-orange-600 text-white rounded hover:bg-orange-500">Yes, leave</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
+  const supabaseKey = 'YOUR_SUPABASE_KEY';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  const cancelBtn = document.getElementById("cancelBtn");
+  const confirmModal = document.getElementById("confirmModal");
+  const modalCancel = document.getElementById("modalCancel");
+  const modalConfirm = document.getElementById("modalConfirm");
+
+  cancelBtn.addEventListener("click", () => {
+    confirmModal.classList.remove("hidden");
+    confirmModal.classList.add("flex");
+  });
+
+  modalCancel.addEventListener("click", () => {
+    confirmModal.classList.add("hidden");
+    confirmModal.classList.remove("flex");
+  });
+
+  modalConfirm.addEventListener("click", () => {
+    window.location.href = "../customerbookingpage.html";
+  });
+
+  // Load existing booking data
+  async function loadBooking(bookingId){
+    const { data: booking, error } = await supabase
+      .from("booking")
+      .select("*")
+      .eq("id", bookingId)
+      .single();
+
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    document.getElementById("eventDate").value = booking.eventdate;
+    document.getElementById("eventTime").value = booking.eventtime;
+    document.getElementById("guests").value = booking.guestcount;
+    document.getElementById("address").value = booking.location;
+  }
+
+  // Example: get booking ID from URL query
+  const urlParams = new URLSearchParams(window.location.search);
+  const bookingId = urlParams.get("id");
+  if(bookingId) loadBooking(bookingId);
+
+  // Submit updated booking
+  document.getElementById("updateBookingForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const updatedData = {
+      eventdate: document.getElementById("eventDate").value,
+      eventtime: document.getElementById("eventTime").value,
+      guestcount: parseInt(document.getElementById("guests").value),
+      location: document.getElementById("address").value,
+      status: "Modified - Pending"
+    };
+
+    const { data, error } = await supabase
+      .from("booking")
+      .update(updatedData)
+      .eq("id", bookingId);
+
+    if(error){
+      console.error(error);
+      alert("Update failed!");
+    } else {
+      alert("Booking updated successfully!");
+      window.location.href = "../customerbookingpage.html";
+    }
+  });
+</script>
+</body>
+</html>
