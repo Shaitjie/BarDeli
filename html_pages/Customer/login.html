@@ -91,19 +91,21 @@
 				}
 				
 				if (data.passwordhash === password) {
-  alert('Login successful!');
-  
-localStorage.setItem("user", JSON.stringify({
-    id: data.userid,    // <-- use 'userid' from your table
-    email: data.email,
-    fullname: data.fullname
-}));
+                    alert('Login successful!');
+                    localStorage.setItem("user", JSON.stringify({
+                        id: data.userid,    // <-- use 'userid' from your table
+                        email: data.email,
+                        fullname: data.fullname,
+						role: data.role
+                    }));
 
- 
-
-  window.location.href = 'customerhomepage.html';
-
-
+					if (data.role === "Customer") { 
+						window.location.href = 'customerhomepage.html';
+					} else if (data.role === "Admin") {
+						window.location.href = './admin/admin-dashboard.html';
+					} else {
+						alert("Unknown role. Please contact support.");
+					}
 				} 
 				else {
 					alert('Incorrect password');
