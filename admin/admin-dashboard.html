@@ -65,7 +65,7 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-white text-sm">Welcome, Admin</span>
+                    <span class="text-white text-sm">Welcome, <span id="adminName">Loading...</span></span>
                     <button id="logoutBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
                         Logout
                     </button>
@@ -285,13 +285,24 @@
     </div>
 
     <!-- JavaScript for enhanced interactions -->
-    <script>
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+        const supabaseUrl = "https://fawlfsukrqrucrrxrjvq.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8";
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const userData = JSON.parse(localStorage.getItem("user"));
+
+        // Update Dashboard Name
+        document.getElementById("adminName").textContent = userData?.fullname || "Admin";
+
         // Logout functionality - redirect to home/landing page
         document.getElementById('logoutBtn').addEventListener('click', function() {
             // You can add a confirmation dialog here if needed
             if (confirm('Are you sure you want to logout?')) {
                 // Replace 'index.html' with your actual landing page file name
-                window.location.href = '../../index.html';
+                window.location.href = '/index.html';
             }
         });
 
@@ -370,5 +381,5 @@
         */
     </script>
 </body>
-
 </html>
+
