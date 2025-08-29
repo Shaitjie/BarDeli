@@ -4,140 +4,152 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Customer Notifications Page</title>
+	<title>Notifications</title>
+	<script src="https://cdn.tailwindcss.com"></script>\
 	<!--Font Awesome-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
 		integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
 		crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<!--TailWind CSS CDN-->
-	<script src="https://cdn.tailwindcss.com"></script>
-	<script type="module">
-		import { createClient } from "@supabase/supabase-js";
-
-		const supabase = createClient("https://fawlfsukrqrucrrxrjvq.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8");
-
-		async function loadNotifications() {
-			const { data: { user } } = await supabase.auth.getUser();
-			if (!user) return console.error("No logged-in user");
-
-			let { data: notifications, error } = await supabase
-				.from("notification")
-				.select(`
-	          notificationid,
-	          title,
-	          message,
-	          user:userid ( fullname ),
-	          booking:bookingid ( bookingid, eventdate, status )
-	        `)
-				.eq("userid", user.id)
-				.order("notificationid", { ascending: false });
-
-			if (error) return console.error(error);
-
-			const notList = document.getElementById("not-list");
-			notList.innerHTML = "";
-
-			notifications.forEach(notif => {
-				const card = document.createElement("div");
-				card.className =
-					"bg-[#EA580C] shadow-md rounded-2xl p-6 border-l-8 border-[#EA580C] flex justify-between items-center mb-4";
-
-				card.innerHTML = `
-	          <div>
-	            <h3 class="text-2xl font-black text-white mb-[10px]">
-	              Booking Status Update - bookingid: 
-	              <span>${notif.booking.bookingid}</span> 
-	              on <span>${notif.booking.eventdate}</span>
-	            </h3>
-	            <p class="text-lg text-white font-semibold mt-1">${notif.title}</p>
-	            <p class="text-gray-600 mt-1 text-white">${notif.message}</p>
-	            <p class="text-sm text-gray-500 mt-2 text-white font-bold">
-	              Recipient: <span>${notif.user.fullname}</span>
-	            </p>
-	          </div>
-	          <span class="px-4 py-2 rounded-[10px] text-sm text-white font-bold bg-[#C2410C]">
-	            ${notif.booking.status}
-	          </span>
-	        `;
-				notList.insertBefore(card, notList.firstChild);
-			});
-		}
-
-		loadNotifications();
-	</script>
-
 </head>
 
-<body >
+<body>
 	<!-- Sidebar -->
 	<nav class="fixed top-0 left-0 h-full w-56 bg-orange-600 flex flex-col justify-between py-6">
 		<div>
 			<!-- Logo -->
 			<div class="flex justify-center mb-6">
-				<img src="/BarDeli/images/Logo/BarDeli.png" class="h-24 w-auto" alt="Logo">
+				<img src="../../images/Logo/BarDeli.png" class="h-24 w-auto" alt="Logo">
 			</div>
-
 			<!-- Navigation Links -->
 			<div class="flex flex-col space-y-2">
-				<a href="customerhomepage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+				<a href="customerhomepage.html"
+					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
 					<i class="fa-regular fa-house"></i> Home
 				</a>
-				<a href="customerbookingpage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+				<a href="customerbookingpage.html"
+					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
 					<i class="fa-regular fa-calendar"></i> Booking
 				</a>
-				<a href="customernotificationspage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded bg-orange-800">
+				<a href="customernotificationspage.html"
+					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded bg-orange-800">
 					<i class="fa-regular fa-bell"></i> Notifications
 				</a>
-				<a href="customerprofilepage.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+				<a href="customerprofilepage.html"
+					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
 					<i class="fa-regular fa-user"></i> Profile
 				</a>
 			</div>
 		</div>
-
 		<!-- Logout -->
 		<div class="flex justify-center">
-			<a href="/BarDeli/index.html" class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+			<a href="/index.html"
+				class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
 				<i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
 			</a>
 		</div>
 	</nav>
 
-	<!--Notifications Dashboard-->
-	<main class="ml-56 p-8 fixed">
+	<main class="ml-56 p-8 fixed w-full">
 		<h1 class="text-5xl font-black text-orange-600">Notifications</h1>
-		<p class="text-sm font-bold text-orange-600 mt-[10px]">Stay updated on your booking status</p>
-        
+		<p class="text-sm font-bold text-orange-600 mt-[10px]">Manage your account information</p>
+
 		<!-- Notifications List -->
-		<div id="not-list" class="space-y-4 mt-5 w-[1440px] h-[775px] overflow-auto">
-
-			<!-- Notification Card - Dont remove -->
-			<!-- <div class="h-[180px] w-full bg-orange-600 text-white p-6 rounded-lg shadow flex justify-between items-start">
-				<div>
-					<div class="flex justify-center items-center w-full ">
-						<i class="fa-regular fa-clock mr-2 text-3xl"></i>
-						<h3 class="text-2xl font-bold flex items-center justify-center">Booking Status Update</h3>
-
-						<span class="bg-orange-700 px-4 py-1 rounded-[5px] text-sm font-medium ml-[960px]">In Progress</span>
-					</div>
-					<div class="ml-[48px]">
-						<p class="font-bold mt-2 mb-[10px]">Payment Required !!</p>
-						<p class="mt-1 text-sm mb-[10px]">Please pay the rest of the payment for us to complete your catering booking for your
-							booking on <span class="font-medium">2025/08/25</span></p>
-						<p class="mt-2 text-sm font-bold">Recipient: John Doe</p>
-					</div>
-				</div>
-				
-			</div> -->
-
-			
-			
+		<div id="not-list" class="flex flex-col gap-6 w-[1440px] max-w-5xl mt-[20px]">
+			<!-- Cards will be inserted here -->
 		</div>
 
+		<script type="module">
+			import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+			const supabaseUrl = "https://fawlfsukrqrucrrxrjvq.supabase.co";
+			const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8";
+			const supabase = createClient(supabaseUrl, supabaseKey);
+
+			// Get logged-in user from localStorage
+			const userData = JSON.parse(localStorage.getItem("user"));
+			if (!userData) {
+				window.location.href = "/login.html"; // redirect if not logged in
+			}
+
+			// Helper: get color for booking status
+			function getStatusColor(status) {
+				switch (status) {
+					case "Completed":
+						return "bg-green-600";
+					case "In Progress":
+						return "bg-orange-600";
+					case "Pending":
+						return "bg-red-600";
+					default:
+						return "bg-gray-600";
+				}
+			}
+
+			async function loadNotifications() {
+				try {
+					let { data: notifications, error } = await supabase
+						.from("notification")
+						.select(`
+		            notificationid,
+		            title,
+		            message,
+		            booking:bookingid (
+		              bookingid,
+		              eventdate,
+		              status
+		            )
+		          `)
+						.eq("userid", Number(userData.id))
+						.order("notificationid", { ascending: false });
+
+					if (error) {
+						console.error("Error fetching notifications:", error);
+						return;
+					}
+
+					const notList = document.getElementById("not-list");
+					notList.innerHTML = "";
+
+					notifications.forEach(notif => {
+						const status = notif.booking?.status || "Pending";
+						const card = document.createElement("div");
+						card.className = "h-[180px] w-full bg-orange-600 text-white p-6 rounded-lg shadow flex justify-between";
+
+						card.innerHTML = `
+		            <div class="w-[1440px]">
+		              <div class="flex items-center justify-between">
+		                <h3 class="text-xl font-bold">
+		                  Booking Status Update - bookingid: <span>${notif.booking?.bookingid || "N/A"}</span> 
+		                  on <span>${notif.booking?.eventdate || "N/A"}</span>
+		                </h3>
+		                <span class="${getStatusColor(status)} px-4 py-1 rounded text-sm font-medium">
+		                  ${status}
+		                </span>
+		              </div>
+		              <div>
+		                <p class="font-bold mt-3 mb-2">${notif.title}</p>
+		                <p class="text-sm mb-2">${notif.message} 
+		                  for your booking on <span class="font-medium">${notif.booking?.eventdate || "N/A"}</span>
+		                </p>
+		                <p class="mt-2 text-sm font-bold">Recipient: <span>${userData.fullname}</span></p>
+		              </div>
+		            </div>
+		          `;
+						notList.appendChild(card);
+					});
+				} catch (err) {
+					console.error("Unexpected error loading notifications:", err);
+				}
+			}
+
+			loadNotifications();
+		</script>
 	</main>
 </body>
 
-
 </html>
+
+
 
 
 
