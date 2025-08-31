@@ -150,8 +150,8 @@
     <div class="step hidden">
       <h2 class="text-xl font-bold mb-4">Payment Upload</h2>
       <div id="paymentSummary" class="space-y-2 border p-4 rounded mb-4">
-        <p><strong>Total:</strong> $<span id="totalAmount">0.00</span></p>
-        <p><strong>Deposit (50%):</strong> $<span id="depositAmount">0.00</span></p>
+        <p><strong>Total:</strong> R<span id="totalAmount">0.00</span></p>
+        <p><strong>Deposit (50%):</strong> R<span id="depositAmount">0.00</span></p>
         <p><strong>Bank Details:</strong> Account Number: 123456789, Bank: XYZ Bank</p>
       </div>
       <input type="file" id="paymentProof" class="w-full p-3 border border-gray-300 rounded mb-4">
@@ -308,12 +308,12 @@ function populateSummary(){
 
   if(selectedMenus.length > 0){
     summaryDiv.innerHTML += `<p><strong>Menu Items Selected:</strong></p>`;
-    selectedMenus.forEach(item => summaryDiv.innerHTML += `<p class="ml-4">• ${item.itemname} - $${parseFloat(item.price).toFixed(2)}</p>`);
+    selectedMenus.forEach(item => summaryDiv.innerHTML += `<p class="ml-4">• ${item.itemname} - R${parseFloat(item.price).toFixed(2)}</p>`);
   } else summaryDiv.innerHTML += `<p><strong>Menu Items Selected:</strong> None</p>`;
 
   if(selectedExtras.length > 0){
     summaryDiv.innerHTML += `<p><strong>Extra Services Selected:</strong></p>`;
-    selectedExtras.forEach(item => summaryDiv.innerHTML += `<p class="ml-4">• ${item.itemname} - $${parseFloat(item.price).toFixed(2)}</p>`);
+    selectedExtras.forEach(item => summaryDiv.innerHTML += `<p class="ml-4">• ${item.itemname} - R${parseFloat(item.price).toFixed(2)}</p>`);
   } else summaryDiv.innerHTML += `<p><strong>Extra Services Selected:</strong> None</p>`;
 
   const menuTotal = selectedMenus.reduce((sum,m) => sum + parseFloat(m.price), 0);
@@ -323,10 +323,10 @@ function populateSummary(){
   const deposit = total * 0.5;
 
   summaryDiv.innerHTML += `<hr class="my-4">`;
-  summaryDiv.innerHTML += `<p><strong>Menu Subtotal:</strong> $${menuTotal.toFixed(2)}</p>`;
-  summaryDiv.innerHTML += `<p><strong>Extras Subtotal:</strong> $${extrasTotal.toFixed(2)}</p>`;
-  summaryDiv.innerHTML += `<p class="text-lg"><strong>Total Amount:</strong> $${total.toFixed(2)}</p>`;
-  summaryDiv.innerHTML += `<p class="text-lg text-orange-600"><strong>Deposit Required (50%):</strong> $${deposit.toFixed(2)}</p>`;
+  summaryDiv.innerHTML += `<p><strong>Menu Subtotal:</strong> R${menuTotal.toFixed(2)}</p>`;
+  summaryDiv.innerHTML += `<p><strong>Extras Subtotal:</strong> R${extrasTotal.toFixed(2)}</p>`;
+  summaryDiv.innerHTML += `<p class="text-lg"><strong>Total Amount:</strong> R${total.toFixed(2)}</p>`;
+  summaryDiv.innerHTML += `<p class="text-lg text-orange-600"><strong>Deposit Required (50%):</strong> R${deposit.toFixed(2)}</p>`;
 }
 
 function populatePaymentSummary(){

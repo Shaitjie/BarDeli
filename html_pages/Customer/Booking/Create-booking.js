@@ -51,7 +51,7 @@ export async function loadMenuItems() {
     card.innerHTML = `
       <h3 class="font-bold">${item.itemname}</h3>
       <p>${item.description || ''}</p>
-      <p>Price per person: $${parseFloat(item.price).toFixed(2)}</p>
+      <p>Price per person: R${parseFloat(item.price).toFixed(2)}</p>
     `;
     card.dataset.menuitemid = item.menuitemid;
     card.dataset.itemname = item.itemname;
@@ -110,7 +110,7 @@ export async function loadMenuItems() {
     const label = document.createElement('label');
     label.htmlFor = `extra-${item.extrasid}`;
     label.className = 'text-gray-700';
-    label.textContent = `${item.itemname} - $${item.price}`;
+    label.textContent = `${item.itemname} - R${item.price}`;
 
     // Append the checkbox and label to the container
     itemContainer.appendChild(checkbox);
