@@ -17,7 +17,7 @@
 </head>
 
 <body>
-  
+
   <style>
     /* Toast animation */
     #toast {
@@ -72,7 +72,7 @@
         </div>
       </div>
       <div class="flex justify-center">
-        <a href="../../../index.html"
+        <a href="/index.html"
           class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
           Logout
         </a>
@@ -187,7 +187,8 @@
       import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
       const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
-      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'; // ⚠️ Replace with env key in production
+      const supabaseKey =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
       const supabase = createClient(supabaseUrl, supabaseKey);
 
       document.getElementById("bookingForm").addEventListener("submit", async (e) => {
@@ -199,7 +200,7 @@
           return;
         }
 
-        // Step 1: Insert booking WITHOUT proof
+        // Step 1: Insert booking 
         const bookingData = {
           userid: user.id,
           eventdate: document.getElementById("eventDate").value || null,
@@ -209,7 +210,7 @@
           location: document.getElementById("address").value || null,
           totalcost: localStorage.getItem("bookingTotal") || null,
           depositpaid: localStorage.getItem("depositPaid") || 0,
-          status: "Pending"
+          status: "Pending",
         };
 
         const { data: insertedBooking, error: insertError } = await supabase
@@ -226,11 +227,52 @@
 
         const bookingId = insertedBooking.bookingid;
 
+        // Build order items
+        const orderItems = [];
+
+        // Menus
+        selectedMenus.forEach((menu) => {
+          // Check if there are extras selected
+          if (selectedExtras.length > 0) {
+            selectedExtras.forEach(extra => {
+              orderItems.push({
+                bookingid: bookingId,
+                menuitemid: menu.menuitemid,
+                extrasid: extra.extrasid
+              });
+            });
+          } else {
+            // Menu with no extras
+            orderItems.push({
+              bookingid: bookingId,
+              menuitemid: menu.menuitemid,
+              extrasid: null  
+            });
+          }
+        });
+
+        // console.log("📝 Order items being inserted:", orderItems);
+
+        // Insert order items
+        if (orderItems.length > 0) {
+          const { error: orderItemError } = await supabase
+            .from("orderitem")
+            .insert(orderItems);
+
+          if (orderItemError) {
+            console.error("❌ Failed to insert order items:", orderItemError);
+            alert("Booking created but failed to save order items!");
+          }
+        }
+
         // Step 2: Upload payment proof if file selected
         const fileInput = document.getElementById("paymentProof");
         if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
-          const filePath = `${bookingId}/${Date.now()}_${file.name}`;
+
+          // ✅ sanitize filename
+          const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const filePath = `${bookingId}/${Date.now()}_${safeFileName}`;
 
           const { error: uploadError } = await supabase.storage
             .from("payment-proofs")
@@ -254,11 +296,12 @@
           }
         }
 
-        //Alert and redirect to customerhomepage
+        // Alert and redirect to customerhomepage
         alert("✅ Booking submitted successfully!");
         window.location.href = "../customerhomepage.html";
       });
     </script>
+
 
 
 
