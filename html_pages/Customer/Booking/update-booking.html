@@ -235,10 +235,17 @@
       eventtime: document.getElementById("eventTime").value,
       guestcount: parseInt(document.getElementById("guests").value),
       location: document.getElementById("address").value,
-      totalcost: parseFloat(document.getElementById("newtotalcost").textContent),
-      depositpaid: parseFloat(document.getElementById("newdepositpaid").textContent),
       status: "Pending"
     };
+
+    // Only update totalcost/depositpaid if new values were calculated
+    const newTotal = document.getElementById("newtotalcost").textContent;
+    const newDeposit = document.getElementById("newdepositpaid").textContent;
+
+    if (newTotal !== "-" && newDeposit !== "-") {
+      updatedData.totalcost = parseFloat(newTotal);
+      updatedData.depositpaid = parseFloat(newDeposit);
+    }
 
     const { data, error } = await supabase
       .from("booking")
