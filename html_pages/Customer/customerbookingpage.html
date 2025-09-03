@@ -101,7 +101,7 @@
       const search = document.getElementById("searchInput").value.toLowerCase();
       if (status) query = query.eq("status", status);
 
-      const { data: bookings, error } = await query.order("eventdate", { ascending: false });
+      const { data: bookings, error } = await query.order("createdat", { ascending: false });
       const container = document.getElementById("bookingList");
       container.innerHTML = "";
       if (error) return container.innerHTML = `<p class="text-red-600">Error loading bookings.</p>`;
