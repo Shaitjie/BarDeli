@@ -71,13 +71,26 @@
         <input type="time" id="eventTime" class="w-full p-3 rounded border border-gray-300">
       </label>
       <label class="block">
-        <span class="font-bold text-gray-700">Number of Guests</span>
-        <input type="number" id="guests" min="1" class="w-full p-3 rounded border border-gray-300">
-      </label>
-      <label class="block">
         <span class="font-bold text-gray-700">Event Location</span>
         <input type="text" id="address" class="w-full p-3 rounded border border-gray-300">
       </label>
+      <label class="block">
+        <span class="font-bold text-gray-700">Number of Guests</span>
+        <input type="number" id="guests" min="1" class="w-full p-3 rounded border border-gray-300">
+      </label>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block font-bold text-gray-700">Current Total Cost: R<span id="currenttotalcost">-</span></label>
+        <label class="block font-bold text-gray-700">Current Deposit Cost: R<span id="currentdepositpaid">-</span></label>
+      </div>
+
+      <div>
+        <label class="block font-bold text-gray-700">New Total Cost: R<span id="newtotalcost">-</span></label>
+        <label class="font-bold text-gray-700">New Deposit Cost: R<span id="newdepositpaid">-</span></label>
+      </div>
+      
     </div>
 
     <!-- Action Buttons -->
@@ -130,6 +143,9 @@
     window.location.href = "../customerbookingpage.html";
   });
 
+  let menuPrice = 0;
+  let extrasPrice = 0;
+
   // Load existing booking data
   async function loadBooking(bookingId){
     const { data: booking, error } = await supabase
@@ -147,12 +163,68 @@
     document.getElementById("eventTime").value = booking.eventtime;
     document.getElementById("guests").value = booking.guestcount;
     document.getElementById("address").value = booking.location;
+    document.getElementById("currenttotalcost").textContent = booking.totalcost;
+    document.getElementById("currentdepositpaid").textContent = booking.depositpaid;
+
+    // fetch prices for menuitemid and extrasid from orderitem
+    await loadOrderItems(bookingId);
+  }
+
+  async function loadOrderItems(bookingId) {
+    const { data: orderitems, error } = await supabase
+      .from("orderitem")
+      .select("menuitemid, extrasid")
+      .eq("bookingid", bookingId);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (orderitems && orderitems.length > 0) {
+      const menuitemid = orderitems[0].menuitemid;
+      const extrasid = orderitems[0].extrasid;
+
+      // get menu price
+      if (menuitemid) {
+        const { data: menu, error: menuError } = await supabase
+          .from("menuitem")
+          .select("price")
+          .eq("menuitemid", menuitemid)
+          .single();
+        if (!menuError) menuPrice = menu.price;
+      }
+
+      // get extras price
+      if (extrasid) {
+        const { data: extra, error: extrasError } = await supabase
+          .from("extras")
+          .select("price")
+          .eq("extrasid", extrasid)
+          .single();
+        if (!extrasError) extrasPrice = extra.price;
+      }
+    }
+  }
+
+  // Calculate new costs
+  function calculateNewCosts() {
+    const guests = parseInt(document.getElementById("guests").value) || 0;
+    const newTotal = (guests * menuPrice) + (guests * extrasPrice);
+    const newDeposit = newTotal * 0.5;
+
+    document.getElementById("newtotalcost").textContent = newTotal;
+    document.getElementById("newdepositpaid").textContent = newDeposit;
   }
 
   // Example: get booking ID from URL query
   const urlParams = new URLSearchParams(window.location.search);
   const bookingId = urlParams.get("id");
   if(bookingId) loadBooking(bookingId);
+
+  // Update cost live when guest input changes
+  document.getElementById("guests").addEventListener("input", calculateNewCosts);
+
 
   // Submit updated booking
   document.getElementById("updateBookingForm").addEventListener("submit", async (e) => {
@@ -163,6 +235,8 @@
       eventtime: document.getElementById("eventTime").value,
       guestcount: parseInt(document.getElementById("guests").value),
       location: document.getElementById("address").value,
+      totalcost: parseFloat(document.getElementById("newtotalcost").textContent),
+      depositpaid: parseFloat(document.getElementById("newdepositpaid").textContent),
       status: "Pending"
     };
 
