@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.24.0/dist/supabase.min.js"></script>
   <script type="module" src="./Create-booking.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,9 +13,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
     integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-
-<body>
 
   <style>
     /* Toast animation */
@@ -31,9 +27,9 @@
     }
   </style>
 
-  </head>
+</head>
 
-  <body class="font-inter bg-gray-50">
+<body class="font-inter bg-gray-50">
 
 
     <!-- Toast Notification -->
@@ -95,6 +91,7 @@
 
       <form id="bookingForm" class="space-y-6">
 
+        
         <!-- Step 1: Event Details & Guest Info -->
         <div class="step">
           <h2 class="text-xl font-bold mb-4">Event Details & Guest Info</h2>
@@ -113,6 +110,8 @@
             </select>
             <input type="number" id="guests" min="1" placeholder="Number of Guests"
               class="w-full p-3 rounded border border-gray-300">
+            
+            <!-- ✅ Address Input with Google Places -->
             <input type="text" id="address" placeholder="Event Location"
               class="w-full p-3 rounded border border-gray-300">
           </div>
@@ -121,6 +120,36 @@
               class="px-6 py-3 bg-orange-600 text-white font-bold rounded hover:bg-orange-500">Next</button>
           </div>
         </div>
+
+        <!-- Google Places API -->
+        <script
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8ejcAGMuCtZ2lkyhw6l8G0lJ54d_WzXI&libraries=places&region=ZA&language=en&callback=initAutocomplete"
+          async defer>
+        </script>
+
+        <script>
+        function initAutocomplete() {
+          const input = document.getElementById("address");
+
+          const autocomplete = new google.maps.places.Autocomplete(input, {
+            types: ["address"],               // Only addresses
+            componentRestrictions: { country: "za" } // South Africa only
+          });
+
+          autocomplete.setFields(["address_components", "formatted_address"]);
+
+          autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+            if (!place.address_components) return;
+            input.value = place.formatted_address;
+          });
+        }
+        </script>
+
+        <!-- Tailwind-safe CSS for Google suggestions -->
+        <style>
+        .pac-container { z-index: 10000 !important; }
+        </style>
 
         <!-- Step 2: Menu Selection -->
         <div class="step hidden">
@@ -453,7 +482,7 @@
       });
 
     </script>
-
+   
   </body>
 
 </html>

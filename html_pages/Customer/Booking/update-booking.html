@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
-    integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
@@ -18,17 +17,20 @@
   <style>
     #toast { opacity: 0; transition: opacity 0.5s ease-in-out; pointer-events: none; }
     #toast.show { opacity: 1; }
+    .pac-container { z-index: 10000 !important; } /* Google autocomplete dropdown */
   </style>
 </head>
 <body class="font-inter bg-gray-50">
 
+<!-- ✅ Toast -->
 <div id="toast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center">
   <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
   </svg>
-  <span id="toastMessage">Item saved to cart!</span>
+  <span id="toastMessage">Booking updated!</span>
 </div>
 
+<!-- Sidebar -->
 <nav class="fixed top-0 left-0 h-full w-56 bg-orange-600 flex flex-col justify-between py-6">
   <div>
     <div class="flex justify-center mb-6">
@@ -56,11 +58,11 @@
   </div>
 </nav>
 
+<!-- Main -->
 <main class="ml-56 p-8 max-w-4xl">
   <h1 class="text-3xl font-extrabold text-orange-600 mb-8">Update Booking</h1>
 
   <form id="updateBookingForm" class="space-y-6">
-
     <div class="space-y-4">
       <label class="block">
         <span class="font-bold text-gray-700">Event Date</span>
@@ -76,7 +78,7 @@
       </label>
       <label class="block">
         <span class="font-bold text-gray-700">Event Location</span>
-        <input type="text" id="address" class="w-full p-3 rounded border border-gray-300">
+        <input type="text" id="address" class="w-full p-3 rounded border border-gray-300" placeholder="Event location">
       </label>
     </div>
 
@@ -93,7 +95,7 @@
   </form>
 </main>
 
-<!-- Confirmation Modal for Cancel -->
+<!-- Confirmation Modal -->
 <div id="confirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
   <div class="bg-white rounded-lg p-6 max-w-sm w-full text-center">
     <h2 class="text-xl font-bold mb-4">Leave Without Saving?</h2>
@@ -105,16 +107,19 @@
   </div>
 </div>
 
+<!-- Supabase + Form Logic -->
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
   const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
+  const supabaseKey = 'YOUR_SUPABASE_KEY';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   const cancelBtn = document.getElementById("cancelBtn");
   const confirmModal = document.getElementById("confirmModal");
   const modalCancel = document.getElementById("modalCancel");
   const modalConfirm = document.getElementById("modalConfirm");
+  const toast = document.getElementById("toast");
+  const toastMsg = document.getElementById("toastMessage");
 
   cancelBtn.addEventListener("click", () => {
     confirmModal.classList.remove("hidden");
@@ -130,7 +135,7 @@
     window.location.href = "../customerbookingpage.html";
   });
 
-  // Load existing booking data
+  // Load booking
   async function loadBooking(bookingId){
     const { data: booking, error } = await supabase
       .from("booking")
@@ -138,10 +143,7 @@
       .eq("bookingid", bookingId)
       .single();
 
-    if(error){
-      console.error(error);
-      return;
-    }
+    if(error){ console.error(error); return; }
 
     document.getElementById("eventDate").value = booking.eventdate;
     document.getElementById("eventTime").value = booking.eventtime;
@@ -149,12 +151,11 @@
     document.getElementById("address").value = booking.location;
   }
 
-  // Example: get booking ID from URL query
   const urlParams = new URLSearchParams(window.location.search);
   const bookingId = urlParams.get("id");
   if(bookingId) loadBooking(bookingId);
 
-  // Submit updated booking
+  // Update booking
   document.getElementById("updateBookingForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -166,19 +167,45 @@
       status: "Pending"
     };
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("booking")
       .update(updatedData)
       .eq("bookingid", bookingId);
 
     if(error){
       console.error(error);
-      alert("Update failed!");
+      toastMsg.textContent = "Update failed!";
+      toast.classList.remove("bg-green-500");
+      toast.classList.add("bg-red-500");
     } else {
-      alert("Booking updated successfully!");
-      window.location.href = "../customerbookingpage.html";
+      toastMsg.textContent = "Booking updated successfully!";
+      toast.classList.remove("bg-red-500");
+      toast.classList.add("bg-green-500");
+      setTimeout(() => window.location.href = "../customerbookingpage.html", 1500);
     }
+
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2000);
   });
 </script>
+
+<!-- Google Places API -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8ejcAGMuCtZ2lkyhw6l8G0lJ54d_WzXI&libraries=places"></script>
+<script>
+  function initAutocomplete() {
+    const input = document.getElementById("address");
+    const options = { componentRestrictions: { country: "za" }, fields: ["formatted_address"], types: ["geocode"] };
+    const autocomplete = new google.maps.places.Autocomplete(input, options);
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if(place.formatted_address){
+        input.value = place.formatted_address;
+      }
+    });
+  }
+  window.onload = initAutocomplete;
+</script>
+
 </body>
 </html>
