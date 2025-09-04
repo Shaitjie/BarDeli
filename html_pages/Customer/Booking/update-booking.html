@@ -72,10 +72,7 @@
         <span class="font-bold text-gray-700">Event Time</span>
         <input type="time" id="eventTime" class="w-full p-3 rounded border border-gray-300">
       </label>
-      <label class="block">
-        <span class="font-bold text-gray-700">Event Location</span>
-        <input type="text" id="address" class="w-full p-3 rounded border border-gray-300">
-      </label>
+      
       <label class="block">
         <span class="font-bold text-gray-700">Number of Guests</span>
         <input type="number" id="guests" min="1" class="w-full p-3 rounded border border-gray-300">
@@ -261,22 +258,24 @@
   });
 </script>
 
-<!-- Google Places API -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8ejcAGMuCtZ2lkyhw6l8G0lJ54d_WzXI&libraries=places"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8ejcAGMuCtZ2lkyhw6l8G0lJ54d_WzXI&libraries=places&callback=initAutocomplete" async defer></script>
 <script>
   function initAutocomplete() {
     const input = document.getElementById("address");
-    const options = { componentRestrictions: { country: "za" }, fields: ["formatted_address"], types: ["geocode"] };
+    const options = {
+      componentRestrictions: { country: "za" },
+      fields: ["formatted_address"],
+      types: ["geocode"]
+    };
     const autocomplete = new google.maps.places.Autocomplete(input, options);
 
     autocomplete.addListener("place_changed", () => {
       const place = autocomplete.getPlace();
-      if(place.formatted_address){
+      if (place.formatted_address) {
         input.value = place.formatted_address;
       }
     });
   }
-  window.onload = initAutocomplete;
 </script>
 
 </body>
