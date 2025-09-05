@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>Admin Profile - BarDeli</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script src="https://cdn.tailwindcss.com"></script>
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+   <script>
+       tailwind.config = {
+           theme: {
+               extend: {
+                   colors: {
+                       'bardeli-orange': '#ff6b35',
+                       'bardeli-dark': '#e55a2b',
+                       'bardeli-light': '#ff8f66'
+                   }
+               }
+           }
+       }
+   </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+   <!-- Header -->
+   <div class="bg-white shadow-sm border-b border-gray-200">
+       <div class="max-w-4xl mx-auto px-4 py-4">
+           <div class="flex items-center">
+               <a href="admin-dashboard.html" class="text-bardeli-orange hover:text-bardeli-dark mr-4">
+                   ← Back to Dashboard
+               </a>
+               <h1 class="text-2xl font-bold text-gray-900">My Profile</h1>
+           </div>
+       </div>
+   </div>
+
+   <div class="max-w-4xl mx-auto px-4 py-8">
+       <!-- Profile Card -->
+       <div class="bg-white rounded-lg shadow-md overflow-hidden">
+           <!-- Profile Header -->
+           <div class="bg-gradient-to-r from-bardeli-orange to-bardeli-dark px-6 py-8">
+               <div class="flex items-center">
+                   <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center">
+                       <span class="text-2xl font-bold text-bardeli-orange" id="profileInitials">--</span>
+                   </div>
+                   <div class="ml-6 text-white">
+                       <h2 class="text-2xl font-bold" id="profileName">Loading...</h2>
+                       <p class="text-bardeli-light" id="profilePosition">Loading...</p>
+                       <p class="text-sm opacity-90" id="memberSince">Member since: Loading...</p>
+                   </div>
+               </div>
+           </div>
+
+           <!-- Profile Content -->
+           <div class="p-6">
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <!-- Contact Information -->
+                   <div>
+                       <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+                       <div class="space-y-3">
+                           <div>
+                               <label class="block text-sm font-medium text-gray-500">Email</label>
+                               <p class="text-gray-900" id="profileEmail">Loading...</p>
+                           </div>
+                           <div>
+                               <label class="block text-sm font-medium text-gray-500">Phone</label>
+                               <p class="text-gray-900" id="profilePhone">Loading...</p>
+                           </div>
+                       </div>
+                   </div>
+
+                   <!-- Work Information -->
+                   <div>
+                       <h3 class="text-lg font-semibold text-gray-900 mb-4">Work Information</h3>
+                       <div class="space-y-3">
+                           <div>
+                               <label class="block text-sm font-medium text-gray-500">Role</label>
+                               <p class="text-gray-900" id="profileRole">Loading...</p>
+                           </div>
+                           <div>
+                               <label class="block text-sm font-medium text-gray-500">Status</label>
+                               <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800" id="profileStatus">
+                                   Active
+                               </span>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+
+               <!-- Actions -->
+               <div class="mt-8 pt-6 border-t border-gray-200">
+                   <button id="editProfileBtn" class="bg-bardeli-orange text-white px-6 py-2 rounded-md hover:bg-bardeli-dark transition-colors">
+                       Update Profile
+                   </button>
+               </div>
+           </div>
+       </div>
+   </div>
+
+   <!-- Edit Profile Modal -->
+   <div id="profileModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+       <div class="flex items-center justify-center min-h-screen px-4">
+           <div class="fixed inset-0 bg-black opacity-30"></div>
+           <div class="relative bg-white rounded-lg max-w-md w-full">
+               <div class="px-6 py-4 border-b border-gray-200">
+                   <h3 class="text-lg font-medium text-gray-900">Update Profile</h3>
+               </div>
+               
+               <form id="profileForm" class="px-6 py-4 space-y-4">
+                   <input type="hidden" id="adminId">
+                   
+                   <div class="grid grid-cols-2 gap-4">
+                       <div>
+                           <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                           <input type="text" id="firstName" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-bardeli-orange focus:border-bardeli-orange">
+                       </div>
+                       <div>
+                           <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                           <input type="text" id="lastName" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-bardeli-orange focus:border-bardeli-orange">
+                       </div>
+                   </div>
+                   
+                   <div>
+                       <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                       <input type="email" id="email" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-bardeli-orange focus:border-bardeli-orange">
+                   </div>
+                   
+                   <div>
+                       <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                       <input type="tel" id="phone" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-bardeli-orange focus:border-bardeli-orange">
+                   </div>
+                   
+                   <div>
+                       <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                       <input type="text" id="position" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-bardeli-orange focus:border-bardeli-orange">
+                   </div>
+               </form>
+               
+               <div class="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                   <button id="cancelBtn" class="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50">
+                       Cancel
+                   </button>
+                   <button id="saveBtn" class="px-4 py-2 bg-bardeli-orange text-white rounded-md hover:bg-bardeli-dark">
+                       Save Changes
+                   </button>
+               </div>
+           </div>
+       </div>
+   </div>
+
+   <script>
+       const { createClient } = supabase;
+       const supabaseClient = createClient(
+           'https://kaqngazbkvhxsuxlgbvf.supabase.co', 
+           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthcW5nYXpia3ZoeHN1eGxnYnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMjcxMjYsImV4cCI6MjA3MTYwMzEyNn0.gesfwcDoHeyCnc6CbThmnlPQZ1QeAoNNsMGBExhcTEs'
+       );
+
+       let currentAdmin = null;
+
+       // DOM Elements
+       const editProfileBtn = document.getElementById('editProfileBtn');
+       const profileModal = document.getElementById('profileModal');
+       const profileForm = document.getElementById('profileForm');
+       const cancelBtn = document.getElementById('cancelBtn');
+       const saveBtn = document.getElementById('saveBtn');
+
+       // Event Listeners
+       editProfileBtn.addEventListener('click', openModal);
+       cancelBtn.addEventListener('click', closeModal);
+       saveBtn.addEventListener('click', saveProfile);
+       profileModal.addEventListener('click', (e) => {
+           if (e.target === profileModal) closeModal();
+       });
+
+       window.addEventListener('load', loadAdminProfile);
+
+       async function loadAdminProfile() {
+           try {
+               const { data, error } = await supabaseClient
+                   .from('staff')
+                   .select('*')
+                   .eq('role', 'admin')
+                   .single();
+
+               if (error || !data) {
+                   showError('Admin profile not found');
+                   return;
+               }
+
+               currentAdmin = data;
+               displayProfile(data);
+           } catch (error) {
+               console.error('Error loading profile:', error);
+               showError('Failed to load profile');
+           }
+       }
+
+       function displayProfile(admin) {
+           const fullName = `${admin.first_name} ${admin.last_name}`;
+           const initials = `${admin.first_name.charAt(0)}${admin.last_name.charAt(0)}`;
+           const hireDate = new Date(admin.hire_date).toLocaleDateString();
+
+           document.getElementById('profileInitials').textContent = initials;
+           document.getElementById('profileName').textContent = fullName;
+           document.getElementById('profilePosition').textContent = admin.position;
+           document.getElementById('memberSince').textContent = `Member since: ${hireDate}`;
+           document.getElementById('profileEmail').textContent = admin.email;
+           document.getElementById('profilePhone').textContent = admin.phone;
+           document.getElementById('profileRole').textContent = admin.role.charAt(0).toUpperCase() + admin.role.slice(1);
+           
+           const statusElement = document.getElementById('profileStatus');
+           if (admin.is_active) {
+               statusElement.className = 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800';
+               statusElement.textContent = 'Active';
+           } else {
+               statusElement.className = 'inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800';
+               statusElement.textContent = 'Inactive';
+           }
+       }
+
+       function openModal() {
+           if (!currentAdmin) return;
+           
+           document.getElementById('adminId').value = currentAdmin.id;
+           document.getElementById('firstName').value = currentAdmin.first_name;
+           document.getElementById('lastName').value = currentAdmin.last_name;
+           document.getElementById('email').value = currentAdmin.email;
+           document.getElementById('phone').value = currentAdmin.phone;
+           document.getElementById('position').value = currentAdmin.position;
+           
+           profileModal.classList.remove('hidden');
+       }
+
+       function closeModal() {
+           profileModal.classList.add('hidden');
+       }
+
+       async function saveProfile() {
+           const adminId = document.getElementById('adminId').value;
+           
+           const updatedData = {
+               first_name: document.getElementById('firstName').value,
+               last_name: document.getElementById('lastName').value,
+               email: document.getElementById('email').value,
+               phone: document.getElementById('phone').value,
+               position: document.getElementById('position').value,
+           };
+
+           try {
+               const { error } = await supabaseClient
+                   .from('staff')
+                   .update(updatedData)
+                   .eq('id', adminId);
+
+               if (error) throw error;
+
+               closeModal();
+               loadAdminProfile();
+               showSuccess('Profile updated successfully!');
+           } catch (error) {
+               console.error('Error updating profile:', error);
+               showError('Failed to update profile');
+           }
+       }
+
+       function showSuccess(message) {
+           const notification = document.createElement('div');
+           notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-md shadow-lg z-50';
+           notification.textContent = message;
+           document.body.appendChild(notification);
+           setTimeout(() => notification.remove(), 3000);
+       }
+
+       function showError(message) {
+           const notification = document.createElement('div');
+           notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-md shadow-lg z-50';
+           notification.textContent = message;
+           document.body.appendChild(notification);
+           setTimeout(() => notification.remove(), 5000);
+       }
+   </script>
+</body>
+</html>
