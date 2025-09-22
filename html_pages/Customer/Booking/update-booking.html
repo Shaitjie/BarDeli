@@ -145,6 +145,9 @@
     window.location.href = "../customerbookingpage.html";
   });
 
+  let menuPrice = 0;
+  let extrasPrice = 0;
+
   // Load existing booking data
   async function loadBooking(bookingId){
     const { data: booking, error } = await supabase
