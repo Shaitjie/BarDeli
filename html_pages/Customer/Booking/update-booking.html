@@ -221,6 +221,9 @@
   const bookingId = urlParams.get("id");
   if(bookingId) loadBooking(bookingId);
 
+  // Update cost live when guest input changes
+  document.getElementById("guests").addEventListener("input", calculateNewCosts);
+
   // Submit updated booking
   document.getElementById("updateBookingForm").addEventListener("submit", async (e) => {
     e.preventDefault();
