@@ -1,80 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>BarDeli Catering & Consulting</title>
-    <!-- Fixed: Changed to relative path without leading slash -->
-    <link rel="stylesheet" href="css_pages/style.css">
-    <link rel="stylesheet" href="src/output.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <!-- Hamburger Menu & Sidebar -->
-    <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+<body class="bg-[#fff8f0] text-gray-800 leading-relaxed font-sans">
 
-    <div class="sidebar" id="sidebar">
-        <!-- Fixed: Using proper relative paths for GitHub Pages -->
-        <button onclick="window.location.href='./html_pages/Customer/login.html'">Login</button>
-        <button onclick="window.location.href='./html_pages/Customer/signup.html'">Sign Up</button>
+    <!-- Hamburger Menu & Sidebar -->
+    <div class="absolute top-6 left-5 text-2xl cursor-pointer text-white z-[1001] bg-[#d35400] rounded px-2"
+        onclick="toggleSidebar()">☰</div>
+
+    <div id="sidebar"
+        class="fixed top-0 left-[-300px] w-[280px] h-full bg-white shadow-lg transition-all duration-300 p-6 z-[1000] pt-24">
+        <button onclick="window.location.href='login.html'"
+            class="w-full py-2 mb-4 bg-[#d35400] text-white rounded hover:bg-[#e67e22]">Login</button>
+        <button onclick="window.location.href='signup.html'"
+            class="w-full py-2 mb-4 bg-[#d35400] text-white rounded hover:bg-[#e67e22]">Sign Up</button>
     </div>
 
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div id="overlay" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 hidden z-[999]"
+        onclick="toggleSidebar()"></div>
 
     <!-- Main Page Content -->
-    <header>
+    <header class="bg-[#d35400] text-white py-5 text-center tracking-wider font-bold text-4xl relative">
         BarDeli Catering & Consulting
     </header>
 
-    <section class="hero">
-        <h1>Delicious Moments, Perfectly Crafted</h1>
-        <p>Your one-stop catering solution for corporate events, weddings, birthdays, and more in Gauteng.</p>
-        <button class="btn-primary" onclick="toggleSidebar()">Book Now</button>
+    <section class="hero bg-[url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1470&q=80')] 
+                  bg-cover bg-center h-[450px] flex flex-col justify-center items-center text-white 
+                  shadow-black/50 shadow-sm rounded-md mb-10 text-center px-4">
+        <h1 class="text-5xl mb-2 drop-shadow-md font-bold">Delicious Moments, Perfectly Crafted</h1>
+        <p class="text-lg mb-5 max-w-xl drop-shadow-md">
+            Your one-stop catering solution for corporate events, weddings, birthdays, and more in Gauteng.
+        </p>
+        <button onclick="toggleSidebar()"
+            class="bg-[#e67e22] hover:bg-[#d35400] text-white py-3 px-7 text-lg rounded-full transition">
+            Book Now
+        </button>
     </section>
 
-    <section id="about" class="container">
-        <h2>About BarDeli</h2>
-        <p>Founded in 2019, BarDeli is dedicated to providing exceptional catering services that bring your events to
+    <section id="about" class="w-[90%] max-w-[1100px] mx-auto py-5 text-center mb-12">
+        <h2 class="mb-5 text-[#d35400] text-2xl font-bold">About BarDeli</h2>
+        <p class="max-w-2xl mx-auto text-lg text-gray-700">
+            Founded in 2019, BarDeli is dedicated to providing exceptional catering services that bring your events to
             life.
             We specialize in corporate functions but cater for weddings, funerals, and private parties. We offer full
             service
             including furniture, décor, flowers, mobile bars, staffing, tents, and sound equipment — everything you need
-            for
-            an unforgettable event.</p>
+            for an unforgettable event.
+        </p>
     </section>
 
-    <section id="services" class="container">
-        <h2>Our Services</h2>
-        <div class="services-grid">
-            <div class="service">
-                <h3>Corporate Catering</h3>
-                <p>Professional and timely catering for business meetings, conferences, and corporate events.</p>
+    <section id="services" class="w-[90%] max-w-[1100px] mx-auto py-5 mb-12">
+        <h2 class="text-center text-[#d35400] text-2xl font-bold mb-8">Our Services</h2>
+        <div class="flex flex-wrap gap-8 justify-center">
+            <div
+                class="bg-white rounded-lg shadow-md hover:shadow-xl transition transform hover:-translate-y-1 p-6 text-center max-w-xs flex-1">
+                <h3 class="text-[#d35400] mb-3 font-semibold">Corporate Catering</h3>
+                <p class="text-gray-600">Professional and timely catering for business meetings, conferences, and
+                    corporate events.</p>
             </div>
-            <div class="service">
-                <h3>Event Planning & Décor</h3>
-                <p>Complete event styling including furniture, floral arrangements, and ambiance setting.</p>
+            <div
+                class="bg-white rounded-lg shadow-md hover:shadow-xl transition transform hover:-translate-y-1 p-6 text-center max-w-xs flex-1">
+                <h3 class="text-[#d35400] mb-3 font-semibold">Event Planning & Décor</h3>
+                <p class="text-gray-600">Complete event styling including furniture, floral arrangements, and ambiance
+                    setting.</p>
             </div>
-            <div class="service">
-                <h3>Mobile Bars & Staffing</h3>
-                <p>Experienced bartenders, wait staff, and hostess services to keep your guests happy.</p>
+            <div
+                class="bg-white rounded-lg shadow-md hover:shadow-xl transition transform hover:-translate-y-1 p-6 text-center max-w-xs flex-1">
+                <h3 class="text-[#d35400] mb-3 font-semibold">Mobile Bars & Staffing</h3>
+                <p class="text-gray-600">Experienced bartenders, wait staff, and hostess services to keep your guests
+                    happy.</p>
             </div>
-            <div class="service">
-                <h3>Equipment Rental</h3>
-                <p>Tents, sound systems, and all the gear you need for a seamless celebration.</p>
+            <div
+                class="bg-white rounded-lg shadow-md hover:shadow-xl transition transform hover:-translate-y-1 p-6 text-center max-w-xs flex-1">
+                <h3 class="text-[#d35400] mb-3 font-semibold">Equipment Rental</h3>
+                <p class="text-gray-600">Tents, sound systems, and all the gear you need for a seamless celebration.</p>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="container">
-        <h2>Get In Touch</h2>
-        <p>Ready to plan your next event? Contact us today!</p>
-        <p>Email: <a href="mailto:info@bardeli.co.za">info@bardeli.co.za</a> | Phone: <a href="tel:+27111234567">+27 11
-                123
-                4567</a></p>
-        <a href="mailto:info@bardeli.co.za">Book Your Event</a>
+    <section id="contact"
+        class="bg-[#d35400] text-white py-10 px-5 text-center rounded-md w-[90%] max-w-[1100px] mx-auto">
+        <h2 class="mb-5 text-2xl font-bold">Get In Touch</h2>
+        <p class="mb-3 text-lg">Ready to plan your next event? Contact us today!</p>
+        <p class="mb-5 text-lg">
+            Email: <a href="mailto:info@bardeli.co.za" class="underline">info@bardeli.co.za</a> |
+            Phone: <a href="tel:+27111234567" class="underline">+27 11 123 4567</a>
+        </p>
+        <a href="mailto:info@bardeli.co.za"
+            class="bg-white text-[#d35400] px-7 py-3 rounded-full font-bold inline-block transition hover:bg-[#f39c12] hover:text-white">
+            Book Your Event
+        </a>
     </section>
 
-    <footer>
+    <footer class="mt-12 text-center text-sm text-gray-500 pb-4">
         &copy; 2025 BarDeli Catering & Consulting. All Rights Reserved.
     </footer>
 
@@ -83,10 +107,18 @@
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+            if (sidebar.classList.contains('left-[-300px]')) {
+                sidebar.classList.remove('left-[-300px]');
+                sidebar.classList.add('left-0');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('left-[-300px]');
+                sidebar.classList.remove('left-0');
+                overlay.classList.add('hidden');
+            }
         }
     </script>
 
 </body>
+
 </html>
