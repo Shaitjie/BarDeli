@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports - BarDeli Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bardeli-orange': '#ff6b35',
+                        'bardeli-dark': '#e55a2b',
+                        'bardeli-light': '#ff8f66'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .header-bg {
+            background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+        }
+        .payment-fully-paid { background-color: #dcfce7; }
+        .payment-partially-paid { background-color: #fef3c7; }
+        .payment-unpaid { background-color: #fee2e2; }
+
+        .highcharts-color-0 { fill: #F59E0B !important; stroke: #F59E0B !important; }
+    .highcharts-color-1 { fill: #3B82F6 !important; stroke: #3B82F6 !important; }
+    .highcharts-color-2 { fill: #EF4444 !important; stroke: #EF4444 !important; }
+    .highcharts-color-3 { fill: #10B981 !important; stroke: #10B981 !important; }
+    .highcharts-color-4 { fill: #8B5CF6 !important; stroke: #8B5CF6 !important; }
+    .highcharts-color-5 { fill: #6B7280 !important; stroke: #6B7280 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <div class="header-bg shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="admin-dashboard.html" class="text-white hover:text-bardeli-light">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </a>
+                    <h1 class="text-2xl font-bold text-white">Reports</h1>
+                </div>
+                <button onclick="window.location.href='index.html'" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Business Reports</h2>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Current Month Revenue 💰</h3>
+                <div class="text-2xl font-bold text-bardeli-orange" id="current-month-revenue">Loading...</div>
+                <div class="text-sm text-gray-600" id="revenue-growth">Growth: --</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Upcoming Events 📅</h3>
+                <div class="text-2xl font-bold text-bardeli-orange" id="upcoming-events">Loading...</div>
+                <div class="text-sm text-gray-600">Next 30 days</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Top Menu Item 🍽️</h3>
+                <div class="text-lg font-bold text-bardeli-orange" id="top-menu-item">Loading...</div>
+                <div class="text-sm text-gray-600" id="top-item-orders">-- orders</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Busiest Staff 👥</h3>
+                <div class="text-lg font-bold text-bardeli-orange" id="busiest-staff">Loading...</div>
+                <div class="text-sm text-gray-600" id="staff-assignments">-- assignments</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Monthly Revenue Trend (2025)</h3>
+                <div id="revenue-chart" style="height: 300px;"></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Booking Status Distribution</h3>
+                <div id="bookings-chart" style="height: 300px;"></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Most Popular Menu Items</h3>
+                <div id="menu-chart" style="height: 300px;"></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Staff Workload Distribution</h3>
+                <div id="staff-chart" style="height: 300px;"></div>
+            </div>
+        </div>
+
+        <!-- Payment Summary Report Section -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Payment Summary Report</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Report Period</label>
+                    <select id="paymentPeriod" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="">Select Period</option>
+                        <option value="current-month">Current Month</option>
+                        <option value="last-month">Last Month</option>
+                        <option value="last-3-months">Last 3 Months</option>
+                        <option value="last-6-months">Last 6 Months</option>
+                        <option value="current-year">Current Year</option>
+                        <option value="custom">Custom Date Range</option>
+                    </select>
+                </div>
+                <div id="customDateInputs" class="hidden md:col-span-2">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                            <input type="date" id="paymentStartDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                            <input type="date" id="paymentEndDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="generatePaymentReport" class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-6 py-2 rounded-lg font-medium">
+                Generate Payment Report
+            </button>
+
+            <!-- Payment Summary Results -->
+            <div id="payment-report-results" class="mt-6 hidden">
+                <h4 class="text-lg font-semibold mb-4">Payment Summary Report</h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Guests</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Cost</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paid Amount</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">% Paid</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payment-summary-table">
+                            <tr>
+                                <td colspan="8" class="px-4 py-8 text-center text-gray-500">Select a period and click Generate Payment Report</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate Custom Report Section -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Generate Custom Report</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Report Type</label>
+                    <select id="reportType" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="revenue">Revenue Report</option>
+                        <option value="bookings">Bookings Report</option>
+                        <option value="menu">Menu Items Report</option>
+                        <option value="staff">Staff Performance Report</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="date" id="startDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="date" id="endDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+            </div>
+            <button id="generateBtn" class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-6 py-2 rounded-lg font-medium">
+                Generate Report
+            </button>
+
+            <!-- Custom Report Results -->
+            <div id="custom-report-results" class="mt-6 hidden">
+                <h4 class="text-lg font-semibold mb-4">Custom Report Results</h4>
+                <div id="custom-report-chart" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Supabase with updated credentials
+        const supabase = window.supabase.createClient(
+            'https://fawlfsukrqrucrrxrjvq.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
+        );
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboardData();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Payment period selection
+            document.getElementById('paymentPeriod').addEventListener('change', function() {
+                const customInputs = document.getElementById('customDateInputs');
+                if (this.value === 'custom') {
+                    customInputs.classList.remove('hidden');
+                } else {
+                    customInputs.classList.add('hidden');
+                }
+            });
+
+            // Payment report generation
+            document.getElementById('generatePaymentReport').addEventListener('click', function() {
+                generatePaymentReport();
+            });
+
+            // Custom report generation
+            document.getElementById('generateBtn').addEventListener('click', function() {
+                generateCustomReport();
+            });
+        }
+
+        async function generatePaymentReport() {
+            const period = document.getElementById('paymentPeriod').value;
+            
+            if (!period) {
+                alert('Please select a report period');
+                return;
+            }
+
+            let startDate, endDate;
+            const today = new Date();
+            
+            switch (period) {
+                case 'current-month':
+                    startDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+                    endDate = today.toISOString().split('T')[0];
+                    break;
+                case 'last-month':
+                    startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1).toISOString().split('T')[0];
+                    endDate = new Date(today.getFullYear(), today.getMonth(), 0).toISOString().split('T')[0];
+                    break;
+                case 'last-3-months':
+                    startDate = new Date(today.getFullYear(), today.getMonth() - 3, 1).toISOString().split('T')[0];
+                    endDate = today.toISOString().split('T')[0];
+                    break;
+                case 'last-6-months':
+                    startDate = new Date(today.getFullYear(), today.getMonth() - 6, 1).toISOString().split('T')[0];
+                    endDate = today.toISOString().split('T')[0];
+                    break;
+                case 'current-year':
+                    startDate = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0];
+                    endDate = today.toISOString().split('T')[0];
+                    break;
+                case 'custom':
+                    startDate = document.getElementById('paymentStartDate').value;
+                    endDate = document.getElementById('paymentEndDate').value;
+                    if (!startDate || !endDate) {
+                        alert('Please select both start and end dates for custom period');
+                        return;
+                    }
+                    break;
+            }
+
+            document.getElementById('payment-report-results').classList.remove('hidden');
+            await loadPaymentSummary(startDate, endDate);
+        }
+
+        async function loadPaymentSummary(startDate = null, endDate = null) {
+    try {
+        document.getElementById('payment-summary-table').innerHTML = 
+            '<tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">Loading payment data...</td></tr>';
+        
+        console.log('Loading payment summary with dates:', startDate, endDate);
+        
+        // Use the manual approach directly since it's more reliable
+        await loadPaymentSummaryManual(startDate, endDate);
+        
+    } catch (error) {
+        console.error('Error in loadPaymentSummary:', error);
+        document.getElementById('payment-summary-table').innerHTML = 
+            `<tr><td colspan="7" class="px-4 py-8 text-center text-red-500">Error: ${error.message}</td></tr>`;
+    }
+}
+
+async function loadPaymentSummaryManual(startDate, endDate) {
+    try {
+        console.log('Using manual approach for payment summary...');
+        
+        // Step 1: Build the booking query with date filters
+        let bookingQuery = supabase
+            .from('booking')
+            .select('bookingid, userid, eventdate, guestcount, totalcost, depositpaid, status')
+            .neq('status', 'cancelled')
+            .order('eventdate', { ascending: false });
+        
+        if (startDate) bookingQuery = bookingQuery.gte('eventdate', startDate);
+        if (endDate) bookingQuery = bookingQuery.lte('eventdate', endDate);
+        
+        const { data: bookings, error: bookingError } = await bookingQuery;
+        
+        console.log('Bookings fetched:', bookings?.length);
+        
+        if (bookingError) {
+            console.error('Booking fetch error:', bookingError);
+            throw bookingError;
+        }
+        
+        if (!bookings || bookings.length === 0) {
+            document.getElementById('payment-summary-table').innerHTML = 
+                '<tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">No bookings found for selected period</td></tr>';
+            return;
+        }
+        
+        // Step 2: Get unique user IDs from bookings
+        const userIds = [...new Set(bookings.map(booking => booking.userid))].filter(id => id != null);
+        console.log('Unique user IDs found:', userIds);
+        
+        // Step 3: Fetch only the customers we need
+        let customerData = [];
+        if (userIds.length > 0) {
+            const { data: customers, error: customerError } = await supabase
+                .from('customerAccounts')
+                .select('userid, fullname, email, phone')
+                .in('userid', userIds);
+            
+            if (customerError) {
+                console.error('Customer fetch error:', customerError);
+                // Continue without customer data rather than failing
+            } else {
+                customerData = customers || [];
+            }
+        }
+        
+        console.log('Customers fetched:', customerData.length);
+        
+        // Step 4: Create customer lookup map
+        const customerMap = {};
+        customerData.forEach(customer => {
+            customerMap[customer.userid] = customer;
+        });
+        
+        console.log('Customer map created with', Object.keys(customerMap).length, 'entries');
+        
+        // Step 5: Generate table rows
+        const tableBody = document.getElementById('payment-summary-table');
+        
+        const rows = bookings.map(booking => {
+            const customer = customerMap[booking.userid];
+            
+            // Better fallback for missing customer data
+            const fullName = customer?.fullname || `Customer ID: ${booking.userid}`;
+            const eventDate = booking.eventdate || '';
+            const customerContact = customer?.phone || customer?.email || 'No Contact Info';
+            const numberOfGuests = booking.guestcount || 0;
+            const totalCost = parseFloat(booking.totalcost || 0);
+            const paidAmount = parseFloat(booking.depositpaid || 0);
+            
+            const percentage = totalCost > 0 ? Math.round((paidAmount / totalCost) * 100) : 0;
+            
+            let paymentClass = '';
+            if (percentage >= 100) paymentClass = 'payment-fully-paid';
+            else if (percentage > 0) paymentClass = 'payment-partially-paid';
+            else paymentClass = 'payment-unpaid';
+            
+            const formattedDate = eventDate ? new Date(eventDate).toLocaleDateString() : 'No date';
+            
+            console.log(`Processing booking ${booking.bookingid}: UserID ${booking.userid} -> Customer: ${fullName}`);
+            
+            return `
+                <tr class="${paymentClass}">
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${fullName}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${formattedDate}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${customerContact}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${numberOfGuests}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">R ${totalCost.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">R ${paidAmount.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-sm font-medium">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            percentage >= 100 ? 'bg-green-100 text-green-800' : 
+                            percentage > 0 ? 'bg-yellow-100 text-yellow-800' : 
+                            'bg-red-100 text-red-800'
+                        }">
+                            ${percentage}%
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tableBody.innerHTML = rows.join('');
+        
+        console.log('Payment report table updated with', rows.length, 'rows');
+        
+    } catch (error) {
+        console.error('Manual approach error:', error);
+        document.getElementById('payment-summary-table').innerHTML = 
+            `<tr><td colspan="7" class="px-4 py-8 text-center text-red-500">Error loading payment data: ${error.message}</td></tr>`;
+    }
+}
+
+// Manual fallback approach with better debugging
+async function loadPaymentSummaryManual(startDate, endDate) {
+    try {
+        console.log('Using manual approach for payment summary...');
+        
+        // Step 1: Get bookings with detailed logging
+        let bookingQuery = supabase
+            .from('booking')
+            .select('bookingid, userid, eventdate, guestcount, totalcost, depositpaid, status')
+            .neq('status', 'cancelled')
+            .order('eventdate', { ascending: false });
+        
+        if (startDate) bookingQuery = bookingQuery.gte('eventdate', startDate);
+        if (endDate) bookingQuery = bookingQuery.lte('eventdate', endDate);
+        
+        const { data: bookings, error: bookingError } = await bookingQuery;
+        
+        console.log('Bookings fetched:', bookings?.length);
+        console.log('Sample booking:', bookings?.[0]);
+        
+        if (bookingError) {
+            console.error('Booking fetch error:', bookingError);
+            throw bookingError;
+        }
+        
+        if (!bookings || bookings.length === 0) {
+            document.getElementById('payment-summary-table').innerHTML = 
+                '<tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">No bookings found for selected period</td></tr>';
+            return;
+        }
+        
+        // Step 2: Get all customer data
+        const { data: allCustomers, error: customerError } = await supabase
+            .from('customerAccounts')
+            .select('userid, fullname, email, phone');
+        
+        console.log('Customers fetched:', allCustomers?.length);
+        console.log('Sample customer:', allCustomers?.[0]);
+        
+        if (customerError) {
+            console.error('Customer fetch error:', customerError);
+        }
+        
+        // Step 3: Create customer lookup map
+        const customerMap = {};
+        if (allCustomers) {
+            allCustomers.forEach(customer => {
+                customerMap[customer.userid] = customer;
+            });
+        }
+        
+        console.log('Customer map created with', Object.keys(customerMap).length, 'entries');
+        
+        // Step 4: Match bookings with customers and display
+        const tableBody = document.getElementById('payment-summary-table');
+        
+        const rows = bookings.map(booking => {
+            const customer = customerMap[booking.userid];
+            const fullName = customer?.fullname || `No Customer Found (UserID: ${booking.userid})`;
+            
+            console.log(`Booking ${booking.bookingid}: UserID ${booking.userid} -> Customer:`, customer);
+            
+            const eventDate = booking.eventdate || '';
+            const customerContact = customer?.phone || customer?.email || 'No Contact';
+            const numberOfGuests = booking.guestcount || 0;
+            const totalCost = parseFloat(booking.totalcost || 0);
+            const paidAmount = parseFloat(booking.depositpaid || 0);
+            
+            const percentage = totalCost > 0 ? Math.round((paidAmount / totalCost) * 100) : 0;
+            
+            let paymentClass = '';
+            if (percentage >= 100) paymentClass = 'payment-fully-paid';
+            else if (percentage > 0) paymentClass = 'payment-partially-paid';
+            else paymentClass = 'payment-unpaid';
+            
+            const formattedDate = eventDate ? new Date(eventDate).toLocaleDateString() : 'No date';
+            
+            return `
+                <tr class="${paymentClass}">
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${fullName}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${formattedDate}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${customerContact}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${numberOfGuests}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">R ${totalCost.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">R ${paidAmount.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-sm font-medium">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            percentage >= 100 ? 'bg-green-100 text-green-800' : 
+                            percentage > 0 ? 'bg-yellow-100 text-yellow-800' : 
+                            'bg-red-100 text-red-800'
+                        }">
+                            ${percentage}%
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tableBody.innerHTML = rows.join('');
+        
+    } catch (error) {
+        console.error('Manual approach error:', error);
+        document.getElementById('payment-summary-table').innerHTML = 
+            `<tr><td colspan="7" class="px-4 py-8 text-center text-red-500">Error: ${error.message}</td></tr>`;
+    }
+}
+
+function displayPaymentResults(paymentData) {
+    const tableBody = document.getElementById('payment-summary-table');
+    
+    if (paymentData && paymentData.length > 0) {
+        const rows = paymentData.map(row => {
+            const fullName = row.fullname || `No Name (UserID: ${row.userid})`;
+            const eventDate = row.eventdate ? new Date(row.eventdate).toLocaleDateString() : 'No date';
+            const customerContact = row.phone || row.email || 'No Contact';
+            const numberOfGuests = row.guestcount || 0;
+            const totalCost = parseFloat(row.totalcost || 0);
+            const paidAmount = parseFloat(row.depositpaid || 0);
+            const percentage = row.payment_percentage || 0;
+            
+            let paymentClass = '';
+            if (percentage >= 100) paymentClass = 'payment-fully-paid';
+            else if (percentage > 0) paymentClass = 'payment-partially-paid';
+            else paymentClass = 'payment-unpaid';
+            
+            return `
+                <tr class="${paymentClass}">
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${fullName}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${eventDate}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${customerContact}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${numberOfGuests}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">R ${totalCost.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">R ${paidAmount.toLocaleString()}</td>
+                    <td class="px-4 py-3 text-sm font-medium">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            percentage >= 100 ? 'bg-green-100 text-green-800' : 
+                            percentage > 0 ? 'bg-yellow-100 text-yellow-800' : 
+                            'bg-red-100 text-red-800'
+                        }">
+                            ${percentage}%
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tableBody.innerHTML = rows.join('');
+    } else {
+        tableBody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">No payment data found</td></tr>';
+    }
+}
+
+        async function loadDashboardData() {
+            try {
+                await loadCurrentMonthStats();
+                await loadUpcomingBookings();
+                await loadPopularMenuItems();
+                await loadStaffPerformance();
+                
+                // Create main charts
+                await createRevenueChart();
+                await createBookingStatusChart();
+                await createPopularMenuChart();
+                await createStaffWorkloadChart();
+
+            } catch (error) {
+                console.error('Database error:', error);
+                showError('Failed to load report data. Please check your connection.');
+            }
+        }
+
+        async function loadCurrentMonthStats() {
+            const currentMonth = new Date().getMonth() + 1;
+            const currentYear = new Date().getFullYear();
+            
+            // Get current month bookings
+            const { data: currentBookings, error } = await supabase
+                .from('booking')
+                .select('totalcost, depositpaid')
+                .gte('bookingdate', `${currentYear}-${currentMonth.toString().padStart(2, '0')}-01`)
+                .lt('bookingdate', `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-01`);
+            
+            if (currentBookings) {
+                const totalRevenue = currentBookings.reduce((sum, booking) => 
+                    sum + (parseFloat(booking.totalcost) || 0), 0);
+                
+                document.getElementById('current-month-revenue').textContent = 
+                    `R ${totalRevenue.toLocaleString()}`;
+                
+                // Get previous month for growth calculation
+                const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+                const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+                
+                const { data: prevBookings } = await supabase
+                    .from('booking')
+                    .select('totalcost')
+                    .gte('bookingdate', `${prevYear}-${prevMonth.toString().padStart(2, '0')}-01`)
+                    .lt('bookingdate', `${prevYear}-${currentMonth.toString().padStart(2, '0')}-01`);
+                
+                if (prevBookings && prevBookings.length > 0) {
+                    const prevRevenue = prevBookings.reduce((sum, booking) => 
+                        sum + (parseFloat(booking.totalcost) || 0), 0);
+                    
+                    const growth = prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue * 100) : 0;
+                    const growthText = growth > 0 ? `+${growth.toFixed(1)}%` : `${growth.toFixed(1)}%`;
+                    const growthColor = growth > 0 ? 'text-green-600' : growth < 0 ? 'text-red-600' : 'text-gray-600';
+                    document.getElementById('revenue-growth').innerHTML = 
+                        `<span class="${growthColor}">Growth: ${growthText}</span>`;
+                }
+            }
+        }
+
+        async function loadUpcomingBookings() {
+            const today = new Date().toISOString().split('T')[0];
+            const thirtyDaysLater = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            
+            const { data: upcomingBookings } = await supabase
+                .from('booking')
+                .select('*')
+                .gte('eventdate', today)
+                .lte('eventdate', thirtyDaysLater)
+                .neq('status', 'cancelled');
+            
+            document.getElementById('upcoming-events').textContent = upcomingBookings?.length || 0;
+        }
+
+        async function loadPopularMenuItems() {
+            // Get menu items from orderitem table
+            const { data: menuOrders } = await supabase
+                .from('orderitem')
+                .select(`
+                    menuitemid,
+                    menuitem:menuitemid (itemname)
+                `)
+                .not('menuitemid', 'is', null);
+            
+            // Get extras from booking_extras table
+            const { data: extraOrders } = await supabase
+                .from('booking_extras')
+                .select(`
+                    extrasid,
+                    quantity,
+                    extras:extrasid (itemname)
+                `);
+            
+            const itemCounts = {};
+            
+            // Count menu items (each orderitem = 1 order)
+            if (menuOrders && menuOrders.length > 0) {
+                menuOrders.forEach(item => {
+                    const itemName = item.menuitem?.itemname || 'Unknown Menu Item';
+                    itemCounts[itemName] = (itemCounts[itemName] || 0) + 1;
+                });
+            }
+            
+            // Count extras with quantities
+            if (extraOrders && extraOrders.length > 0) {
+                extraOrders.forEach(item => {
+                    const itemName = (item.extras?.itemname || 'Unknown Extra') + ' (Extra)';
+                    itemCounts[itemName] = (itemCounts[itemName] || 0) + (item.quantity || 0);
+                });
+            }
+            
+            // Find most popular item
+            if (Object.keys(itemCounts).length > 0) {
+                const topItem = Object.entries(itemCounts)
+                    .sort((a, b) => b[1] - a[1])[0];
+                
+                if (topItem) {
+                    document.getElementById('top-menu-item').textContent = topItem[0];
+                    document.getElementById('top-item-orders').textContent = `${topItem[1]} orders`;
+                }
+            } else {
+                // Handle case when no data is found
+                document.getElementById('top-menu-item').textContent = 'No data';
+                document.getElementById('top-item-orders').textContent = '0 orders';
+            }
+        }
+
+        async function loadStaffPerformance() {
+            const { data: staffAssignments } = await supabase
+                .from('staffassignment')
+                .select(`
+                    staffid,
+                    staff:staffid (fullname)
+                `);
+            
+            if (staffAssignments && staffAssignments.length > 0) {
+                // Count assignments per staff
+                const staffCounts = {};
+                staffAssignments.forEach(assignment => {
+                    const staffName = assignment.staff?.fullname || 'Unknown';
+                    staffCounts[staffName] = (staffCounts[staffName] || 0) + 1;
+                });
+                
+                // Find busiest staff
+                const busiestStaff = Object.entries(staffCounts)
+                    .sort((a, b) => b[1] - a[1])[0];
+                
+                if (busiestStaff) {
+                    document.getElementById('busiest-staff').textContent = busiestStaff[0];
+                    document.getElementById('staff-assignments').textContent = `${busiestStaff[1]} assignments`;
+                }
+            }
+        }
+
+        async function createRevenueChart() {
+            const { data: bookings } = await supabase
+                .from('booking')
+                .select('totalcost, bookingdate')
+                .order('bookingdate');
+            
+            if (bookings && bookings.length > 0) {
+                // Group by month
+                const monthlyRevenue = {};
+                bookings.forEach(booking => {
+                    if (booking.bookingdate && booking.totalcost) {
+                        const date = new Date(booking.bookingdate);
+                        const monthKey = date.toLocaleDateString('en', { month: 'short', year: 'numeric' });
+                        monthlyRevenue[monthKey] = (monthlyRevenue[monthKey] || 0) + parseFloat(booking.totalcost);
+                    }
+                });
+                
+                const months = Object.keys(monthlyRevenue);
+                const revenues = Object.values(monthlyRevenue);
+                
+                Highcharts.chart('revenue-chart', {
+                    chart: { type: 'line' },
+                    title: { text: 'Monthly Revenue Trend' },
+                    xAxis: { 
+                        categories: months,
+                        title: { text: 'Month' }
+                    },
+                    yAxis: { 
+                        title: { text: 'Revenue (R)' },
+                        labels: {
+                            formatter: function() {
+                                return 'R' + this.value.toLocaleString();
+                            }
+                        }
+                    },
+                    series: [{
+                        name: 'Revenue',
+                        data: revenues,
+                        color: '#ff6b35',
+                        marker: { radius: 6 }
+                    }],
+                    tooltip: {
+                        formatter: function() {
+                            return '<b>' + this.x + '</b><br/>Revenue: R' + this.y.toLocaleString();
+                        }
+                    }
+                });
+            } else {
+                Highcharts.chart('revenue-chart', {
+                    title: { text: 'No Revenue Data Available' },
+                    series: [{ data: [] }]
+                });
+            }
+        }
+
+       async function createBookingStatusChart() {
+    const { data: bookings } = await supabase
+        .from('booking')
+        .select('status');
+    
+    if (bookings && bookings.length > 0) {
+        const statusCounts = {};
+        bookings.forEach(booking => {
+            const status = booking.status || 'pending';
+            statusCounts[status] = (statusCounts[status] || 0) + 1;
+        });
+        
+        const colors = {
+            'confirmed': '#10B981',      // Green
+            'pending': '#F59E0B',        // Orange
+            'in progress': '#3B82F6',    // Blue  
+            'cancelled': '#EF4444',      // Red
+            'completed': '#8B5CF6',      // Purple
+            'draft': '#6B7280'           // Gray
+        };
+        
+        const chartData = Object.entries(statusCounts).map(([status, count]) => ({
+            name: status.charAt(0).toUpperCase() + status.slice(1),
+            y: count,
+            color: colors[status] || '#94A3B8'
+        }));
+
+        // Extract just the colors in the same order as the data
+        const chartColors = chartData.map(item => item.color);
+
+        Highcharts.chart('bookings-chart', {
+            chart: { type: 'pie' },
+            title: { text: 'Booking Status Distribution' },
+            colors: chartColors,  // Add this line to force the colors
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                name: 'Bookings',
+                data: chartData
+            }],
+            tooltip: {
+                formatter: function() {
+                    return '<b>' + this.point.name + '</b>: ' + this.y + ' bookings (' + Math.round(this.percentage) + '%)';
+                }
+            }
+        });
+    }
+}
+
+        async function createPopularMenuChart() {
+            // Get menu items from orderitem table
+            const { data: menuOrders } = await supabase
+                .from('orderitem')
+                .select(`
+                    menuitemid,
+                    menuitem:menuitemid (itemname)
+                `)
+                .not('menuitemid', 'is', null);
+            
+            // Get extras from booking_extras table
+            const { data: extraOrders } = await supabase
+                .from('booking_extras')
+                .select(`
+                    extrasid,
+                    quantity,
+                    extras:extrasid (itemname)
+                `);
+            
+            const itemCounts = {};
+            
+            // Count menu items (each orderitem = 1 order)
+            if (menuOrders) {
+                menuOrders.forEach(item => {
+                    const itemName = item.menuitem?.itemname || 'Unknown Menu Item';
+                    itemCounts[itemName] = (itemCounts[itemName] || 0) + 1;
+                });
+            }
+            
+            // Count extras with quantities
+            if (extraOrders) {
+                extraOrders.forEach(item => {
+                    const itemName = (item.extras?.itemname || 'Unknown Extra') + ' (Extra)';
+                    itemCounts[itemName] = (itemCounts[itemName] || 0) + (item.quantity || 0);
+                });
+            }
+            
+            if (Object.keys(itemCounts).length > 0) {
+                const sortedItems = Object.entries(itemCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+                
+                const itemNames = sortedItems.map(item => item[0]);
+                const quantities = sortedItems.map(item => item[1]);
+                
+                Highcharts.chart('menu-chart', {
+                    chart: { type: 'column' },
+                    title: { text: 'Top 5 Items by Orders (Menu + Extras)' },
+                    xAxis: { 
+                        categories: itemNames,
+                        title: { text: 'Item' }
+                    },
+                    yAxis: { 
+                        title: { text: 'Quantity Ordered' },
+                        min: 0
+                    },
+                    series: [{
+                        name: 'Orders',
+                        data: quantities,
+                        color: '#ff6b35'
+                    }],
+                    tooltip: {
+                        formatter: function() {
+                            return '<b>' + this.x + '</b><br/>Orders: ' + this.y;
+                        }
+                    }
+                });
+            } else {
+                Highcharts.chart('menu-chart', {
+                    title: { text: 'No Menu Data Available' },
+                    series: [{ data: [] }]
+                });
+            }
+        }
+
+        async function createStaffWorkloadChart() {
+    const { data: staffAssignments } = await supabase
+        .from('staffassignment')
+        .select(`
+            staffid,
+            staff:staffid (fullname)
+        `);
+    
+    if (staffAssignments && staffAssignments.length > 0) {
+        const staffWorkload = {};
+        staffAssignments.forEach(assignment => {
+            const staffName = assignment.staff?.fullname || 'Unknown';
+            staffWorkload[staffName] = (staffWorkload[staffName] || 0) + 1;
+        });
+        
+        const sortedStaff = Object.entries(staffWorkload)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10);
+        
+        const staffNames = sortedStaff.map(item => item[0]);
+        const assignmentCounts = sortedStaff.map(item => item[1]);
+        
+        Highcharts.chart('staff-chart', {
+            chart: { type: 'bar' },
+            title: { text: 'Staff Assignment Distribution (Top 10)' },
+            xAxis: { 
+                categories: staffNames,
+                title: { text: 'Staff Member' }
+            },
+            yAxis: { 
+                title: { text: 'Number of Assignments' },
+                min: 0,
+                allowDecimals: false,  // Add this line
+                tickInterval: 1        // Add this line
+            },
+            series: [{
+                name: 'Assignments',
+                data: assignmentCounts,
+                color: '#ff6b35'
+            }],
+            tooltip: {
+                formatter: function() {
+                    return '<b>' + this.x + '</b><br/>Assignments: ' + this.y;
+                }
+            }
+        });
+    } else {
+        Highcharts.chart('staff-chart', {
+            title: { text: 'No Staff Assignment Data Available' },
+            series: [{ data: [] }]
+        });
+    }
+}
+        // Custom report generation
+        async function generateCustomReport() {
+            const reportType = document.getElementById('reportType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            document.getElementById('custom-report-results').classList.remove('hidden');
+            
+            try {
+                if (reportType === 'revenue') {
+                    await generateRevenueReport(startDate, endDate);
+                } else if (reportType === 'bookings') {
+                    await generateBookingsReport(startDate, endDate);
+                } else if (reportType === 'menu') {
+                    await generateMenuReport(startDate, endDate);
+                } else if (reportType === 'staff') {
+                    await generateStaffReport(startDate, endDate);
+                }
+            } catch (error) {
+                console.error('Report generation error:', error);
+                showError('Failed to generate report. Please try again.');
+            }
+        }
+
+        async function generateRevenueReport(startDate, endDate) {
+    let query = supabase.from('booking').select('totalcost, depositpaid, bookingdate, eventdate');
+    if (startDate) query = query.gte('bookingdate', startDate);
+    if (endDate) query = query.lte('bookingdate', endDate);
+    
+    const { data: bookings } = await query;
+    
+    if (bookings && bookings.length > 0) {
+        const monthlyData = {};
+        bookings.forEach(booking => {
+            if (booking.bookingdate) {
+                const date = new Date(booking.bookingdate);
+                const monthKey = date.toLocaleDateString('en', { month: 'short', year: 'numeric' });
+                if (!monthlyData[monthKey]) {
+                    monthlyData[monthKey] = { revenue: 0, deposits: 0, bookings: 0 };
+                }
+                monthlyData[monthKey].revenue += parseFloat(booking.totalcost || 0);
+                monthlyData[monthKey].deposits += parseFloat(booking.depositpaid || 0);
+                monthlyData[monthKey].bookings += 1;
+            }
+        });
+        
+        // Create table
+        const tableHTML = `
+            <div class="mb-6">
+                <h5 class="text-md font-semibold mb-3">Revenue Report Table</h5>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="border border-gray-300 px-4 py-2 text-left">Month</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left">Bookings</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left">Total Revenue</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left">Deposits Collected</th>
+                                <th class="border border-gray-300 px-4 py-2 text-left">Outstanding</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(monthlyData).map(([month, data]) => `
+                                <tr>
+                                    <td class="border border-gray-300 px-4 py-2">${month}</td>
+                                    <td class="border border-gray-300 px-4 py-2">${data.bookings}</td>
+                                    <td class="border border-gray-300 px-4 py-2">R ${data.revenue.toLocaleString()}</td>
+                                    <td class="border border-gray-300 px-4 py-2">R ${data.deposits.toLocaleString()}</td>
+                                    <td class="border border-gray-300 px-4 py-2">R ${(data.revenue - data.deposits).toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        
+        // Create chart
+        const months = Object.keys(monthlyData);
+        const revenues = Object.values(monthlyData).map(data => data.revenue);
+        const deposits = Object.values(monthlyData).map(data => data.deposits);
+        
+        document.getElementById('custom-report-chart').innerHTML = tableHTML + '<div id="revenue-chart-container" style="height: 400px;"></div>';
+        
+        Highcharts.chart('revenue-chart-container', {
+            chart: { type: 'column' },
+            title: { text: 'Revenue Report Chart' },
+            xAxis: { categories: months },
+            yAxis: { 
+                title: { text: 'Amount (R)' },
+                labels: {
+                    formatter: function() {
+                        return 'R' + this.value.toLocaleString();
+                    }
+                }
+            },
+            series: [
+                {
+                    name: 'Total Revenue',
+                    data: revenues,
+                    color: '#ff6b35'
+                },
+                {
+                    name: 'Deposits Collected',
+                    data: deposits,
+                    color: '#34d399'
+                }
+            ]
+        });
+    }
+}
+
+async function generateBookingsReport(startDate, endDate) {
+    try {
+        // Manual approach for bookings report
+        let query = supabase.from('booking').select('*');
+        if (startDate) query = query.gte('eventdate', startDate);
+        if (endDate) query = query.lte('eventdate', endDate);
+        
+        const { data: bookings } = await query;
+        const { data: customers } = await supabase.from('customerAccounts').select('userid, fullname');
+        
+        const customerMap = {};
+        if (customers) {
+            customers.forEach(customer => {
+                customerMap[customer.userid] = customer;
+            });
+        }
+        
+        if (bookings && bookings.length > 0) {
+            const tableHTML = `
+                <div class="mb-6">
+                    <h5 class="text-md font-semibold mb-3">Bookings Report Table</h5>
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto border-collapse border border-gray-300">
+                            <thead>
+                                <tr class="bg-gray-50">
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Customer</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Event Date</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Guests</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Status</th>
+                                    <th class="border border-gray-300 px-4 py-2 text-left">Total Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${bookings.map(booking => {
+                                    const customer = customerMap[booking.userid];
+                                    return `
+                                        <tr>
+                                            <td class="border border-gray-300 px-4 py-2">${customer?.fullname || `Unknown (ID: ${booking.userid})`}</td>
+                                            <td class="border border-gray-300 px-4 py-2">${booking.eventdate ? new Date(booking.eventdate).toLocaleDateString() : 'No date'}</td>
+                                            <td class="border border-gray-300 px-4 py-2">${booking.guestcount || 0}</td>
+                                            <td class="border border-gray-300 px-4 py-2">
+                                                <span class="px-2 py-1 rounded text-xs ${
+                                                    booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                    booking.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                                                    'bg-gray-100 text-gray-800'
+                                                }">
+                                                    ${booking.status || 'pending'}
+                                                </span>
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-2">R ${(booking.totalcost || 0).toLocaleString()}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('custom-report-chart').innerHTML = tableHTML;
+        }
+    } catch (error) {
+        console.error('Bookings report error:', error);
+    }
+}
+
+        async function generateMenuReport(startDate, endDate) {
+            // Get menu items with their prices
+            const { data: menuOrders } = await supabase
+                .from('orderitem')
+                .select(`
+                    menuitemid,
+                    booking:bookingid (bookingdate),
+                    menuitem:menuitemid (itemname, price)
+                `)
+                .not('menuitemid', 'is', null);
+            
+            // Get extras with their prices and quantities
+            const { data: extraOrders } = await supabase
+                .from('booking_extras')
+                .select(`
+                    extrasid,
+                    quantity,
+                    booking:bookingid (bookingdate),
+                    extras:extrasid (itemname, price)
+                `);
+            
+            const itemRevenue = {};
+            
+            // Calculate menu item revenue (assuming 1 quantity per orderitem)
+            if (menuOrders) {
+                menuOrders.forEach(item => {
+                    // Apply date filter if provided
+                    if (startDate || endDate) {
+                        const bookingDate = item.booking?.bookingdate;
+                        if (bookingDate) {
+                            if (startDate && bookingDate < startDate) return;
+                            if (endDate && bookingDate > endDate) return;
+                        }
+                    }
+                    
+                    const itemName = item.menuitem?.itemname || 'Unknown Menu Item';
+                    const revenue = parseFloat(item.menuitem?.price || 0);
+                    itemRevenue[itemName] = (itemRevenue[itemName] || 0) + revenue;
+                });
+            }
+            
+            // Calculate extras revenue
+            if (extraOrders) {
+                extraOrders.forEach(item => {
+                    // Apply date filter if provided
+                    if (startDate || endDate) {
+                        const bookingDate = item.booking?.bookingdate;
+                        if (bookingDate) {
+                            if (startDate && bookingDate < startDate) return;
+                            if (endDate && bookingDate > endDate) return;
+                        }
+                    }
+                    
+                    const itemName = (item.extras?.itemname || 'Unknown Extra') + ' (Extra)';
+                    const revenue = parseFloat(item.extras?.price || 0) * (item.quantity || 0);
+                    itemRevenue[itemName] = (itemRevenue[itemName] || 0) + revenue;
+                });
+            }
+            
+            if (Object.keys(itemRevenue).length > 0) {
+                const sortedItems = Object.entries(itemRevenue)
+                    .sort((a, b) => b[1] - a[1]);
+                
+                const itemNames = sortedItems.map(item => item[0]);
+                const revenues = sortedItems.map(item => item[1]);
+                
+                Highcharts.chart('custom-report-chart', {
+                    chart: { type: 'bar' },
+                    title: { text: 'Item Revenue Report (Menu + Extras)' },
+                    xAxis: { categories: itemNames },
+                    yAxis: { 
+                        title: { text: 'Revenue (R)' },
+                        labels: {
+                            formatter: function() {
+                                return 'R' + this.value.toLocaleString();
+                            }
+                        }
+                    },
+                    series: [{
+                        name: 'Revenue',
+                        data: revenues,
+                        color: '#ff6b35'
+                    }]
+                });
+            } else {
+                Highcharts.chart('custom-report-chart', {
+                    title: { text: 'No Menu Data Available' },
+                    series: [{ data: [] }]
+                });
+            }
+        }
+
+        async function generateStaffReport() {
+            const { data: staffData } = await supabase
+                .from('staff')
+                .select('*');
+            
+            const { data: assignments } = await supabase
+                .from('staffassignment')
+                .select('staffid');
+            
+            if (staffData && assignments) {
+                const activeStaff = assignments.length;
+                const totalStaff = staffData.length;
+                const inactiveStaff = totalStaff - activeStaff;
+                
+                const chartData = [
+                    { name: 'Active Staff', y: activeStaff, color: '#ff6b35' },
+                    { name: 'Inactive Staff', y: inactiveStaff, color: '#6b7280' }
+                ];
+                
+                Highcharts.chart('custom-report-chart', {
+                    chart: { type: 'pie' },
+                    title: { text: 'Staff Activity Report' },
+                    series: [{
+                        name: 'Staff',
+                        data: chartData
+                    }]
+                });
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg z-50';
+            errorDiv.textContent = message;
+            document.body.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        // Set default date range (last 6 months)
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const sixMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 6, 1);
+            
+            document.getElementById('startDate').value = sixMonthsAgo.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>
