@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Dashboard</title>
+
+  <script>
+    const user = localStorage.getItem("user");
+    if (!user) {
+      window.location.href = "login.html"; // redirect if not logged in
+    }
+  </script>
+
+  <!--Font Awesome-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!--TailWind CSS CDN-->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+  <!-- Sidebar -->
+  <nav class="fixed top-0 left-0 h-full w-56 bg-orange-600 flex flex-col justify-between py-6">
+    <div>
+      <!-- Logo -->
+      <div class="flex justify-center mb-6">
+        <img src="../../images/BarDeli Logo (White).png" class="h-24 w-auto" alt="Logo">
+      </div>
+      <!-- Navigation Links -->
+      <div class="flex flex-col space-y-2">
+        <a href="customerhomepage.html"
+          class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded bg-orange-800">
+          <i class="fa-regular fa-house"></i> Home
+        </a>
+        <a href="customerbookingpage.html"
+          class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+          <i class="fa-regular fa-calendar"></i> Booking
+        </a>
+        <a href="customernotificationspage.html"
+          class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+          <i class="fa-regular fa-bell"></i> Notifications
+        </a>
+        <a href="customerprofilepage.html"
+          class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+          <i class="fa-regular fa-user"></i> Profile
+        </a>
+      </div>
+    </div>
+    <!-- Logout -->
+    <div class="flex justify-center">
+      <a href="../../index.html"
+        class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  </nav>
+
+  <!--Customer Dashboard-->
+  <main class="ml-56 p-10">
+    <h1 class="text-4xl font-extrabold text-gray-800">
+      Welcome, <span id="customerName" class="text-orange-600">Loading...</span>
+    </h1>
+    <p class="text-gray-600 mt-2">Here’s an overview of your catering bookings</p>
+
+    <!--Summary Blocks-->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+      <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-xl shadow-lg">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold text-white">Total Bookings</h2>
+          <i class="fa-regular fa-calendar text-white text-3xl"></i>
+        </div>
+        <p id="totalBookings" class="text-5xl text-white font-extrabold mt-4">0</p>
+        <p class="text-white text-sm">Events successfully booked</p>
+      </div>
+
+      <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-xl shadow-lg">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold text-white">Last Booking</h2>
+          <i class="fa-regular fa-clock text-white text-3xl"></i>
+        </div>
+        <div class="mt-4 space-y-2 text-white">
+          <p id="lastDate" class="font-semibold">Date: none</p>
+          <p id="lastGuests" class="font-semibold">Number of Guests: none</p>
+          <p id="lastLocation" class="font-semibold">Location: none</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Bookings -->
+    <div class="bg-white rounded-xl mt-10 p-6 shadow-lg">
+      <h2 class="text-2xl text-gray-800 font-bold mb-4 border-b pb-3">Recent Bookings</h2>
+      <div id="Recent-bookings" class="overflow-y-auto max-h-[450px] space-y-4 pr-2">
+        <!-- Bookings Cards will load here -->
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabaseUrl = "https://fawlfsukrqrucrrxrjvq.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8";
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const userData = JSON.parse(localStorage.getItem("user"));
+    document.getElementById("customerName").textContent = userData?.fullname || "Customer";
+
+    // Load bookings
+    async function loadBookings() {
+      if (!userData?.id) return;
+
+      const { data: bookings, error } = await supabase
+        .from("booking")
+        .select("*")
+        .eq("userid", Number(userData.id))
+        .order("eventdate", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching bookings:", error);
+        return;
+      }
+
+      document.getElementById("totalBookings").textContent = bookings?.length || 0;
+
+      const lastBooking = bookings?.[0];
+      document.getElementById("lastDate").textContent = `Date: ${lastBooking?.eventdate || "none"}`;
+      document.getElementById("lastGuests").textContent = `Number of Guests: ${lastBooking?.guestcount || "none"}`;
+      document.getElementById("lastLocation").textContent = `Location: ${lastBooking?.location || "none"}`;
+
+      const recentDiv = document.getElementById("Recent-bookings");
+      recentDiv.innerHTML = "";
+      bookings?.forEach(b => {
+        const card = `
+          <div class="bg-gradient-to-r from-orange-400 to-orange-500 rounded-xl p-5 shadow-md hover:shadow-xl transition relative">
+            <span class="absolute top-3 right-3 bg-orange-700 text-white font-bold px-3 py-1 rounded-lg text-xs">${b.eventtype || 'Event'}</span>
+            <p class="font-bold text-lg text-white mb-2">
+              <i class="fa-regular fa-calendar mr-1"></i> ${b.eventdate || 'TBD'}
+            </p>
+            <div class="grid grid-cols-2 gap-x-6 text-sm text-white">
+              <p><i class="fa-solid fa-users mr-1.5"></i> Guests: ${b.guestcount || 0}</p>
+              <p><i class="fa-solid fa-utensils mr-1.5"></i> Menu: ${b.menu_type || 'Standard'}</p>
+              <p><i class="fa-solid fa-location-dot mr-1.5"></i> ${b.location || 'TBD'}</p>
+              <p><i class="fa-regular fa-clock mr-1.5"></i> ${b.eventtime || 'TBD'}</p>
+            </div>
+          </div>
+        `;
+        recentDiv.insertAdjacentHTML("beforeend", card);
+      });
+    }
+    loadBookings();
+  </script>
+</body>
+
+</html>
