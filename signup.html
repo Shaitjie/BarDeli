@@ -119,12 +119,12 @@
 
                 if (authError) throw authError
 
-                // 2️⃣ Insert user details into your 'users' table
                 const { data, error } = await supabase
                 .from('users')
                 .insert([{
                     auth_user_id: authData.user.id,
-                    fullname: fullname.value,
+                    first_name: fullname.value.split(" ")[0] || "",
+                    last_name: fullname.value.split(" ").slice(1).join(" ") || "",
                     phone: phone.value,
                     role: role.value
                 }])
