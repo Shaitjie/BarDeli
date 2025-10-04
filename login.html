@@ -6,75 +6,91 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Bardeli Login</title>
 	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					colors: {
+						brand: "#FB8C00", // Brand Orange
+					},
+				},
+			},
+		};
+	</script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+		integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body class="font-sans bg-white">
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-white to-orange-100">
+	<!-- Card -->
+	<div class="w-full max-w-md bg-white shadow-2xl rounded-3xl p-10 relative">
 
-	<!-- Navigation -->
-	<nav class="fixed top-0 left-0 w-full bg-[#d35400] flex justify-between items-center h-20 z-50 shadow-md px-5">
-		<div class="flex items-center">
-			<img onclick="window.location.href='index.html'" src="./images/BarDeli Logo (White).png"
-				alt="Company Logo" class="h-20 mr-2 cursor-pointer">
+		<!-- Logo -->
+		<div class="flex justify-center mb-6">
+			<img onclick="window.location.href='index.html'" src="images/BarDeli Logo (Black).png" class="h-28 w-28"
+				alt="BarDeli Logo">
 		</div>
-	</nav>
 
-	<!-- Login Section -->
-	<div class="w-full mt-28 text-center">
-		<div class="w-4/5 h-[740px] bg-[#d35400] inline-block rounded-2xl text-left px-64 py-4">
-			<h1 class="text-[60px] font-black text-center text-white">Login</h1>
+		<!-- Heading -->
+		<h1 class="text-3xl font-extrabold text-center text-gray-800 mb-2">Welcome Back</h1>
+		<p class="text-center text-gray-500 mb-8">Log in to continue with BarDeli Catering</p>
 
-			<div class="login-inputs">
-				<p class="text-left text-[35px] mt-6 font-extrabold text-white">Email:</p>
-				<input type="text" id="email" placeholder="Please enter your email"
-					class="w-full h-[75px] rounded-2xl border border-black text-[35px] text-left px-4 font-semibold">
-
-				<p class="text-left text-[35px] mt-6 font-extrabold text-white">Password:</p>
-				<input type="password" id="password" placeholder="Please enter your password"
-					class="w-full h-[75px] rounded-2xl border border-black text-[35px] text-left px-4 font-semibold">
-
-				<div class="flex items-center gap-2 mt-4">
-					<input type="checkbox" id="password-chkbox" class="w-[18px] h-[30px]">
-					<label for="password-chkbox" class="text-sm font-extrabold text-white">Show Password</label>
-				</div>
-
-				<div class="w-full mt-8">
-					<button id="loginBtn" type="button"
-						class="w-full h-20 text-5xl font-extrabold rounded-2xl text-[#d35400] bg-white border border-transparent transition duration-300 hover:text-white hover:bg-[#d35400] hover:border-white">
-						Login
-					</button>
-				</div>
-
-				<div class="mt-6 inline-flex items-center">
-					<p class="text-white font-extrabold text-2xl">Don't have a profile?</p>
-					<div class="ml-4">
-						<button onclick="window.location.href='signup.html'"
-							class="text-[35px] px-2 py-0.5 ml-4 text-[#d35400] bg-white border-none rounded-2xl font-extrabold mt-2 w-[234px] transition duration-300 hover:bg-[#d35400] hover:text-white hover:border hover:border-white">
-							Sign Up
-						</button>
-					</div>
-				</div>
+		<!-- Form -->
+		<form id="login-form" class="space-y-6">
+			<div>
+				<label class="block text-sm font-medium text-gray-700">Email</label>
+				<input id="email" type="email" required
+					class="mt-1 w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition" />
 			</div>
-		</div>
-	</div>
 
-	<!-- Footer -->
-	<footer
-		class="fixed bottom-0 w-full bg-[#d35400] text-white text-center py-4 h-20 flex justify-center items-center">
-		<p class="text-[32px] font-extrabold">© 2025 Bardeli Catering</p>
-	</footer>
+			<div>
+				<label class="block text-sm font-medium text-gray-700">Password</label>
+				<input id="password" type="password" required
+					class="mt-1 w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition" />
+			</div>
+
+			<!-- Show Password -->
+			<div class="flex items-center justify-between">
+				<label class="inline-flex items-center space-x-2">
+					<input id="show_pw" type="checkbox" class="text-brand focus:ring-brand">
+					<span class="text-sm text-gray-600">Show password</span>
+				</label>
+				<a href="#" class="text-sm text-brand hover:underline">Forgot password?</a>
+			</div>
+
+			<!-- Submit Button -->
+			<button id="loginBtn" type="submit"
+				class="w-full py-3 rounded-xl bg-brand text-white font-semibold shadow-lg hover:bg-orange-700 hover:shadow-xl transition transform hover:-translate-y-0.5">
+				<i class="fa-solid fa-arrow-right-to-bracket"></i> Log In
+			</button>
+
+			<!-- Sign Up Link -->
+			<p class="text-sm text-center mt-6 text-gray-600">
+				Don’t have an account?
+				<a href="signup.html" class="font-semibold text-brand hover:text-orange-700">Sign up</a>
+			</p>
+		</form>
+	</div>
 
 	<!-- Login with Supabase auth -->
 	<script type="module">
 		import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co'
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
+		const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co'
+		const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
 
-        export const supabase = createClient(supabaseUrl, supabaseKey)
+		const supabase = createClient(supabaseUrl, supabaseKey)
 
-		document.getElementById("password-chkbox").addEventListener("click", () => {
-			let x = document.getElementById("password");
-			x.type = x.type === "password" ? "text" : "password";
+		// Toggle password visibility
+		document.getElementById('show_pw').addEventListener('change', (e) => {
+			document.getElementById('password').type = e.target.checked ? 'text' : 'password';
+		});
+
+		// Handle login form submit
+		document.getElementById('login-form').addEventListener('submit', async (event) => {
+			event.preventDefault(); // prevent page reload
+			await login();
 		});
 
 		async function login() {
@@ -104,6 +120,8 @@
 
 				if (userError) throw userError;
 
+				alert("Login Successful!!!")
+
 				// 3️⃣ Store session info in localStorage (optional)
 				localStorage.setItem("user", JSON.stringify({
 					id: userData.id,
@@ -113,6 +131,7 @@
 					role: userData.role
 				}));
 
+				// 4️⃣ Redirect based on role
 				if (userData.role === "Customer") {
 					window.location.href = './html_pages/Customer/customerhomepage.html';
 				} else if (userData.role === "Admin") {
@@ -126,8 +145,6 @@
 				alert('Login failed: ' + err.message);
 			}
 		}
-
-		document.getElementById("loginBtn").addEventListener("click", login);
 	</script>
 
 </body>
