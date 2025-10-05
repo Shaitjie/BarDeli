@@ -111,6 +111,8 @@
 
 				if (authError) throw authError;
 
+				document.getElementById('loginBtn').textContent = 'Loggin In...';
+
 				// 2️⃣ Fetch user info from your users table
 				const { data: userData, error: userError } = await supabase
 					.from('users')
