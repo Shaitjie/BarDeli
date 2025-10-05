@@ -65,7 +65,7 @@
                    </div>
                </div>
                <div class="flex items-center space-x-4">
-                   <span class="text-white text-sm">Welcome, <span id="adminName">Loading...</span></span>
+                   <span class="text-white text-sm">Welcome, <span id="adminName" class="font-semibold text-xl">Loading...</span></span>
                    <button id="logoutBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
                        Logout
                    </button>
@@ -242,10 +242,32 @@
        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8";
        const supabase = createClient(supabaseUrl, supabaseKey);
 
-       const userData = JSON.parse(localStorage.getItem("user"));
+       //Checks if user is signed in
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) window.location.href = "login.html";
 
-       // Update Dashboard Name
-       document.getElementById("adminName").textContent = userData?.fullname || "Admin";
+        //Retrieves signedin user's first and last names
+        async function loadUserProfile() {
+            try {
+                const { data, error } = await supabase
+                    .from("users")
+                    .select("user_id, first_name, last_name")
+                    .eq("auth_user_id", user.id)
+                    .single();
+
+                if (error) throw error;
+
+                const fullName = `${data.first_name} ${data.last_name}`.trim() || "Admin";
+                document.getElementById("adminName").textContent = fullName;
+
+                localStorage.setItem("user", JSON.stringify(data));
+            } catch (err) {
+                console.error("Error loading user profile:", err);
+                document.getElementById("adminName").textContent = "Admin";
+            }
+        }
+
+        await loadUserProfile();
 
        // Logout functionality - redirect to home/landing page
        document.getElementById('logoutBtn').addEventListener('click', function() {
