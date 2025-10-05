@@ -120,13 +120,13 @@
     //Loads booking information (still to be tested when booking table has bookings)
     async function loadBookings() {
       const userData = JSON.parse(localStorage.getItem("user"));
-      if (!userData?.userid) return;
+      if (!userData?.user_id) return;
 
       const { data: bookings, error } = await supabase
         .from("booking")
         .select("*")
-        .eq("userid", userData.userid)
-        .order("eventdate", { ascending: false });
+        .eq("user_id", userData.user_id)
+        .order("event_date", { ascending: false });
 
       if (error) {
         console.error("Error fetching bookings:", error);
@@ -136,22 +136,30 @@
       document.getElementById("totalBookings").textContent = bookings?.length || 0;
 
       const lastBooking = bookings?.[0];
-      document.getElementById("lastDate").textContent = `Date: ${lastBooking?.eventdate || "none"}`;
-      document.getElementById("lastGuests").textContent = `Guests: ${lastBooking?.guestcount || "none"}`;
+      document.getElementById("lastDate").textContent = `Date: ${lastBooking?.event_date || "none"}`;
+      document.getElementById("lastGuests").textContent = `Guests: ${lastBooking?.guest_count || "none"}`;
       document.getElementById("lastLocation").textContent = `Location: ${lastBooking?.location || "none"}`;
 
       const recentDiv = document.getElementById("Recent-bookings");
       recentDiv.innerHTML = "";
       bookings.forEach(b => {
+        const statusColor = {
+          Pending: "bg-yellow-500",
+          Confirmed: "bg-green-600",
+          Cancelled: "bg-red-600"
+        }[b.status] || "bg-gray-500";
+
         recentDiv.insertAdjacentHTML("beforeend", `
           <div class="bg-gradient-to-r from-orange-400 to-orange-500 rounded-xl p-5 shadow-md hover:shadow-xl transition relative">
-            <span class="absolute top-3 right-3 bg-orange-700 text-white font-bold px-3 py-1 rounded-lg text-xs">${b.eventtype || "Event"}</span>
-            <p class="font-bold text-lg text-white mb-2"><i class="fa-regular fa-calendar mr-1"></i> ${b.eventdate || "TBD"}</p>
+            <div class="absolute top-3 right-3 flex gap-2">
+              <span class="bg-orange-700 text-white font-bold px-3 py-1 rounded-lg text-xs">${b.event_type || "Event"}</span>
+              <span class="${statusColor} text-white font-bold px-3 py-1 rounded-lg text-xs">${b.status || "Unknown"}</span>
+            </div>
+            <p class="font-bold text-lg text-white mb-2"><i class="fa-regular fa-calendar mr-1"></i> ${b.event_date || "TBD"}</p>
             <div class="grid grid-cols-2 gap-x-6 text-sm text-white">
-              <p><i class="fa-solid fa-users mr-1.5"></i> Guests: ${b.guestcount || 0}</p>
-              <p><i class="fa-solid fa-utensils mr-1.5"></i> Menu: ${b.menu_type || "Standard"}</p>
+              <p><i class="fa-solid fa-users mr-1.5"></i> Guests: ${b.guest_count || 0}</p>
               <p><i class="fa-solid fa-location-dot mr-1.5"></i> ${b.location || "TBD"}</p>
-              <p><i class="fa-regular fa-clock mr-1.5"></i> ${b.eventtime || "TBD"}</p>
+              <p><i class="fa-regular fa-clock mr-1.5"></i> ${b.event_time || "TBD"}</p>
             </div>
           </div>
         `);
@@ -160,7 +168,9 @@
 
     await loadUserProfile();
     await loadBookings();
-  </script>
+  </script>  </script>
 </body>
 
-</html>
+
+
+</html></html>
