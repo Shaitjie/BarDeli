@@ -56,9 +56,9 @@
         <input id="searchInput" type="text" placeholder="Search bookings..." class="px-4 py-2 rounded-lg border w-64">
         <select id="filterStatus" class="px-4 py-2 rounded-lg border">
           <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="confirmed">Confirmed</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="Pending">Pending</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Cancelled">Cancelled</option>
         </select>
         <button id="searchBtn" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-500">
           <i class="fa-solid fa-search"></i>
@@ -89,38 +89,44 @@
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
     const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydUNCcnJydnFJLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const userData = JSON.parse(localStorage.getItem("user"));
     let bookingToCancel = null;
 
     async function loadBookings() {
-      let query = supabase.from("booking").select("*").eq("userid", Number(userData.id));
+      let query = supabase.from("booking").select("*").eq("user_id", Number(userData.user_id));
       const status = document.getElementById("filterStatus").value;
       const search = document.getElementById("searchInput").value.toLowerCase();
       if (status) query = query.eq("status", status);
 
-      const { data: bookings, error } = await query.order("createdat", { ascending: false });
+      const { data: bookings, error } = await query.order("created_at", { ascending: false });
       const container = document.getElementById("bookingList");
       container.innerHTML = "";
       if (error) return container.innerHTML = `<p class="text-red-600">Error loading bookings.</p>`;
 
       bookings
-        .filter(b => !search || b.eventtype?.toLowerCase().includes(search) || b.location?.toLowerCase().includes(search))
+        .filter(b =>
+          !search ||
+          b.event_type?.toLowerCase().includes(search) ||
+          b.location?.toLowerCase().includes(search) ||
+          b.event_name?.toLowerCase().includes(search)
+        )
         .forEach(b => {
           const card = document.createElement("div");
           card.className = "bg-white border rounded-xl shadow p-6 flex flex-col md:flex-row justify-between items-center cursor-pointer hover:bg-gray-50";
           card.innerHTML = `
             <div>
-              <h2 class="font-bold text-xl text-orange-600">${b.eventtype || "Event"} - ${b.status}</h2>
-              <p><i class="fa-regular fa-calendar mr-1"></i> ${b.eventdate || "TBD"} at ${b.eventtime || "TBD"}</p>
-              <p><i class="fa-solid fa-users mr-1"></i> ${b.guestcount || 0} guests</p>
+              <p class="font-semibold text-gray-700">${b.event_name || ""}</p>
+              <h2 class="font-bold text-xl text-orange-600">${b.event_type || "Event"} - ${b.status}</h2>
+              <p><i class="fa-regular fa-calendar mr-1"></i> ${b.event_date || "TBD"} at ${b.event_time || "TBD"}</p>
+              <p><i class="fa-solid fa-users mr-1"></i> ${b.guest_count || 0} guests</p>
               <p><i class="fa-solid fa-location-dot mr-1"></i> ${b.location || "TBD"}</p>
             </div>
             <div class="flex gap-2 mt-4 md:mt-0">
-              <a href="./Booking/update-booking.html?id=${b.bookingid}" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500">Edit</a>
-              <button data-id="${b.bookingid}" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500 cancelBtn">Cancel</button>
+              <a href="./Booking/update-booking.html?id=${b.booking_id}" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500">Edit</a>
+              <button data-id="${b.booking_id}" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500 cancelBtn">Cancel</button>
             </div>
           `;
           container.appendChild(card);
@@ -143,8 +149,8 @@
       if (!bookingToCancel) return;
       const { error } = await supabase
         .from("booking")
-        .update({ status: "cancelled" })
-        .eq("bookingid", bookingToCancel); // updated PK column
+        .update({ status: "Cancelled" })
+        .eq("booking_id", bookingToCancel); 
       if (error) alert("Error cancelling booking");
       bookingToCancel = null;
       document.getElementById("cancelModal").classList.add("hidden");
