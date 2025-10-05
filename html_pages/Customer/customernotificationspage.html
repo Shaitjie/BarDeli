@@ -71,6 +71,7 @@
 
 			// Get logged-in user from localStorage
 			const userData = JSON.parse(localStorage.getItem("user"));
+			const fullName = userData ? userData.fullName || "Customer" : "Customer";
 			if (!userData) {
 				window.location.href = "/login.html"; // redirect if not logged in
 			}
@@ -94,17 +95,17 @@
 					let { data: notifications, error } = await supabase
 						.from("notification")
 						.select(`
-              notificationid,
+              notification_id,
               title,
               message,
-              booking:bookingid (
-                bookingid,
-                eventdate,
+              booking:booking_id (
+                booking_id,
+                event_date,
                 status
               )
             `)
-						.eq("userid", Number(userData.id))
-						.order("notificationid", { ascending: false });
+						.eq("user_id", Number(userData.user_id))
+						.order("notification_id", { ascending: false });
 
 					if (error) {
 						console.error("Error fetching notifications:", error);
@@ -114,6 +115,11 @@
 					const notList = document.getElementById("not-list");
 					notList.innerHTML = "";
 
+					if (notifications.length === 0) {
+        				notList.innerHTML = `<p class="text-gray-600">No notifications yet. We’ll keep you posted!</p>`;
+        				return;
+                    }
+
 					notifications.forEach(notif => {
 						const status = notif.booking?.status || "Pending";
 						const card = document.createElement("div");
@@ -121,21 +127,21 @@
 							"bg-white rounded-xl shadow hover:shadow-lg transition p-6 border flex flex-col justify-between";
 
 						card.innerHTML = `
-              <div>
-                <div class="flex items-center justify-between mb-3">
-                  <h3 class="text-lg font-semibold text-gray-800">
-                    Booking Number: <span class="text-orange-600">#${notif.booking?.bookingid || "N/A"}</span>
-                  </h3>
-                  <span class="px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(status)}">
-                    ${status}
-                  </span>
-                </div>
-                <p class="text-sm text-gray-600 mb-1"><span class="font-semibold">Date:</span> ${notif.booking?.eventdate || "N/A"}</p>
-                <p class="text-base font-bold text-gray-800 mt-3">${notif.title}</p>
-                <p class="text-sm text-gray-600 mt-1">${notif.message}</p>
-              </div>
-              <p class="mt-4 text-xs text-gray-500">Receipient: <span class="font-medium">${userData.fullname}</span></p>
-            `;
+						<div>
+							<div class="flex items-center justify-between mb-3">
+							<h3 class="text-lg font-semibold text-gray-800">
+								Booking Number: <span class="text-orange-600">#${notif.booking?.booking_id || "N/A"}</span>
+							</h3>
+							<span class="px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(status)}">
+								${status}
+							</span>
+							</div>
+							<p class="text-sm text-gray-600 mb-1"><span class="font-semibold">Date:</span> ${notif.booking?.event_date || "N/A"}</p>
+							<p class="text-base font-bold text-gray-800 mt-3">${notif.title}</p>
+							<p class="text-sm text-gray-600 mt-1">${notif.message}</p>
+						</div>
+						<p class="mt-4 text-xs text-gray-500">Receipient: <span class="font-medium">${fullName}</span></p>
+						`;
 						notList.appendChild(card);
 					});
 				} catch (err) {

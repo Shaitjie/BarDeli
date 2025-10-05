@@ -110,7 +110,7 @@
         const fullName = `${data.first_name} ${data.last_name}`.trim() || "Customer";
         document.getElementById("customerName").textContent = fullName;
 
-        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("user", JSON.stringify({...data,fullName}));
       } catch (err) {
         console.error("Error loading user profile:", err);
         document.getElementById("customerName").textContent = "Customer";
@@ -168,9 +168,6 @@
 
     await loadUserProfile();
     await loadBookings();
-  </script>  </script>
+   </script>
 </body>
-
-
-
-</html></html>
+</html>
