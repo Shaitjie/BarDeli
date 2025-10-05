@@ -5,36 +5,30 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Customer Profile</title>
-	<!-- Font Awesome -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
-		integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
 		crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<!-- Tailwind CSS CDN -->
 	<script src="https://cdn.tailwindcss.com"></script>
-	<!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
 </head>
 
-<body class="bg-gray-100 font-sans text-gray-800">
+<body class="bg-gray-100 font-sans text-gray-900">
 
-	<!-- Sidebar unchanged -->
-	<nav class="fixed top-0 left-0 h-full w-56 bg-orange-600 flex flex-col justify-between py-6">
+	<!-- Sidebar -->
+	<nav class="fixed top-0 left-0 h-full w-56 bg-orange-600 flex flex-col justify-between py-6 shadow-xl">
 		<div>
-			<!-- Logo -->
 			<div class="flex justify-center mb-6">
 				<img src="../../images/BarDeli Logo (White).png" class="h-24 w-auto" alt="Logo">
 			</div>
-			<!-- Navigation Links -->
 			<div class="flex flex-col space-y-2">
 				<a href="customerhomepage.html"
-					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500 transition">
 					<i class="fa-regular fa-house"></i> Home
 				</a>
 				<a href="customerbookingpage.html"
-					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500 transition">
 					<i class="fa-regular fa-calendar"></i> Booking
 				</a>
 				<a href="customernotificationspage.html"
-					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
+					class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500 transition">
 					<i class="fa-regular fa-bell"></i> Notifications
 				</a>
 				<a href="customerprofilepage.html"
@@ -43,7 +37,6 @@
 				</a>
 			</div>
 		</div>
-		<!-- Logout -->
 		<div class="flex justify-center">
 			<a href="../../index.html"
 				class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500">
@@ -52,135 +45,107 @@
 		</div>
 	</nav>
 
-	<!-- Main Content -->
+	<!-- Main -->
 	<main class="ml-56 p-10 min-h-screen">
-		<!-- Header -->
-		<div class="mb-8">
-			<h1 class="text-4xl font-extrabold text-gray-800">Profile</h1>
-			<p class="text-sm font-medium text-gray-500 mt-2">Manage your account information</p>
-		</div>
-		
-		<div class="max-w-3xl  bg-white rounded-2xl shadow-lg p-8">
-			<form class="space-y-8">
-				<!-- Full Name -->
+		<h1 class="text-4xl font-extrabold text-gray-800 mb-8">Profile</h1>
+		<div class="max-w-3xl bg-white rounded-2xl shadow-lg p-8">
+			<form id="profileForm" class="space-y-8">
 				<div>
-					<label for="profile-fullname" class="block font-semibold mb-2 text-gray-700">Full Name</label>
-					<div class="relative">
-						<i class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-orange-600"></i>
-						<input id="profile-fullname" type="text" placeholder="Your full name"
-							class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-gray-800" />
-					</div>
+					<label class="block font-semibold mb-2 text-gray-700">First Name</label>
+					<input id="profile-firstname" type="text"
+						class="w-full border font-medium rounded-lg px-4 py-3 focus:ring-1 focus:ring-orange-500 focus:border-orange-500" />
+				</div>
+				<div>
+					<label class="block font-semibold mb-2 text-gray-700">Last Name</label>
+					<input id="profile-lastname" type="text"
+						class="w-full border font-medium rounded-lg px-4 py-3 focus:ring-1 focus:ring-orange-500 focus:border-orange-500" />
+				</div>
+				<div>
+					<label class="block font-semibold mb-2 text-gray-700">Email</label>
+					<input id="profile-email" type="email"
+						class="w-full border font-medium rounded-lg px-4 py-3 focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
+						disabled />
+				</div>
+				<div>
+					<label class="block font-semibold mb-2 text-gray-700">Phone</label>
+					<input id="profile-phone" type="tel"
+						class="w-full border font-medium rounded-lg px-4 py-3 focus:ring-1 focus:ring-orange-500 focus:border-orange-500" />
 				</div>
 
-				<!-- Email -->
-				<div>
-					<label for="profile-email" class="block font-semibold mb-2 text-gray-700">Email</label>
-					<div class="relative">
-						<i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-orange-600"></i>
-						<input id="profile-email" type="email" placeholder="you@example.com"
-							class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-gray-800" />
-					</div>
-				</div>
+				<p class="font-medium text-gray-700">To update your information, enter the new details in the fields provided, then click the “Save Changes” button.</p>
 
-				<!-- Phone -->
-				<div>
-					<label for="profile-phone" class="block font-semibold mb-2 text-gray-700">Phone</label>
-					<div class="relative">
-						<i class="fa-solid fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-orange-600"></i>
-						<input id="profile-phone" type="tel" placeholder="+27 600 000 000"
-							class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-gray-800" />
-					</div>
-				</div>
-
-				<p class="text-sm text-gray-500">* The placeholder text shows your current information. Edit fields
-					below and click Save to update.</p>
-
-				<div>
-					<button type="submit"
-						class="w-full bg-orange-600 text-white font-bold py-3 rounded-lg hover:bg-orange-700 transition">
-						Save Changes
-					</button>
-				</div>
+				<button type="submit"
+					class="w-full bg-orange-600 text-white font-bold py-3 rounded-lg hover:bg-orange-800 transition">
+					Save Changes
+				</button>
 			</form>
 		</div>
 	</main>
 
-	<!-- JS -->
 	<script type="module">
 		import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-		const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co'
-		const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
+		const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
+		const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
 		const supabase = createClient(supabaseUrl, supabaseKey);
 
-		async function loadUserProfile() {
-			const userData = JSON.parse(localStorage.getItem("user"));
-			if (!userData) {
-				console.error("No user data found in localStorage.");
-				return;
-			}
-
-			const userId = userData.id;
-
-			const { data, error } = await supabase
-				.from("customerAccounts")
-				.select("fullname, email, phone")
-				.eq("userid", parseInt(userId))
-				.single();
-
-			if (error) {
-				console.error("Error fetching user profile:", error);
-				return;
-			}
-
-			document.getElementById("profile-fullname").placeholder = data.fullname || "";
-			document.getElementById("profile-email").placeholder = data.email || "";
-			document.getElementById("profile-phone").placeholder = data.phone || "";
+		// Get authenticated user
+		const { data: { user }, error: userError } = await supabase.auth.getUser();
+		if (userError || !user) {
+			console.error("No user found or not logged in:", userError);
+			window.location.href = "login.html";
 		}
 
-		document.querySelector("form").addEventListener("submit", async (e) => {
+		// Load user profile from 'users' table
+		async function loadUserProfile() {
+			try {
+				const { data, error } = await supabase
+					.from("users")
+					.select("user_id, first_name, last_name, email, phone")
+					.eq("auth_user_id", user.id)
+					.single();
+
+				if (error) throw error;
+
+				document.getElementById("profile-firstname").value = data.first_name || "";
+				document.getElementById("profile-lastname").value = data.last_name || "";
+				document.getElementById("profile-email").value = data.email || user.email;
+				document.getElementById("profile-phone").value = data.phone || "";
+
+				// Save locally in case you need to use it later
+				localStorage.setItem("user", JSON.stringify(data));
+			} catch (err) {
+				console.error("Error loading user profile:", err);
+			}
+		}
+
+		// Update user profile
+		document.getElementById("profileForm").addEventListener("submit", async (e) => {
 			e.preventDefault();
 
-			const userData = JSON.parse(localStorage.getItem("user"));
-			if (!userData) {
-				alert("No user logged in.");
-				return;
-			}
+			const { data: { user } } = await supabase.auth.getUser();
+			if (!user) return alert("User not logged in.");
 
-			const userId = userData.id;
-
-			const fullname = document.getElementById("profile-fullname").value.trim();
-			const email = document.getElementById("profile-email").value.trim();
-			const phone = document.getElementById("profile-phone").value.trim();
-
-			const updates = {};
-			if (fullname) updates.fullname = fullname;
-			if (email) updates.email = email;
-			if (phone) updates.phone = phone;
-
-			if (Object.keys(updates).length === 0) {
-				alert("No changes made.");
-				return;
-			}
+			const updates = {
+				first_name: document.getElementById("profile-firstname").value.trim(),
+				last_name: document.getElementById("profile-lastname").value.trim(),
+				phone: document.getElementById("profile-phone").value.trim()
+			};
 
 			const { error } = await supabase
-				.from("customerAccounts")
+				.from("users")
 				.update(updates)
-				.eq("userid", parseInt(userId));
+				.eq("auth_user_id", user.id);
 
 			if (error) {
 				console.error("Error updating profile:", error);
-				alert("Failed to update profile.");
+				alert("❌ Failed to update profile.");
 			} else {
-				alert("Profile updated successfully!");
-				loadUserProfile();
-				document.getElementById("profile-fullname").value = "";
-				document.getElementById("profile-email").value = "";
-				document.getElementById("profile-phone").value = "";
+				alert("✅ Profile updated successfully!");
 			}
 		});
 
-		window.addEventListener("load", loadUserProfile);
+		loadUserProfile();
 	</script>
 </body>
 
