@@ -99,7 +99,7 @@ function renderExtras() {
         qtyInput.classList.add('hidden');
         updateExtrasState(id, false);
       }
-      calculateNewCosts();
+      //calculateNewCosts();
     });
 
     qtyInput.addEventListener('input', () => {
