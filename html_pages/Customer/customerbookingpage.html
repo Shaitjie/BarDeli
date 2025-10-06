@@ -145,13 +145,47 @@
       document.getElementById("cancelModal").classList.add("hidden");
     });
 
+    //Cancel Booking exception (Earnest)
     document.getElementById("cancelYes").addEventListener("click", async () => {
       if (!bookingToCancel) return;
-      const { error } = await supabase
+
+      // Fetch the booking to get its creation date
+      const { data: booking, error: fetchError } = await supabase
+        .from("booking")
+        .select("created_at")
+        .eq("booking_id", bookingToCancel)
+        .single();
+
+      if (fetchError || !booking) {
+        alert("Error checking booking details.");
+        return;
+      }
+
+      // Calculate days difference between now and booking creation
+      const createdAt = new Date(booking.created_at);
+      const now = new Date();
+      const diffInDays = (now - createdAt) / (1000 * 60 * 60 * 24);
+
+      // Restrict cancellation if older than 2 days
+      if (diffInDays > 2) {
+        alert("❌ You can only cancel bookings within 2 days (72 hours) of creation.");
+        bookingToCancel = null;
+        document.getElementById("cancelModal").classList.add("hidden");
+        return;
+      }
+
+      // Otherwise, allow cancellation
+      const { error: cancelError } = await supabase
         .from("booking")
         .update({ status: "Cancelled" })
-        .eq("booking_id", bookingToCancel); 
-      if (error) alert("Error cancelling booking");
+        .eq("booking_id", bookingToCancel);
+
+      if (cancelError) {
+        alert("Error cancelling booking. Please try again.");
+      } else {
+        alert("✅ Booking successfully cancelled.");
+      }
+
       bookingToCancel = null;
       document.getElementById("cancelModal").classList.add("hidden");
       loadBookings();
