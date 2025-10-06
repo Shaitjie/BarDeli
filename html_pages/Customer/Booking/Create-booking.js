@@ -27,7 +27,7 @@ function showToast(message) {
 }
 
 //Fetching
-export async function fetchMenus() {
+async function fetchMenus() {
   const { data, error } = await supabase
     .from('menu')
     .select('menu_id, menu_name, description, menu_price')
@@ -40,7 +40,7 @@ export async function fetchMenus() {
   return data || [];
 }
 
-export async function fetchMenuItems() {
+async function fetchMenuItems() {
   const { data, error } = await supabase
     .from('menu_item')
     .select('menu_item_id, item_name, description, item_price, category')
@@ -55,7 +55,7 @@ export async function fetchMenuItems() {
   return data || [];
 }
 
-export async function fetchExtraItems() {
+async function fetchExtraItems() {
   const { data, error } = await supabase
     .from('extra')
     .select('extra_id, extra_name, description, extra_price')
@@ -409,7 +409,7 @@ function showStep(index) {
   $id('stepText') && ($id('stepText').innerText = `Step ${index + 1} of ${steps.length}`);
   $id('progressBar') && ($id('progressBar').style.width = `${((index + 1) / steps.length) * 100}%`);
 }
-export function nextStep() {
+function nextStep() {
   if (!steps) return;
   if (currentStep < steps.length - 1) {
     // populate summary/payments at correct steps
@@ -419,7 +419,7 @@ export function nextStep() {
     showStep(currentStep);
   }
 }
-export function prevStep() {
+function prevStep() {
   if (!steps) return;
   if (currentStep > 0) {
     currentStep--;
