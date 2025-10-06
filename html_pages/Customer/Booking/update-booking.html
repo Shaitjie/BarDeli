@@ -69,7 +69,10 @@
 
   <!-- Main -->
   <main class="ml-56 p-8 max-w-4xl">
-    <h1 class="text-3xl font-extrabold text-orange-600 mb-8">Update Booking</h1>
+    <div class="mb-6">
+      <h1 class="text-4xl font-extrabold text-gray-600">Update Booking</h1>
+      <p class="text-gray-600 mt-2">Easily update your bookings or add a proof of payment</p>
+    </div>
 
     <form id="updateBookingForm" class="space-y-6">
       <div class="space-y-4">
@@ -104,6 +107,19 @@
         <div>
           <p class="font-bold text-gray-700">New Total: R<span id="newtotalcost">-</span></p>
           <p class="font-bold text-gray-700">New Deposit: R<span id="newdepositpaid">-</span></p>
+        </div>
+      </div>
+
+      <!-- Allows customers to upload payment proofs related to bookings -->
+      <div class="space-y-4 mt-6">
+        <h2 class="text-xl font-bold">Upload Proof of Payment</h2>
+        <!-- New upload -->
+        <div class="flex items-center gap-4">
+          <input type="file" id="paymentProof" accept="image/*,application/pdf" class="border p-2 rounded w-full" />
+          <button type="button" id="uploadProofBtn"
+            class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-500 font-bold">
+            Upload
+          </button>
         </div>
       </div>
 
