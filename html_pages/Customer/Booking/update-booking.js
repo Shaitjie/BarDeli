@@ -2,14 +2,14 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 const supabaseUrl = 'https://fawlfsukrqrucrrxrjvq.supabase.co';
-const supabaseKey =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
+const supabaseKey ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 let bookingId;
 let menuPrice = 0;
 let selectedExtras = [];
 let allExtras = [];
+let newlyUploadedProofs = []; // track proofs uploaded before form submit
 
 // Toast helper
 function showToast(msg) {
@@ -18,6 +18,41 @@ function showToast(msg) {
   toastMsg.textContent = msg;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+async function uploadPaymentProof() {
+  const fileInput = document.getElementById('paymentProof');
+  if (!fileInput.files.length) return alert('Please select a file');
+
+  const file = fileInput.files[0];
+  const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const filePath = `${bookingId}/${Date.now()}_${safeFileName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from('payment-proofs')
+    .upload(filePath, file);
+
+  if (uploadError) return console.error('File upload error:', uploadError);
+
+  newlyUploadedProofs.push(filePath);
+  fileInput.value = '';
+  console.log('Uploading finished, showing toast...');
+  showToast('Payment proof uploaded!');
+  document.getElementById('uploadProofBtn').style.display = 'none';
+}
+
+document.getElementById('uploadProofBtn').addEventListener('click', uploadPaymentProof);
+
+// After updating booking and extras
+for (let filePath of newlyUploadedProofs) {
+  const paymentPayload = {
+    booking_id: bookingId,
+    amount: parseFloat(document.getElementById('newdepositpaid').textContent) || 0,
+    pop_url: filePath,
+    status: 'Pending',
+  };
+  const { error: payErr } = await supabase.from('payment').insert([paymentPayload]);
+  if (payErr) console.error('Error inserting payment:', payErr);
 }
 
 // Fetch all extras
@@ -61,7 +96,6 @@ async function loadBooking() {
   // Render extras
   allExtras = await fetchExtraItems();
   renderExtras();
-  calculateNewCosts();
 }
 
 // Render extras list
@@ -99,7 +133,7 @@ function renderExtras() {
         qtyInput.classList.add('hidden');
         updateExtrasState(id, false);
       }
-      //calculateNewCosts();
+      calculateNewCosts();
     });
 
     qtyInput.addEventListener('input', () => {
@@ -123,8 +157,23 @@ function updateExtrasState(extra_id, checked, quantity = 1) {
   }
 }
 
+//Event listener that changes when the user changes the guest count, and new total and deposit resets to R0 if there’s no valid guest number.
+document.getElementById('guests').addEventListener('input', () => {
+  const guests = parseInt(document.getElementById('guests').value, 10);
+
+  if (!guests || guests <= 0) {
+    // Reset to R0 when input is empty or invalid
+    document.getElementById('newtotalcost').textContent = '0.00';
+    document.getElementById('newdepositpaid').textContent = '0.00';
+    return;
+  }
+
+  calculateNewCosts();
+});
+
 // Calculate new totals
 function calculateNewCosts() {
+
   const guests = parseInt(document.getElementById('guests').value) || 0;
 
   const extrasTotal = selectedExtras.reduce((sum, ex) => {
@@ -132,25 +181,35 @@ function calculateNewCosts() {
     return sum + ((extra?.extra_price || 0) * ex.quantity);
   }, 0);
 
-  const newTotal = (guests * menuPrice) + extrasTotal;
+  const newTotal = guests > 0 ? (guests * menuPrice) + extrasTotal : 0;
   const newDeposit = newTotal * 0.5;
 
   document.getElementById('newtotalcost').textContent = newTotal.toFixed(2);
   document.getElementById('newdepositpaid').textContent = newDeposit.toFixed(2);
 }
 
-// Submit update
 async function submitUpdate(e) {
   e.preventDefault();
 
+  const newTotal = parseFloat(document.getElementById('newtotalcost').textContent);
+  const newDeposit = parseFloat(document.getElementById('newdepositpaid').textContent);
+
+  // Start with basic fields that always update
   const updatedData = {
     event_date: document.getElementById('eventDate').value,
     event_time: document.getElementById('eventTime').value,
     guest_count: parseInt(document.getElementById('guests').value),
     location: document.getElementById('address').value,
-    total_cost: parseFloat(document.getElementById('newtotalcost').textContent),
-    deposit_paid: parseFloat(document.getElementById('newdepositpaid').textContent),
   };
+
+  // ✅ Only include total_cost and deposit_paid if both are valid and not zero
+  if (!isNaN(newTotal) && newTotal > 0) {
+    updatedData.total_cost = newTotal;
+  }
+
+  if (!isNaN(newDeposit) && newDeposit > 0) {
+    updatedData.deposit_paid = newDeposit;
+  }
 
   // Update booking
   const { error: updateError } = await supabase
