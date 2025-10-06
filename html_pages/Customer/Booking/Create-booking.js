@@ -613,37 +613,5 @@ window.addEventListener('DOMContentLoaded', async () => {
   // ensure summary container exists
   if ($id('summaryDetails')) populateSummary();
 
-    /* Google Maps Autocomplete Setup */
-  function initAddressAutocomplete() {
-    const addressInput = document.getElementById('address');
-    if (!addressInput || !window.google) return;
-
-    const autocomplete = new google.maps.places.Autocomplete(addressInput, {
-      types: ['geocode'],
-      fields: ['formatted_address', 'geometry']
-    });
-
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      if (place && place.formatted_address) {
-        addressInput.value = place.formatted_address;
-        // Optionally save address locally
-        localStorage.setItem('selectedAddress', place.formatted_address);
-        // If you want coordinates later:
-        // localStorage.setItem('selectedLat', place.geometry.location.lat());
-        // localStorage.setItem('selectedLng', place.geometry.location.lng());
-      }
-    });
-  }
-
-  // If an address was previously stored, repopulate it
-  const savedAddr = localStorage.getItem('selectedAddress');
-  if (savedAddr && document.getElementById('address')) {
-    document.getElementById('address').value = savedAddr;
-  }
-
-  // Initialize Maps autocomplete after a brief delay (ensure API loaded)
-  setTimeout(initAddressAutocomplete, 1000);
-
 });
 

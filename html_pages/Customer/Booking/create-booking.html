@@ -11,11 +11,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
     integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Google Places API -->
-  <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8ejcAGMuCtZ2lkyhw6l8G0lJ54d_WzXI&libraries=places&region=ZA&language=en"
-    async defer>
-  </script>
  <script type="module" src="./create-booking.js"></script>
   <style>
     /* Toast animation */
@@ -28,8 +23,7 @@
     #toast.show {
       opacity: 1;
     }
-    /*Tailwind-safe CSS for Google suggestions*/
-   .pac-container { z-index: 10000 !important; }
+
   </style>
 </head>
 
@@ -177,5 +171,35 @@
         </div>
       </form>
     </main>
+    <!-- Google Places API -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8ejcAGMuCtZ2lkyhw6l8G0lJ54d_WzXI&libraries=places&region=ZA&language=en&callback=initAutocomplete"
+      async defer>
+    </script>
+
+    <script>
+      function initAutocomplete() {
+        const input = document.getElementById("address");
+        if (!input) return;
+
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          types: ["address"],
+          componentRestrictions: { country: "za" },
+        });
+        autocomplete.setFields(["address_components", "formatted_address"]);
+
+        autocomplete.addListener("place_changed", () => {
+          const place = autocomplete.getPlace();
+          if (!place.formatted_address) return;
+          input.value = place.formatted_address;
+        });
+      }
+    </script>
+
+    <style>
+    
+      .pac-container { z-index: 10000 !important; }
+    </style>
+
   </body>
 </html>
