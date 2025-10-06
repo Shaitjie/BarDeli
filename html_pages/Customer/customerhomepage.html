@@ -110,7 +110,13 @@
         const fullName = `${data.first_name} ${data.last_name}`.trim() || "Customer";
         document.getElementById("customerName").textContent = fullName;
 
-        localStorage.setItem("user", JSON.stringify({...data,fullName}));
+        localStorage.setItem("user", JSON.stringify({
+          id: data.user_id,         // add id for other pages that expect .id
+          user_id: data.user_id,    // keep original name too (optional)
+          first_name: data.first_name,
+          last_name: data.last_name,
+          fullName
+        }));
       } catch (err) {
         console.error("Error loading user profile:", err);
         document.getElementById("customerName").textContent = "Customer";
