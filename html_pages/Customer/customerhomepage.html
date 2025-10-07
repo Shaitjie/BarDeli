@@ -149,12 +149,12 @@
       const recentDiv = document.getElementById("Recent-bookings");
       recentDiv.innerHTML = "";
       bookings.forEach(b => {
-        const statusColor = {
-          Pending: "bg-yellow-700",
-          In_Progress: "bg-orange-700",
-          Completed: "bg-green-700",
-          Cancelled: "bg-red-700"
-        }[b.status] || "bg-gray-500";
+        const statusColor = ({
+          "Pending": "bg-yellow-700",
+          "In Progress": "bg-[#f4c430]",
+          "Completed": "bg-green-700",
+          "Cancelled": "bg-red-700"
+        }[b.status]) || "bg-gray-500";
 
         recentDiv.insertAdjacentHTML("beforeend", `
           <div class="bg-gradient-to-r from-orange-400 to-orange-500 rounded-xl p-5 shadow-md hover:shadow-xl transition relative">
