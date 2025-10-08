@@ -143,7 +143,7 @@
 
       const lastBooking = bookings?.[0];
       document.getElementById("lastDate").textContent = `Date: ${lastBooking?.event_date || "none"}`;
-      document.getElementById("lastGuests").textContent = `Guests: ${lastBooking?.guest_count || "none"}`;
+      document.getElementById("lastGuests").textContent = `Number of Guests: ${lastBooking?.guest_count || "none"}`;
       document.getElementById("lastLocation").textContent = `Location: ${lastBooking?.location || "none"}`;
 
       const recentDiv = document.getElementById("Recent-bookings");
