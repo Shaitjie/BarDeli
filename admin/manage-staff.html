@@ -366,8 +366,8 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button onclick="editStaff('${member.id}')" class="text-bardeli-orange hover:text-bardeli-dark mr-2">Edit</button>
-                            <button onclick="deleteStaff('${member.id}')" class="text-red-600 hover:text-red-900">Delete</button>
+                            <button onclick="editStaff('${member.staff_id}')" class="text-bardeli-orange hover:text-bardeli-dark mr-2">Edit</button>
+                            <button onclick="deleteStaff('${member.staff_id}')" class="text-red-600 hover:text-red-900">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -425,7 +425,7 @@
             document.getElementById('modalTitle').textContent = isEdit ? 'Edit Staff Member' : 'Add New Staff Member';
             
             if (isEdit) {
-                const staff = allStaff.find(s => s.id === staffId);
+                const staff = allStaff.find(s => s.staff_id === staffId);
                 if (staff) populateForm(staff);
             } else {
                 staffForm.reset();
@@ -442,7 +442,7 @@
         }
 
         function populateForm(staff) {
-            document.getElementById('staffId').value = staff.id;
+            document.getElementById('staffId').value = staff.staff_id;
             document.getElementById('firstName').value = staff.first_name;
             document.getElementById('lastName').value = staff.last_name;
             document.getElementById('email').value = staff.email;
@@ -479,7 +479,7 @@
                     result = await supabaseClient
                         .from('staff')
                         .update(staffData)
-                        .eq('id', staffId);
+                        .eq('staff_id', staffId);
                 } else {
                     result = await supabaseClient
                         .from('staff')
@@ -508,7 +508,7 @@
                 const { error } = await supabaseClient
                     .from('staff')
                     .delete()
-                    .eq('id', staffId);
+                    .eq('staff_id', staffId);
 
                 if (error) throw error;
 
