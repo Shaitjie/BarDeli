@@ -165,7 +165,7 @@
        const { createClient } = supabase;
        const supabaseClient = createClient(
            'https://fawlfsukrqrucrrxrjvq.supabase.co', 
-           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
+           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydUNCYXJkZWxpbmUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2NzU1MjYwMjIsImV4cCI6MjA3MTAxMTYwMn0.8G5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8'
        );
 
        let allBookings = [];
@@ -194,9 +194,9 @@
        async function loadBookings() {
            const { data, error } = await supabaseClient
                .from('booking')
-               .select('bookingid, eventdate, eventtype, location, guestcount, status')
+               .select('booking_id, event_date, event_type, location, guest_count, status')
                .eq('status', 'In Progress')
-               .order('eventdate', { ascending: true });
+               .order('event_date', { ascending: true });
 
            if (error) throw error;
            allBookings = data || [];
@@ -205,9 +205,9 @@
        async function loadStaff() {
            const { data, error } = await supabaseClient
                .from('staff')
-               .select('staffid, fullname, position, role, isactive')
-               .eq('isactive', true)
-               .order('fullname', { ascending: true });
+               .select('staff_id, first_name, last_name, position, role, is_active')
+               .eq('is_active', true)
+               .order('last_name', { ascending: true });
 
            if (error) throw error;
            allStaff = data || [];
@@ -216,8 +216,8 @@
        async function loadAssignments() {
            try {
                const { data, error } = await supabaseClient
-                   .from('staffassignment')
-                   .select('assignmentid, bookingid, staffid, roleassignment, status, createdat');
+                   .from('staff_assignment')
+                   .select('assignment_id, booking_id, staff_id, role_assignment, status, created_at');
 
                if (error && error.code !== 'PGRST116') throw error;
                assignments = data || [];
@@ -230,9 +230,9 @@
        function groupAssignmentsByEvent(assignments) {
            const grouped = {};
            assignments.forEach(assignment => {
-               const bookingId = assignment.bookingid;
+               const bookingId = assignment.booking_id;
                if (!grouped[bookingId]) {
-                   const booking = allBookings.find(b => b.bookingid === bookingId);
+                   const booking = allBookings.find(b => b.booking_id === bookingId);
                    grouped[bookingId] = {
                        booking: booking,
                        assignments: []
@@ -261,9 +261,9 @@
                <div class="p-6 border-b border-gray-200 hover:bg-gray-50">
                    <div class="flex items-center justify-between">
                        <div class="flex-1">
-                           <h4 class="font-semibold text-gray-900 text-lg">${eventData.booking?.eventtype || 'Unknown Event'}</h4>
-                           <p class="text-sm text-gray-500 mt-1">${new Date(eventData.booking?.eventdate).toLocaleDateString()}</p>
-                           <p class="text-xs text-gray-400">${eventData.booking?.location || 'No location'} • ${eventData.booking?.guestcount || 0} guests</p>
+                           <h4 class="font-semibold text-gray-900 text-lg">${eventData.booking?.event_type || 'Unknown Event'}</h4>
+                           <p class="text-sm text-gray-500 mt-1">${new Date(eventData.booking?.event_date).toLocaleDateString()}</p>
+                           <p class="text-xs text-gray-400">${eventData.booking?.location || 'No location'} • ${eventData.booking?.guest_count || 0} guests</p>
                        </div>
                        <div class="flex items-center space-x-3">
                            <button onclick="showAssignedStaff('${bookingId}')" class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center space-x-2">
@@ -287,24 +287,30 @@
        window.showAssignedStaff = function(bookingId) {
            const groupedAssignments = groupAssignmentsByEvent(assignments);
            const eventData = groupedAssignments[bookingId];
-           
            if (!eventData) return;
 
-           document.getElementById('staffDetailsTitle').textContent = `Assigned Staff - ${eventData.booking.eventtype}`;
-           
+           document.getElementById('staffDetailsTitle').textContent = `Assigned Staff - ${eventData.booking?.event_type || 'Event'}`;
+
            const staffList = eventData.assignments.map(assignment => {
-               const staff = allStaff.find(s => s.staffid === assignment.staffid);
+               const staff = allStaff.find(s => s.staff_id === assignment.staff_id) || {};
+               const firstName = staff.first_name || '';
+               const lastName = staff.last_name || 'Unknown Staff';
+               const position = staff.position || 'Unknown Position';
+               const role = assignment.role_assignment || 'No role';
+               const status = assignment.status || 'Unknown';
+
                return `
                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
                        <div>
-                           <h5 class="font-medium text-gray-900">${staff?.fullname || 'Unknown Staff'}</h5>
-                           <p class="text-sm text-gray-600">${staff?.position || 'Unknown Position'}</p>
-                           <p class="text-sm text-bardeli-orange font-medium">Role: ${assignment.roleassignment}</p>
-                           <p class="text-sm text-gray-500">Status: ${assignment.status}</p>
+                           <h5 class="font-medium text-gray-900">${firstName} ${lastName}</h5>
+                           <p class="text-sm text-gray-600">${position}</p>
+                           <p class="text-sm text-bardeli-orange font-medium">Role: ${role}</p>
+                           <p class="text-sm text-gray-500">Status: ${status}</p>
                        </div>
-                       <button onclick="deleteAssignment('${assignment.assignmentid}')" class="text-red-500 hover:text-red-700 p-1">
+                       <button onclick="deleteAssignment('${assignment.assignment_id}')" class="text-red-500 hover:text-red-700 p-1">
                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                            </svg>
                        </button>
                    </div>
@@ -320,9 +326,9 @@
            
            try {
                const { error } = await supabaseClient
-                   .from('staffassignment')
+                   .from('staff_assignment')
                    .delete()
-                   .eq('assignmentid', id);
+                   .eq('assignment_id', id);
 
                if (error) throw error;
                await loadData(); // Reload data
@@ -339,13 +345,15 @@
            const groupedAssignments = groupAssignmentsByEvent(assignments);
            const eventData = groupedAssignments[bookingId];
            
-           if (!confirm(`Delete all assignments for ${eventData.booking.eventtype}?`)) return;
+           if (!eventData || !eventData.booking) return;
+           const eventType = eventData.booking.event_type || 'this event';
+           if (!confirm(`Delete all assignments for ${eventType}?`)) return;
            
            try {
                const { error } = await supabaseClient
-                   .from('staffassignment')
+                   .from('staff_assignment')
                    .delete()
-                   .eq('bookingid', bookingId);
+                   .eq('booking_id', bookingId);
 
                if (error) throw error;
                await loadData();
@@ -366,10 +374,10 @@
            const eventSelect = document.getElementById('eventSelect');
            eventSelect.innerHTML = '<option value="">Choose an event...</option>';
            allBookings.forEach(booking => {
-               const eventDate = new Date(booking.eventdate).toLocaleDateString();
+               const eventDate = booking.event_date ? new Date(booking.event_date).toLocaleDateString() : 'TBD';
                eventSelect.innerHTML += `
-                   <option value="${booking.bookingid}">
-                       ${booking.eventtype} - ${eventDate} (${booking.guestcount} guests)
+                   <option value="${booking.booking_id}">
+                       ${booking.event_type || 'Event'} - ${eventDate} (${booking.guest_count || 0} guests)
                    </option>
                `;
            });
@@ -379,7 +387,7 @@
        function createStaffDropdown(rowId) {
            let options = '<option value="">Select Staff...</option>';
            allStaff.forEach(staff => {
-               options += `<option value="${staff.staffid}">${staff.fullname} - ${staff.position}</option>`;
+               options += `<option value="${staff.staff_id}">${staff.first_name} ${staff.last_name} - ${staff.position}</option>`;
            });
            return options;
        }
@@ -425,14 +433,14 @@
        async function createMultipleAssignments(eventId, staffAssignments) {
            try {
                const assignments = staffAssignments.map(assignment => ({
-                   bookingid: parseInt(eventId),
-                   staffid: parseInt(assignment.staffId),
-                   roleassignment: assignment.role,
+                   booking_id: parseInt(eventId),
+                   staff_id: parseInt(assignment.staffId),
+                   role_assignment: assignment.role,
                    status: 'assigned'
                }));
 
                const { error } = await supabaseClient
-                   .from('staffassignment')
+                   .from('staff_assignment')
                    .insert(assignments);
 
                if (error) throw error;
