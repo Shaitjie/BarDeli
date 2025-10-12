@@ -27,11 +27,13 @@
         </a>
         <a href="customerbookingpage.html"
           class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500 transition">
-          <i class="fa-regular fa-calendar"></i> Bookings
+          <i class="fa-regular fa-calendar"></i> Booking
         </a>
-        <a href="customernotificationspage.html"
+        <a id="notification-text" href="customernotificationspage.html"
           class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500 transition">
-          <i class="fa-regular fa-bell"></i> Notifications
+          <i id="not-icon" class="fa-regular fa-bell"></i> Notifications
+          <!-- Notification bubble -->
+          <span id="notificationBubble" class="hidden top-2 right-3 bg-orange-800 text-xs text-white font-bold rounded-full h-2 w-2 flex items-center justify-center"></span>
         </a>
         <a href="customerprofilepage.html"
           class="flex items-center gap-3 px-4 py-3 text-white font-bold rounded hover:bg-orange-500 transition">
@@ -95,7 +97,35 @@
     //Checks if user is signed in
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) window.location.href = "login.html";
-    
+
+    // 2️⃣ Select the bubble element
+    const notificationBubble = document.getElementById("notificationBubble");
+    const notificationIcon = document.getElementById("not-icon");
+    const notificationText = document.getElementById("notification-text");
+
+    // 3️⃣ Function to check for new notifications
+    async function checkNewNotifications(user_id) {
+      const { data, error } = await supabase
+        .from("notification")
+        .select("*")
+        .eq("user_id", user_id)
+        .eq("is_read", false); // only unread ones
+
+      if (error) {
+        console.error("Error fetching notifications:", error);
+        return;
+      }
+
+      // If there are new/unread notifications, show bubble and change text and notification color
+      if (data && data.length > 0) {
+        notificationBubble.classList.remove("hidden");
+        notificationIcon.style.color = "#9c4221";
+        notificationText.style.color = "#9c4221";
+      } else {
+        notificationBubble.classList.add("hidden");
+      }
+    }
+
     //Retrieves signedin user's first and last names
     async function loadUserProfile() {
       try {
@@ -122,7 +152,32 @@
         document.getElementById("customerName").textContent = "Customer";
       }
     }
-    
+
+    // ✅ Run this after loadUserProfile() finishes
+      await loadUserProfile(); // Loads user info and saves to localStorage
+      const userData = JSON.parse(localStorage.getItem("user"));
+
+      // ✅ Now check notifications using correct user_id
+      await checkNewNotifications(userData.user_id);
+
+      // Optional: Watch for new inserts in real time
+      supabase
+        .channel("notifications-changes")
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "notification" },
+          (payload) => {
+            if (payload.new.user_id === userData.user_id) {
+              notificationBubble.classList.remove("hidden");
+            }
+          }
+        )
+        .subscribe();
+
+      // ✅ Finally, load bookings
+      await loadBookings();
+
+
     //Loads booking information (still to be tested when booking table has bookings)
     async function loadBookings() {
       const userData = JSON.parse(localStorage.getItem("user"));
