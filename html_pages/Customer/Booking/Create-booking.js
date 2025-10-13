@@ -6,6 +6,13 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Clear previous booking data when booking page loads
+localStorage.removeItem('selectedFixedMenus');
+localStorage.removeItem('selectedMenuItems');
+localStorage.removeItem('selectedExtras');
+localStorage.removeItem('bookingTotal');
+localStorage.removeItem('depositPaid');
+
 let menus = [];
 let menuItems = [];
 let extras = [];
@@ -14,6 +21,48 @@ let selectedFixedMenus = [];
 let selectedMenuItems = [];    
 let selectedExtras = [];       
 let steps, currentStep = 0;
+
+function resetSelections() {
+  // Clear arrays
+  selectedFixedMenus = [];
+  selectedMenuItems = [];
+  selectedExtras = [];
+
+  // Clear local storage items related to booking
+  localStorage.removeItem('selectedFixedMenus');
+  localStorage.removeItem('selectedMenuItems');
+  localStorage.removeItem('selectedExtras');
+  localStorage.removeItem('bookingTotal');
+  localStorage.removeItem('depositPaid');
+
+  // Reset form fields
+  const form = document.getElementById('bookingForm');
+  if (form) form.reset();
+
+  // Reset UI elements (menus, extras)
+  const menuList = document.getElementById('menuList');
+  if (menuList) menuList.innerHTML = '';
+
+  const extrasList = document.getElementById('extrasList');
+  if (extrasList) extrasList.innerHTML = '';
+
+  // Reset step to 1
+  currentStep = 0;
+  showStep(currentStep);
+
+  // Re-fetch data to repopulate clean UI
+  initializeBooking();
+}
+
+async function initializeBooking() {
+  menus = await fetchMenus();
+  menuItems = await fetchMenuItems();
+  extras = await fetchExtraItems();
+
+  renderFixedMenus();
+  renderExtras();
+  setupSteps();
+}
 
 function $id(id) { return document.getElementById(id); }
 
@@ -526,6 +575,8 @@ async function submitBooking(e) {
   }
 
   showToast('Booking submitted successfully!');
+  // ✅ Reset selections and form
+  resetSelections();
   // redirect or show success
   setTimeout(() => {
     window.location.href = '../customerhomepage.html';
@@ -614,4 +665,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   if ($id('summaryDetails')) populateSummary();
 
 });
+
+// --- Start booking setup when the page loads ---
+initializeBooking();
 
