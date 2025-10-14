@@ -462,7 +462,8 @@ function nextStep() {
   if (!steps) return;
   if (currentStep < steps.length - 1) {
     // populate summary/payments at correct steps
-    if (currentStep === 1) populateSummary();   // after menu/extras step
+    if (currentStep === 1) populateSummary();  // stores menu
+    if (currentStep === 2) populateSummary();  // populate summary after extras step
     if (currentStep === 3) populatePaymentSummary(); // before final
     currentStep++;
     showStep(currentStep);
