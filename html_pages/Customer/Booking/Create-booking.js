@@ -22,38 +22,6 @@ let selectedMenuItems = [];
 let selectedExtras = [];       
 let steps, currentStep = 0;
 
-function resetSelections() {
-  // Clear arrays
-  selectedFixedMenus = [];
-  selectedMenuItems = [];
-  selectedExtras = [];
-
-  // Clear local storage items related to booking
-  localStorage.removeItem('selectedFixedMenus');
-  localStorage.removeItem('selectedMenuItems');
-  localStorage.removeItem('selectedExtras');
-  localStorage.removeItem('bookingTotal');
-  localStorage.removeItem('depositPaid');
-
-  // Reset form fields
-  const form = document.getElementById('bookingForm');
-  if (form) form.reset();
-
-  // Reset UI elements (menus, extras)
-  const menuList = document.getElementById('menuList');
-  if (menuList) menuList.innerHTML = '';
-
-  const extrasList = document.getElementById('extrasList');
-  if (extrasList) extrasList.innerHTML = '';
-
-  // Reset step to 1
-  currentStep = 0;
-  showStep(currentStep);
-
-  // Re-fetch data to repopulate clean UI
-  initializeBooking();
-}
-
 async function initializeBooking() {
   menus = await fetchMenus();
   menuItems = await fetchMenuItems();
@@ -580,6 +548,13 @@ async function submitBooking(e) {
   resetSelections();
   // redirect or show success
   setTimeout(() => {
+    // clear storage 
+    localStorage.removeItem('selectedFixedMenus');
+    localStorage.removeItem('selectedMenuItems');
+    localStorage.removeItem('selectedExtras');
+    localStorage.removeItem('bookingTotal');
+    localStorage.removeItem('depositPaid');
+    
     window.location.href = '../customerhomepage.html';
   }, 900);
 }
