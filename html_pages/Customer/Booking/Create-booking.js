@@ -545,8 +545,7 @@ async function submitBooking(e) {
 
   showToast('Booking submitted successfully!');
   // ✅ Reset selections and form
-  resetSelections();
-  // redirect or show success
+  
   setTimeout(() => {
     // clear storage 
     localStorage.removeItem('selectedFixedMenus');
