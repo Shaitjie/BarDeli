@@ -194,7 +194,18 @@
         return;
       }
 
-      document.getElementById("totalBookings").textContent = bookings?.length || 0;
+      // Count only Pending + In Progress bookings
+      const activeCount = bookings.filter(
+        b => b.status === "Pending" || b.status === "In Progress"
+      ).length;
+
+      document.getElementById("totalBookings").textContent = activeCount;
+
+      // Filter out completed/cancelled (both spellings)
+      const activeBookings = bookings.filter(b => {
+        const status = b.status?.toLowerCase();
+        return status !== "completed" && status !== "cancelled" && status !== "canceled";
+      });
 
       const lastBooking = bookings?.[0];
       document.getElementById("lastDate").textContent = `Date: ${lastBooking?.event_date || "none"}`;
@@ -203,7 +214,7 @@
 
       const recentDiv = document.getElementById("Recent-bookings");
       recentDiv.innerHTML = "";
-      bookings.forEach(b => {
+      activeBookings.forEach(b => {
         const statusColor = ({
           "Pending": "bg-yellow-700",
           "In Progress": "bg-[#f4c430]",
