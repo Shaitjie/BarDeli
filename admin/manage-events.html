@@ -218,18 +218,46 @@
                     const newStatus = e.target.value;
                     const bookingId = e.target.dataset.bookingId;
 
-                    const { error } = await supabase
+                    // Find the current booking before update
+                    const booking = bookings.find(b => b.booking_id == bookingId);
+                    const oldStatus = booking ? booking.status : "Unknown";
+                    const userId = booking?.user_id;
+
+                    // Update the booking status
+                    const { error: updateError } = await supabase
                         .from("booking")
                         .update({ status: newStatus })
                         .eq("booking_id", bookingId);
 
-                    if (error) {
-                        alert("Error updating status: " + error.message);
-                    } else {
-                        const booking = bookings.find(b => b.booking_id == bookingId);
-                        if (booking) booking.status = newStatus;
-                        e.target.style.backgroundColor = getStatusColor(newStatus);
-                        alert("Status updated successfully!");
+                    if (updateError) {
+                        alert("Error updating status: " + updateError.message);
+                        return;
+                    }
+
+                    // Update the UI
+                    if (booking) booking.status = newStatus;
+                    e.target.style.backgroundColor = getStatusColor(newStatus);
+                    alert("Status updated successfully!");
+
+                    // ✅ Create an automatic notification for the customer
+                    if (userId) {
+                        const title = "STATUS CHANGED";
+                        const message = `Your booking status has been changed from ${oldStatus} to ${newStatus}.`;
+
+                        const { error: notifError } = await supabase
+                            .from("notification")
+                            .insert([{
+                                user_id: userId,
+                                booking_id: bookingId,
+                                title,
+                                message
+                            }]);
+
+                        if (notifError) {
+                            console.error("Error sending notification:", notifError);
+                        } else {
+                            alert("Automatic status change notification sent.");
+                        }
                     }
                 });
             });
