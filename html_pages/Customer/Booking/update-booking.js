@@ -38,7 +38,6 @@ async function uploadPaymentProof() {
   fileInput.value = '';
   console.log('Uploading finished, showing toast...');
   showToast('Payment proof uploaded!');
-  document.getElementById('uploadProofBtn').style.display = 'none';
 }
 
 document.getElementById('uploadProofBtn').addEventListener('click', uploadPaymentProof);
