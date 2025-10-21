@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -47,10 +52,16 @@
                 <h2 class="text-3xl font-bold text-gray-900">Manage Events</h2>
                 <p class="text-gray-600 mt-2">View and manage all catering event bookings</p>
             </div>
+
+            <!-- Toggle View Button -->
+            <button id="toggleViewBtn"
+                class="bg-bardeli-orange text-white px-4 py-2 rounded-lg hover:bg-bardeli-dark transition">
+                View Calendar
+            </button>
         </div>
 
         <!-- Filters -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div id="filterSection" class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <input type="text" id="searchInput" placeholder="Search customers..."
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-bardeli-orange focus:border-transparent" />
@@ -69,8 +80,30 @@
             </div>
         </div>
 
+        <!---Date Filter-->
+        <div id="calendarFilter" class="flex gap-4 mb-4 items-end hidden">
+            <div>
+                <label for="startDate" class="block text-gray-700 font-medium">Start Date</label>
+                <input type="date" id="startDate" class="border rounded px-3 py-2" />
+            </div>
+            <div>
+                <label for="endDate" class="block text-gray-700 font-medium">End Date</label>
+                <input type="date" id="endDate" class="border rounded px-3 py-2" />
+            </div>
+            <button id="filterCalendarBtn"
+                class="bg-bardeli-orange text-white px-4 py-2 rounded hover:bg-bardeli-dark">Filter</button>
+            <button id="clearCalendarFilterBtn"
+                class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">Clear</button>
+        </div>
+
+
+        <!-- Calendar Section (hidden by default) -->
+        <div id="calendarSection" class="bg-white rounded-lg shadow-sm border border-gray-200 hidden p-4 mb-6">
+            <div id="calendar"></div>
+        </div>
+
         <!-- Events Table -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div id="tableSection" class="bg-white rounded-lg shadow-sm border border-gray-200">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900">Event Bookings</h3>
             </div>
@@ -127,22 +160,25 @@
 
         const bucketName = "payment-proofs";
         let bookings = [];
+        let calendarInstance = null; // keep ref to destroy when reloading
 
         document.addEventListener("DOMContentLoaded", () => {
             loadBookings();
             setupFilters();
+            setupViewToggle();
         });
 
         function getStatusColor(status) {
             switch (status) {
-                case "Pending": return "#FBC02D"; // yellow
-                case "In Progress": return "#F57C00"; // orange
-                case "Completed": return "#388E3C"; //green
-                case "Cancelled": return "#D32F2F"; // red
-                default: return "#6c757d"; // gray
+                case "Pending": return "#FBC02D";
+                case "In Progress": return "#F57C00";
+                case "Completed": return "#388E3C";
+                case "Cancelled": return "#D32F2F";
+                default: return "#6c757d";
             }
         }
 
+        // Load bookings
         async function loadBookings() {
             const { data, error } = await supabase
                 .from("booking")
@@ -158,8 +194,8 @@
                     total_cost,
                     deposit_paid,
                     status,
-                    users:user_id (first_name, last_name),
-                    payment (pop_url)
+                    users:user_id(first_name, last_name),
+                    payment(pop_url)
                 `)
                 .order("booking_id", { ascending: false });
 
@@ -170,8 +206,10 @@
 
             bookings = data || [];
             displayBookings(bookings);
+            loadCalendar(bookings);
         }
 
+        // Display table rows (unchanged behavior)
         function displayBookings(list) {
             const tbody = document.getElementById("eventsBody");
             tbody.innerHTML = "";
@@ -190,10 +228,8 @@
                     <td class="px-6 py-3 border">R${b.total_cost || 0}</td>
                     <td class="px-6 py-3 border">R${b.deposit_paid || 0}</td>
                     <td class="px-6 py-3 border">
-                        <select 
-                            class="status-select font-semibold px-2 py-1 rounded-lg"
-                            data-booking-id="${b.booking_id}"
-                            style="background-color:${getStatusColor(b.status)}; color:white;">
+                        <select class="status-select font-semibold px-2 py-1 rounded-lg"
+                        data-booking-id="${b.booking_id}" style="background-color:${getStatusColor(b.status)}; color:white;">
                             <option value="Pending" ${b.status === "Pending" ? "selected" : ""}>Pending</option>
                             <option value="In Progress" ${b.status === "In Progress" ? "selected" : ""}>In Progress</option>
                             <option value="Completed" ${b.status === "Completed" ? "selected" : ""}>Completed</option>
@@ -206,24 +242,21 @@
                         : `<span class="text-gray-500">No Proof</span>`}
                     </td>
                     <td class="px-6 py-3 border text-center">
-                        <button onclick="viewBooking(${b.booking_id})" class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-3 py-1 rounded-lg">
-                            View
-                        </button>
+                        <button onclick="viewBooking(${b.booking_id})" class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-3 py-1 rounded-lg"> View </button>
                     </td>
                 `;
+
                 tbody.appendChild(tr);
 
-                // Add status change listener
-                tr.querySelector(".status-select").addEventListener("change", async (e) => {
+                // status change listener
+                const sel = tr.querySelector(".status-select");
+                sel.addEventListener("change", async (e) => {
                     const newStatus = e.target.value;
                     const bookingId = e.target.dataset.bookingId;
-
-                    // Find the current booking before update
-                    const booking = bookings.find(b => b.booking_id == bookingId);
+                    const booking = bookings.find(x => x.booking_id == bookingId);
                     const oldStatus = booking ? booking.status : "Unknown";
                     const userId = booking?.user_id;
 
-                    // Update the booking status
                     const { error: updateError } = await supabase
                         .from("booking")
                         .update({ status: newStatus })
@@ -234,35 +267,24 @@
                         return;
                     }
 
-                    // Update the UI
                     if (booking) booking.status = newStatus;
                     e.target.style.backgroundColor = getStatusColor(newStatus);
                     alert("Status updated successfully!");
 
-                    // ✅ Create an automatic notification for the customer
                     if (userId) {
                         const title = "STATUS CHANGED";
                         const message = `Your booking status has been changed from ${oldStatus} to ${newStatus}.`;
-
                         const { error: notifError } = await supabase
                             .from("notification")
-                            .insert([{
-                                user_id: userId,
-                                booking_id: bookingId,
-                                title,
-                                message
-                            }]);
+                            .insert([{ user_id: userId, booking_id: bookingId, title, message }]);
 
-                        if (notifError) {
-                            console.error("Error sending notification:", notifError);
-                        } else {
-                            alert("Automatic status change notification sent.");
-                        }
+                        if (!notifError) alert("Automatic status change notification sent.");
                     }
                 });
             });
         }
 
+        // Filters
         function setupFilters() {
             document.getElementById("searchInput").addEventListener("input", filterBookings);
             document.getElementById("statusFilter").addEventListener("change", filterBookings);
@@ -278,54 +300,208 @@
                 return matchSearch && matchStatus;
             });
             displayBookings(filtered);
+            // also update calendar if visible
+            if (calendarInstance) {
+                calendarInstance.removeAllEvents();
+                filtered.forEach(ev => {
+                    calendarInstance.addEvent({
+                        id: ev.booking_id,
+                        title: `${ev.event_name || "Event"} - ${ev.users?.first_name || ""}`,
+                        start: ev.event_date,
+                        backgroundColor: getStatusColor(ev.status),
+                        borderColor: getStatusColor(ev.status),
+                    });
+                });
+            }
         }
 
-        window.viewBooking = async function (bookingId) {
-            const booking = bookings.find((b) => b.booking_id === bookingId);
-            if (!booking) return;
+        // Toggle view
+        function setupViewToggle() {
+            const toggleBtn = document.getElementById("toggleViewBtn");
+            const tableSection = document.getElementById("tableSection");
+            const calendarSection = document.getElementById("calendarSection");
+            const filterSection = document.getElementById("filterSection");
+            const calendarFilter = document.getElementById("calendarFilter");
 
-            const { data: menuData } = await supabase
-                .from("booking_menu")
-                .select("menu:menu_id(menu_name)")
-                .eq("booking_id", bookingId)
-                .single();
+            toggleBtn.addEventListener("click", () => {
+                const isCalendarVisible = !calendarSection.classList.contains("hidden");
+                if (isCalendarVisible) {
+                    calendarSection.classList.add("hidden");
+                    tableSection.classList.remove("hidden");
+                    filterSection.classList.remove("hidden");
+                    calendarFilter.classList.add("hidden");
+                    toggleBtn.textContent = "View Calendar";
+                } else {
+                    calendarSection.classList.remove("hidden");
+                    tableSection.classList.add("hidden");
+                    filterSection.classList.add("hidden");
+                    calendarFilter.classList.remove("hidden");
+                    toggleBtn.textContent = "View Table";
+                    // ensure calendar resizes/rendered correctly
+                    setTimeout(() => {
+                        if (calendar) {
+                            calendar.render();       // Re-render to fix blank issue
+                            calendar.updateSize();   // Ensure proper sizing
+                        }
+                    }, 300);
+                }
+            });
+        }
 
-            const { data: extrasData } = await supabase
-                .from("booking_extra")
-                .select("extra:extra_id(extra_name)")
-                .eq("booking_id", bookingId);
+        let calendar;
 
-            const menuName = menuData?.menu?.menu_name || "None selected";
-            const extrasList = extrasData && extrasData.length > 0
-                ? extrasData.map(e => e.extra.extra_name).join(", ")
-                : "None selected";
+        // Calendar
+        function loadCalendar(list) {
+            const calendarEl = document.getElementById("calendar");
+            if (!calendarEl) return;
 
-            const modalTitle = document.getElementById("modalTitle");
-            const modalContent = document.getElementById("modalContent");
+            const events = list.map((b) => ({
+                id: b.booking_id,
+                title: `${b.event_name || "Event"} (${b.users?.first_name || ""})`,
+                start: b.event_date,
+                backgroundColor: getStatusColor(b.status),
+                borderColor: getStatusColor(b.status),
+            }));
 
-            modalTitle.textContent = `Booking #${booking.booking_id}`;
-            modalContent.innerHTML = `
-                <div class="space-y-4">
-                    <h3 class="font-semibold text-lg text-bardeli-orange mt-2">Event Information</h3>
-                    <p><strong>Event Date:</strong> ${booking.event_date}</p>
-                    <p><strong>Event Time:</strong> ${booking.event_time || "N/A"}</p>
-                    <p><strong>Event Location:</strong> ${booking.location || "N/A"}</p>
-                    <p><strong>Event Type:</strong> ${booking.event_type || "N/A"}</p>
-                    <p><strong>Event Name:</strong> ${booking.event_name || "N/A"}</p>
-                    <p><strong>Number of Guests:</strong> ${booking.guest_count || 0}</p>
-                    <h3 class="font-semibold text-lg text-bardeli-orange mt-4">Menu Information</h3>
-                    <p><strong>Menu Selected:</strong> ${menuName}</p>
-                    <h3 class="font-semibold text-lg text-bardeli-orange mt-4">Extra Information</h3>
-                    <p><strong>Extra Items Selected:</strong> ${extrasList}</p>
-                </div>
-            `;
+            // Destroy previous calendar if exists
+            if (calendar) calendar.destroy();
 
-            document.getElementById("modal").classList.remove("hidden");
-        };
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: "dayGridMonth",
+                height: 650,
+                events: events,
+                eventClick: function (info) {
+                    const bookingId = info.event.id;
+                    viewBooking(bookingId); // show modal on click
+                },
+                dayCellDidMount(info) {
+                    const today = new Date();
+                    const cellDate = info.date;
+                    if (
+                        today.getFullYear() === cellDate.getFullYear() &&
+                        today.getMonth() === cellDate.getMonth() &&
+                        today.getDate() === cellDate.getDate()
+                    ) {
+                        info.el.style.backgroundColor = "#fffbcc"; // highlight today
+                        info.el.style.border = "2px solid #ff6b35";
+                    }
+                },
+            });
 
-        window.hideModal = function () {
+            calendar.render();
+        }
+
+        document.getElementById("filterCalendarBtn").addEventListener("click", () => {
+            const start = document.getElementById("startDate").value;
+            const end = document.getElementById("endDate").value;
+
+            if (!start && !end) return;
+
+            const filteredEvents = bookings.filter((b) => {
+                const eventDate = b.event_date;
+                if (start && end) return eventDate >= start && eventDate <= end;
+                if (start) return eventDate >= start;
+                if (end) return eventDate <= end;
+            });
+
+            loadCalendar(filteredEvents);
+        });
+
+        document.getElementById("clearCalendarFilterBtn").addEventListener("click", () => {
+            document.getElementById("startDate").value = "";
+            document.getElementById("endDate").value = "";
+            loadCalendar(bookings);
+        });
+
+
+        // IMPORTANT: declare viewBooking as a normal function, then attach to window
+        async function viewBooking(bookingId) {
+            const booking = bookings.find((b) => b.booking_id == bookingId);
+            if (!booking) {
+                // If not in local cache, try fetching single record
+                try {
+                    const { data, error } = await supabase
+                        .from("booking")
+                        .select(`
+                            booking_id,
+                            user_id,
+                            event_date,
+                            event_time,
+                            event_name,
+                            event_type,
+                            guest_count,
+                            location,
+                            total_cost,
+                            deposit_paid,
+                            status,
+                            users:user_id(first_name, last_name),
+                            payment(pop_url)
+                        `)
+                        .eq("booking_id", bookingId)
+                        .single();
+                    if (!error && data) {
+                        bookings.push(data);
+                        // proceed with data
+                        showBookingModal(data);
+                        return;
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+                return;
+            }
+
+            showBookingModal(booking);
+        }
+
+        function showBookingModal(booking) {
+            (async () => {
+                const { data: menuData } = await supabase
+                    .from("booking_menu")
+                    .select("menu:menu_id(menu_name)")
+                    .eq("booking_id", booking.booking_id)
+                    .single();
+
+                const { data: extrasData } = await supabase
+                    .from("booking_extra")
+                    .select("extra:extra_id(extra_name)")
+                    .eq("booking_id", booking.booking_id);
+
+                const menuName = menuData?.menu?.menu_name || "None selected";
+                const extrasList = extrasData?.length ? extrasData.map(e => e.extra.extra_name).join(", ") : "None selected";
+
+                const modalTitle = document.getElementById("modalTitle");
+                const modalContent = document.getElementById("modalContent");
+
+                modalTitle.textContent = `Booking #${booking.booking_id}`;
+                modalContent.innerHTML = `
+                    <div class="space-y-4">
+                        <h3 class="font-semibold text-lg text-bardeli-orange mt-2">Event Information</h3>
+                        <p><strong>Event Date:</strong> ${booking.event_date}</p>
+                        <p><strong>Event Time:</strong> ${booking.event_time || "N/A"}</p>
+                        <p><strong>Event Location:</strong> ${booking.location || "N/A"}</p>
+                        <p><strong>Event Type:</strong> ${booking.event_type || "N/A"}</p>
+                        <p><strong>Event Name:</strong> ${booking.event_name || "N/A"}</p>
+                        <p><strong>Number of Guests:</strong> ${booking.guest_count || 0}</p>
+                        <h3 class="font-semibold text-lg text-bardeli-orange mt-4">Menu Information</h3>
+                        <p><strong>Menu Selected:</strong> ${menuName}</p>
+                        <h3 class="font-semibold text-lg text-bardeli-orange mt-4">Extra Information</h3>
+                        <p><strong>Extra Items Selected:</strong> ${extrasList}</p>
+                    </div>
+                `;
+                document.getElementById("modal").classList.remove("hidden");
+            })();
+        }
+
+        function hideModal() {
             document.getElementById("modal").classList.add("hidden");
-        };
+        }
+
+        // expose functions globally so inline onclick and other code can call them
+        window.viewBooking = viewBooking;
+        window.hideModal = hideModal;
+        window.loadBookings = loadBookings;
+
     </script>
 </body>
 
