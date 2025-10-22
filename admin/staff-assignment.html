@@ -583,32 +583,74 @@
 
             if (staffData.length === 0) return alert("Please add at least one staff assignment.");
 
-            // Insert new assignments only
+            // 🧩 1️⃣ Get this booking's event date
+            const currentBooking = allBookings.find(b => b.booking_id == eventId);
+            if (!currentBooking) return alert("Invalid booking selected.");
+            const eventDate = currentBooking.event_date;
+
+            // 🧩 2️⃣ Check for double-bookings before inserting
+            for (const staff of staffData) {
+                const { staffId } = staff;
+
+                // Check if this staff is already assigned to another booking on the same day
+                const { data: existingAssignments, error } = await supabaseClient
+                    .from("staff_assignment")
+                    .select(`
+                        assignment_id,
+                        booking:booking_id(event_date)
+                    `)
+                    .eq("staff_id", staffId);
+
+                    if (error) {
+                        console.error("Error checking staff availability:", error.message);
+                        return alert("Error verifying staff availability.");
+                    }
+
+                    // If any assignment has the same event_date (except current event)
+                    const hasConflict = existingAssignments.some(a =>
+                        a.booking && a.booking.event_date === eventDate && a.booking_id != eventId //a.booking.event_time === currentBooking.event_time && - for time (just incase)
+                    );
+
+                    if (hasConflict) {
+                        const staffMember = allStaff.find(s => s.staff_id == staffId);
+                        const name = staffMember
+                            ? `${staffMember.first_name} ${staffMember.last_name}`
+                            : `Staff ID ${staffId}`;
+                        alert(`⚠️ ${name} is already assigned to another event on ${new Date(eventDate).toLocaleDateString()}.`);
+                        return; // Stop submission
+                    }
+            }
+
+            // 🧩 3️⃣ If no conflicts, proceed with normal insertion
             const insertData = staffData
-                .filter(a => !allAssignments.find(existing => existing.staff_id == a.staffId && existing.role_assignment == a.role && existing.booking_id == eventId))
-                .map(a => ({
-                    booking_id: parseInt(eventId),
-                    staff_id: parseInt(a.staffId),
-                    role_assignment: a.role,
-                    status: 'assigned'
-                }));
+            .filter(a =>
+                !allAssignments.find(existing =>
+                    existing.staff_id == a.staffId &&
+                    existing.role_assignment == a.role &&
+                    existing.booking_id == eventId
+                )
+            )
+            .map(a => ({
+                booking_id: parseInt(eventId),
+                staff_id: parseInt(a.staffId),
+                role_assignment: a.role,
+                status: 'assigned'
+            }));
 
             if (insertData.length > 0) {
                 const { error } = await supabaseClient.from('staff_assignment').insert(insertData);
                 if (error) return alert("Error assigning staff: " + error.message);
                 await loadAssignments(); // refresh assignments
             }
-            
-            alert("Staff assigned successfully!");
+
+            alert("✅ Staff assigned successfully!");
             modal.classList.add("hidden");
             staffAssignments.innerHTML = "";
             hiddenEventId.value = "";
             eventInput.value = "";
-            
-
-            // ✅ Refresh the list
             location.reload();
         });
+        
     </script>
 
 </body>
