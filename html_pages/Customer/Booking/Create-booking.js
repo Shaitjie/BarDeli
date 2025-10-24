@@ -430,8 +430,77 @@ function showStep(index) {
   $id('stepText') && ($id('stepText').innerText = `Step ${index + 1} of ${steps.length}`);
   $id('progressBar') && ($id('progressBar').style.width = `${((index + 1) / steps.length) * 100}%`);
 }
+
+function validateStep(index) {
+  let isValid = true;
+
+  // clear old errors
+  document.querySelectorAll('.error-text').forEach(e => e.remove());
+  document.querySelectorAll('.border-red-500').forEach(e => e.classList.remove('border-red-500'));
+
+  if (index === 0) {
+    // Step 1: Event details
+    const requiredFields = [
+      { id: 'eventName', label: 'Event Name' },
+      { id: 'eventDate', label: 'Event Date' },
+      { id: 'eventTime', label: 'Event Time' },
+      { id: 'eventType', label: 'Event Type' },
+      { id: 'guests', label: 'Number of Guests' },
+      { id: 'address', label: 'Event Location' },
+    ];
+
+    requiredFields.forEach(f => {
+      const el = $id(f.id);
+      if (!el || !el.value.trim()) {
+        showFieldError(el, `${f.label} is required`);
+        isValid = false;
+      } else if (f.id === 'guests' && parseInt(el.value, 10) <= 0) {
+        showFieldError(el, 'Number of guests must be greater than 0');
+        isValid = false;
+      }
+    });
+  }
+
+  if (index === 1) {
+    // Step 2: Menu selection
+    if (selectedFixedMenus.length === 0 && selectedMenuItems.length === 0) {
+      alert('Please select at least one fixed menu or custom menu item before proceeding.');
+      isValid = false;
+    }
+  }
+
+  if (index === 2) {
+    // Step 3: Extras — optional, but we can skip validation here
+    isValid = true;
+  }
+
+  if (index === 4) {
+    // Step 5: Payment
+    const fileInput = $id('paymentProof');
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+      showFieldError(fileInput, 'Please upload proof of payment');
+      isValid = false;
+    }
+  }
+
+  return isValid;
+}
+
+function showFieldError(el, message) {
+  if (!el) return;
+  el.classList.add('border-red-500');
+  const msg = document.createElement('p');
+  msg.className = 'error-text text-red-600 text-sm mt-1';
+  msg.innerText = message;
+  el.insertAdjacentElement('afterend', msg);
+}
+
 function nextStep() {
   if (!steps) return;
+
+  if (!validateStep(currentStep)) {
+    return;
+  }
   if (currentStep < steps.length - 1) {
     // populate summary/payments at correct steps
     if (currentStep === 1) populateSummary();  // stores menu
