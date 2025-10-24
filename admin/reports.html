@@ -475,7 +475,7 @@
             .select('*')
             .gte('event_date', today)
             .lte('event_date', thirtyDaysLater)
-            .eq('status', 'in progress');
+            .in('status', ['In Progress', 'Pending']);;
         
         document.getElementById('upcoming-events').textContent = upcomingBookings?.length || 0;
     }
