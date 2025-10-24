@@ -172,6 +172,19 @@
         </div>
       </form>
     </main>
+    
+    <!-- Custom Menu Modal -->
+    <div id="customMenuModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+      <div class="bg-white w-11/12 md:w-3/4 lg:w-1/2 max-h-[80vh] overflow-y-auto rounded-2xl shadow-lg p-6 relative">
+        <h2 class="text-xl font-bold mb-4">Custom Menu Selection</h2>
+        <div id="customMenuContent"></div>
+        <div class="flex justify-end mt-6 space-x-3">
+          <button id="closeCustomMenu" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-200">Cancel</button>
+          <button id="saveCustomMenu" class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-500">Save</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Google Places API -->
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8ejcAGMuCtZ2lkyhw6l8G0lJ54d_WzXI&libraries=places&region=ZA&language=en&callback=initAutocomplete"

@@ -119,27 +119,31 @@ function renderFixedMenus() {
     menuList.appendChild(card);
   });
 
-  // Custom menu card 
+  // Custom menu card - opens modal
   const customCard = document.createElement('div');
   customCard.className = 'p-4 border rounded hover:shadow cursor-pointer';
   customCard.innerHTML = `
     <h3 class="font-bold text-lg">Custom Menu</h3>
     <p class="text-sm text-gray-600 mt-1">Select individual items and quantities</p>
     <div class="mt-3">
-      <button id="toggleCustomMenu" class="px-3 py-1 bg-gray-200 text-gray-800 rounded">Open Custom Menu</button>
+      <button id="openCustomMenu" class="px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-500">
+        Open Custom Menu
+      </button>
     </div>
-    <div id="customMenuContainer" class="mt-4 hidden"></div>
   `;
   menuList.appendChild(customCard);
 
-  // wire toggle
-  $id('toggleCustomMenu')?.addEventListener('click', () => {
-    const c = $id('customMenuContainer');
-    if (!c) return;
-    c.classList.toggle('hidden');
-    if (!c.hasChildNodes()) renderCustomMenuItems(c);
+  // Open modal
+  $id('openCustomMenu')?.addEventListener('click', () => {
+    const modal = $id('customMenuModal');
+    const content = $id('customMenuContent');
+    if (modal && content) {
+      renderCustomMenuItems(content);
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
   });
-
+   
   // mark already selected fixed menus visually
   updateFixedMenuSelectionUI();
 }
@@ -612,12 +616,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   renderFixedMenus();
   renderExtras();
 
-  // if custom container already open, render its items
-  const customContainer = $id('customMenuContainer');
-  if (customContainer && !customContainer.hasChildNodes()) {
-    // don't auto-open, but ensure element is ready for toggling
-    // we render only when user opens
-  }
 
   // populate inputs if any selections restored
   // (selectedMenuItems quantities will be shown when user opens the custom section)
@@ -638,6 +636,37 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // ensure summary container exists
   if ($id('summaryDetails')) populateSummary();
+
+  // Modal close/save behavior
+  const modal = document.getElementById('customMenuModal');
+  const closeModal = document.getElementById('closeCustomMenu');
+  const saveModal = document.getElementById('saveCustomMenu');
+
+  if (closeModal && modal) {
+    closeModal.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    });
+  }
+
+  if (saveModal && modal) {
+    saveModal.addEventListener('click', () => {
+      // Just close the modal; data is already synced to state
+      showToast('Custom menu saved!');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    });
+  }
+
+  // Close modal when clicking outside content
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    });
+  }
 
 });
 
