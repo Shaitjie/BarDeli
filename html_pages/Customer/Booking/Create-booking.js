@@ -106,7 +106,7 @@ function renderFixedMenus() {
       </div>
       <div class="mt-3 flex items-center justify-between">
         <span class="font-semibold">R${parseFloat(menu.menu_price).toFixed(2)} / person</span>
-        <button class="px-3 py-1 bg-orange-600 text-white rounded select-menu-btn">Select</button>
+        <button type="button" class="px-3 py-1 bg-orange-600 text-white rounded select-menu-btn">Select</button>
       </div>
     `;
 
@@ -126,7 +126,7 @@ function renderFixedMenus() {
     <h3 class="font-bold text-lg">Custom Menu</h3>
     <p class="text-sm text-gray-600 mt-1">Select individual items and quantities</p>
     <div class="mt-3">
-      <button id="openCustomMenu" class="px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-500">
+      <button type="button" id="openCustomMenu" class="px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-500">
         Open Custom Menu
       </button>
     </div>
@@ -173,9 +173,9 @@ function renderCustomMenuItems(container) {
           <div class="text-sm text-gray-600">R${parseFloat(item.item_price || 0).toFixed(2)}</div>
         </div>
         <div class="flex items-center space-x-2">
-          <button class="px-2 py-1 bg-gray-200 rounded qty-decrease" data-id="${item.menu_item_id}">−</button>
+          <button type="button" class="px-2 py-1 bg-gray-200 rounded qty-decrease" data-id="${item.menu_item_id}">−</button>
           <input class="w-16 text-center border rounded qty-input" type="number" min="0" value="0" data-id="${item.menu_item_id}" />
-          <button class="px-2 py-1 bg-gray-200 rounded qty-increase" data-id="${item.menu_item_id}">＋</button>
+          <button type="button" class="px-2 py-1 bg-gray-200 rounded qty-increase" data-id="${item.menu_item_id}">＋</button>
         </div>
       `;
       // attach events
