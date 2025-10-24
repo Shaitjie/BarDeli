@@ -424,7 +424,7 @@
             document.getElementById('modalTitle').textContent = isEdit ? 'Edit Staff Member' : 'Add New Staff Member';
             
             if (isEdit) {
-                const staff = allStaff.find(s => s.staff_id === staffId);
+                const staff = allStaff.find(s => String(s.staff_id) === String(staffId));
                 if (staff) populateForm(staff);
             } else {
                 staffForm.reset();
@@ -536,6 +536,9 @@
             
             setTimeout(() => notification.remove(), 5000);
         }
+
+        window.deleteStaff = deleteStaff;
+        window.editStaff = editStaff;
     </script>
 </body>
 </html>
