@@ -30,7 +30,7 @@
 <body class="bg-gray-50 min-h-screen">
     <!-- Header -->
     <div class="header-bg shadow-lg bg-bardeli-orange">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-4">
                     <a href="admin-dashboard.html" class="text-white hover:text-bardeli-light">
@@ -46,7 +46,7 @@
     </div>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex justify-between items-center mb-8">
             <div>
                 <h2 class="text-3xl font-bold text-gray-900">Manage Events</h2>
@@ -114,13 +114,12 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Booking ID</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Cost</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deposit Paid
-                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deposit Paid</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment Proof
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">View Booking
-                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Payment Proof</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">View Booking</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Send Message</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Assign Staff</th>
                         </tr>
                     </thead>
                     <tbody id="eventsBody" class="bg-white divide-y divide-gray-200"></tbody>
@@ -150,7 +149,123 @@
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Compose Modal -->
+    <div id="composeModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Send Notification</h3>
+                    <button id="closeComposeModal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+    
+                <form id="composeForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">User ID</label>
+                        <input id="compose-user-id" type="text" readonly
+                            class="w-full border rounded px-3 py-2 bg-gray-100 text-gray-600">
+                    </div>
+    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Booking ID</label>
+                        <input id="compose-booking-id" type="text" readonly
+                            class="w-full border rounded px-3 py-2 bg-gray-100 text-gray-600">
+                    </div>
+    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                        <input id="compose-title" type="text" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Message subject">
+                    </div>
+    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                        <textarea id="compose-message" rows="4" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                            placeholder="Type your message here..."></textarea>
+                    </div>
+    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelComposeBtn"
+                            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-6 py-2 rounded-lg">
+                            Send Notification
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff Assignment Modal -->
+    <div id="assignmentModal"
+        class="hidden fixed inset-0 bg-gray-800 bg-opacity-60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-xl">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+                <h3 class="text-xl font-bold text-gray-900">Assign Staff to Event</h3>
+                <button onclick="closeAssignmentModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+    
+            <div class="px-6 py-4 space-y-6">
+                <!-- Select Event -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Select Event</label>
+                    <input id="booking-id-input" type="text" placeholder="Enter booking ID..."
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange focus:border-transparent" />
+                </div>
+    
+                <!-- Staff & Role Assignments -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Staff & Role Assignments</label>
+                    <div id="assignmentContainer" class="space-y-3">
+                        <div class="flex gap-3 assignment-row">
+                            <select
+                                class="role-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                                <option value="">Select Role</option>
+                                <option value="Chef">Chef</option>
+                                <option value="Server">Server</option>
+                                <option value="Bartender">Bartender</option>
+                            </select>
+                            <select
+                                class="staff-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                                <option value="">Select Staff</option>
+                            </select>
+                            <button type="button"
+                                class="remove-row text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+                        </div>
+                    </div>
+    
+                    <button id="addStaffRow" type="button"
+                        class="mt-3 flex items-center gap-2 text-gray-600 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg">
+                        <span class="text-xl leading-none">+</span>
+                        Add Staff Member
+                    </button>
+                </div>
+    
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                    <button onclick="closeAssignmentModal()"
+                        class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700">Cancel</button>
+                    <button id="assignAllStaff"
+                        class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-6 py-2 rounded-lg font-medium">
+                        Assign All Staff
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
@@ -243,6 +358,12 @@
                     </td>
                     <td class="px-6 py-3 border text-center">
                         <button onclick="viewBooking(${b.booking_id})" class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-3 py-1 rounded-lg"> View </button>
+                    </td>
+                    <td class="px-6 py-3 border text-center">
+                        <button onclick="openComposeModal(${b.user_id}, ${b.booking_id})" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg">Send Message</button>
+                    </td>
+                    <td class="px-6 py-3 border text-center">
+                        <button onclick="openAssignmentModal(${b.booking_id})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg"> Assign Staff </button>
                     </td>
                 `;
 
@@ -500,6 +621,178 @@
         // expose functions globally so inline onclick and other code can call them
         window.viewBooking = viewBooking;
         window.hideModal = hideModal;
+        // ----------------- Compose Modal Logic -----------------
+        window.openComposeModal = function (userId, bookingId) {
+            document.getElementById("compose-user-id").value = userId;
+            document.getElementById("compose-booking-id").value = bookingId;
+            document.getElementById("compose-title").value = "";
+            document.getElementById("compose-message").value = "";
+            document.getElementById("composeModal").classList.remove("hidden");
+        };
+
+        document.getElementById("closeComposeModal").addEventListener("click", () => {
+            document.getElementById("composeModal").classList.add("hidden");
+        });
+        document.getElementById("cancelComposeBtn").addEventListener("click", () => {
+            document.getElementById("composeModal").classList.add("hidden");
+        });
+
+        document.getElementById("composeForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById("compose-user-id").value;
+            const bookingId = document.getElementById("compose-booking-id").value;
+            const title = document.getElementById("compose-title").value.trim();
+            const message = document.getElementById("compose-message").value.trim();
+
+            if (!title || !message) {
+                alert("Please fill in both the title and message.");
+                return;
+            }
+
+            const { error } = await supabase.from("notification").insert([
+                { user_id: userId, booking_id: bookingId, title, message }
+            ]);
+
+            if (error) {
+                alert("Error sending message: " + error.message);
+            } else {
+                alert("Message sent successfully!");
+                document.getElementById("composeModal").classList.add("hidden");
+            }
+        });
+
+        // -------- STAFF ASSIGNMENT LOGIC --------
+        let staffList = [];
+
+            window.openAssignmentModal = async function (bookingId) {
+                document.getElementById("booking-id-input").value = bookingId;
+                document.getElementById("assignmentModal").classList.remove("hidden");
+
+                const { data, error } = await supabase
+                    .from("staff")
+                    .select("staff_id, first_name, last_name, position");
+
+                if (error) {
+                    console.error("Error loading staff:", error);
+                    return;
+                }
+                staffList = data;
+
+                // Populate initial staff selects
+                updateStaffOptions();
+            };
+
+            // Add new row
+            document.getElementById("addStaffRow").addEventListener("click", () => {
+                const container = document.getElementById("assignmentContainer");
+                const newRow = document.createElement("div");
+                newRow.className = "flex gap-3 assignment-row";
+                newRow.innerHTML = `
+    <select class="role-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+      <option value="">Select Role</option>
+      <option value="Chef">Chef</option>
+      <option value="Server">Server</option>
+      <option value="Bartender">Bartender</option>
+    </select>
+    <select class="staff-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+      <option value="">Select Staff</option>
+    </select>
+    <button type="button" class="remove-row text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+  `;
+                container.appendChild(newRow);
+                updateStaffOptions();
+            });
+
+            // Remove row
+            document.addEventListener("click", (e) => {
+                if (e.target.classList.contains("remove-row")) {
+                    e.target.parentElement.remove();
+                }
+            });
+
+            // Update staff dropdowns based on selected role
+            document.addEventListener("change", (e) => {
+                if (e.target.classList.contains("role-select")) {
+                    const role = e.target.value;
+                    const staffSelect = e.target.parentElement.querySelector(".staff-select");
+                    staffSelect.innerHTML = `<option value="">Select Staff</option>`;
+                    staffList
+                        .filter((s) => s.position === role)
+                        .forEach((s) => {
+                            const opt = document.createElement("option");
+                            opt.value = s.staff_id;
+                            opt.textContent = `${s.first_name} ${s.last_name}`;
+                            staffSelect.appendChild(opt);
+                        });
+                }
+            });
+
+            function updateStaffOptions() {
+                document.querySelectorAll(".assignment-row").forEach((row) => {
+                    const roleSelect = row.querySelector(".role-select");
+                    const staffSelect = row.querySelector(".staff-select");
+                    const role = roleSelect.value;
+                    staffSelect.innerHTML = `<option value="">Select Staff</option>`;
+                    if (role) {
+                        staffList
+                            .filter((s) => s.position === role)
+                            .forEach((s) => {
+                                const opt = document.createElement("option");
+                                opt.value = s.staff_id;
+                                opt.textContent = `${s.first_name} ${s.last_name}`;
+                                staffSelect.appendChild(opt);
+                            });
+                    }
+                });
+            }
+
+            // Assign all staff at once
+            document.getElementById("assignAllStaff").addEventListener("click", async () => {
+                const bookingId = document.getElementById("booking-id-input").value;
+                if (!bookingId) return alert("Please enter a valid booking ID.");
+
+                const rows = document.querySelectorAll(".assignment-row");
+                const assignments = [];
+
+                rows.forEach((row) => {
+                    const role = row.querySelector(".role-select").value;
+                    const staffId = row.querySelector(".staff-select").value;
+                    if (role && staffId) {
+                        assignments.push({ booking_id: bookingId, staff_id: staffId, role_assignment: role });
+                    }
+                });
+
+                if (!assignments.length) {
+                    alert("Please select at least one staff member.");
+                    return;
+                }
+
+                const { error } = await supabase.from("staff_assignment").insert(assignments);
+                if (error) {
+                    alert("Error assigning staff: " + error.message);
+                } else {
+                    alert("Staff successfully assigned!");
+                    closeAssignmentModal();
+                }
+            });
+
+            window.closeAssignmentModal = function () {
+                document.getElementById("assignmentModal").classList.add("hidden");
+                document.getElementById("assignmentContainer").innerHTML = `
+                    <div class="flex gap-3 assignment-row">
+                        <select class="role-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                            <option value="">Select Role</option>
+                            <option value="Chef">Chef</option>
+                            <option value="Server">Server</option>
+                            <option value="Bartender">Bartender</option>
+                        </select>
+                        <select class="staff-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                            <option value="">Select Staff</option>
+                        </select>
+                        <button type="button" class="remove-row text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+                    </div>`;
+            };
+
         window.loadBookings = loadBookings;
 
     </script>
