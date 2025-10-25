@@ -637,6 +637,10 @@
             document.getElementById("composeModal").classList.add("hidden");
         });
 
+        document.getElementById("compose-title").addEventListener("input", (e) => {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
         document.getElementById("composeForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             const userId = document.getElementById("compose-user-id").value;
