@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- FullCalendar CSS & JS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -23,6 +28,17 @@
     <style>
         .header-bg {
             background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+        }
+
+        /* ensure fullcalendar uses correct sizing within our layout */
+        #calendar {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* small adjustments to dropdown z-index */
+        #eventResults {
+            z-index: 60;
         }
     </style>
 </head>
@@ -69,34 +85,69 @@
             </div>
         </div>
 
-        <!-- Assignments List -->
+        <!-- Assignments List + View Toggle -->
         <div class="bg-white rounded-xl shadow-md border border-gray-200">
-            <div class="px-6 py-4 border-b border-gray-200">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900">Staff Assignments</h3>
-            </div>
-            <div id="assignmentsContainer">
-                <!-- Empty state -->
-                <div id="emptyState" class="p-12 text-center">
-                    <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                            </path>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">No staff assignments yet</h3>
-                    <p class="text-gray-500 mb-6">Start by assigning staff to events.</p>
-                    <button id="createFirstBtn"
-                        class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-6 py-3 rounded-lg font-medium">
-                        Create First Assignment
-                    </button>
+
+                <!-- View Toggle Buttons -->
+                <div class="space-x-2">
+                    <button id="listViewBtn" class="view-toggle-btn px-4 py-2 rounded-lg bg-white font-medium">List
+                        View</button>
+                    <button id="calendarViewBtn"
+                        class="view-toggle-btn px-4 py-2 rounded-lg bg-white font-medium">Calendar
+                        View</button>
                 </div>
             </div>
+
+            <!-- LIST view container -->
+            <div id="listView" class="p-0">
+                <div id="assignmentsContainer">
+                    <!-- Empty state -->
+                    <div id="emptyState" class="p-12 text-center">
+                        <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No staff assignments yet</h3>
+                        <p class="text-gray-500 mb-6">Start by assigning staff to events.</p>
+                        <button id="createFirstBtn"
+                            class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-6 py-3 rounded-lg font-medium">
+                            Create First Assignment
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CALENDAR view container (hidden by default) -->
+            <div id="calendarView" class="hidden p-6">
+                <div id="calendar" class="bg-white rounded-lg shadow-sm p-4"></div>
+            </div>
+
+            <!-- Inside #assignmentsContainer -->
+            <div id="emptyState" class="hidden p-12 text-center">
+                <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No staff assignments yet</h3>
+                <p class="text-gray-500 mb-6">Start by assigning staff to events.</p>
+                <button id="createFirstBtn"
+                    class="bg-bardeli-orange hover:bg-bardeli-dark text-white px-6 py-3 rounded-lg font-medium">
+                    Create First Assignment
+                </button>
+            </div>
+
         </div>
     </div>
 
     <!-- Multi-Staff Assignment Modal -->
-    <!-- Staff Assignments Modal -->
     <div id="assignmentModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-lg shadow-xl max-w-xl w-full flex flex-col">
@@ -104,12 +155,12 @@
                     <h3 class="text-lg font-bold text-gray-900">Assign Staff to Event</h3>
                     <button id="closeModal" class="text-gray-400 hover:text-gray-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
-    
+
                 <div class="p-6 flex-1 overflow-y-auto">
                     <form id="assignmentForm" class="space-y-6">
                         <!-- Event Search -->
@@ -122,7 +173,7 @@
                             </ul>
                             <input type="hidden" id="event-id">
                         </div>
-    
+
                         <!-- Staff & Role Assignments -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Staff & Role Assignments</label>
@@ -138,7 +189,7 @@
                                 <span>Add Staff Member</span>
                             </button>
                         </div>
-    
+
                         <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
                             <button type="button" id="cancelBtn"
                                 class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700">
@@ -155,7 +206,7 @@
         </div>
     </div>
 
-    <!-- 🧩 Staff List Modal -->
+    <!-- Staff List Modal -->
     <div id="staffListModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-xl shadow-lg max-w-md w-full">
@@ -172,12 +223,12 @@
             </div>
         </div>
     </div>
-    
+
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
         const supabaseUrl = "https://fawlfsukrqrucrrxrjvq.supabase.co";
-        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8"; // Add your key here
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhd2xmc3VrcnFydWNycnhyanZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0MzU2OTUsImV4cCI6MjA3MTAxMTY5NX0.KGH5SAJvCEhnz3NHdp6LeMgCvZp-nP1Tj6oIL32J6K8";
         const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
         // Global arrays
@@ -185,7 +236,10 @@
         let allStaff = [];
         let allAssignments = [];
 
-        // Load bookings
+        // Calendar instance reference to destroy if needed
+        let calendarInstance = null;
+
+        // Load bookings (for event search & extras)
         async function loadBookings() {
             const { data, error } = await supabaseClient
                 .from('booking')
@@ -196,7 +250,6 @@
                 `);
 
             if (!error && data) {
-                // Map extras for each booking
                 allBookings = data.map(b => {
                     const extras = b.booking_extra?.map(be => be.extra.extra_name) || [];
                     return {
@@ -218,22 +271,31 @@
                 .eq('is_active', true);
             if (!error && data) allStaff = data;
         }
-        loadStaff();
+        await loadStaff();
 
-        // Load existing assignments
+        // Load assignments table data
         async function loadAssignments() {
             const { data, error } = await supabaseClient
                 .from('staff_assignment')
                 .select('*');
             if (!error && data) allAssignments = data;
         }
-        loadAssignments();
+        await loadAssignments();
 
-        async function loadStaffAssignments() {
+        // ---------------------------
+        // LIST view: load & render
+        // ---------------------------
+        async function loadStaffAssignmentsList() {
             const assignmentsContainer = document.getElementById("assignmentsContainer");
             const emptyState = document.getElementById("emptyState");
 
-            // 1️⃣ Load staff assignments with booking & staff info
+            // Add null checks
+            if (!assignmentsContainer || !emptyState) {
+                console.error("Required DOM elements not found");
+                return;
+            }
+
+            // Fetch assignments with booking & staff info
             const { data: assignments, error } = await supabaseClient
                 .from("staff_assignment")
                 .select(`
@@ -249,7 +311,7 @@
                 .order("assignment_id", { ascending: false });
 
             if (error) {
-                 console.error("Error loading staff assignments:", error.message);
+                console.error("Error loading staff assignments:", error.message);
                 return;
             }
 
@@ -261,26 +323,27 @@
 
             emptyState.classList.add("hidden");
 
-            // 2️⃣ Load booking extras
+            // Booking extras: load only extras for bookings present
             const bookingIds = [...new Set(assignments.map(a => a.booking_id))];
-
-            const { data: bookingExtras, error: extrasError } = await supabaseClient
-                .from("booking_extra")
-                .select("booking_id, extra_id")
-                .in("booking_id", bookingIds);
-
-            if (extrasError) console.error("Error loading booking extras:", extrasError.message);
+            let bookingExtras = [];
+            if (bookingIds.length > 0) {
+                const resp = await supabaseClient
+                    .from("booking_extra")
+                    .select("booking_id, extra_id")
+                    .in("booking_id", bookingIds);
+                if (!resp.error && resp.data) bookingExtras = resp.data;
+            }
 
             const extraIds = [...new Set(bookingExtras.map(be => be.extra_id))];
+            let extras = [];
+            if (extraIds.length > 0) {
+                const resp2 = await supabaseClient
+                    .from("extra")
+                    .select("extra_id, extra_name")
+                    .in("extra_id", extraIds);
+                if (!resp2.error && resp2.data) extras = resp2.data;
+            }
 
-            const { data: extras, error: extrasNamesError } = await supabaseClient
-                .from("extra")
-                .select("extra_id, extra_name")
-                .in("extra_id", extraIds);
-
-            if (extrasNamesError) console.error("Error loading extra names:", extrasNamesError.message);
-
-            // 3️⃣ Map extras to booking_id
             const extraNameMap = {};
             extras.forEach(e => extraNameMap[e.extra_id] = e.extra_name);
 
@@ -290,13 +353,12 @@
                 extrasMap[be.booking_id].push(extraNameMap[be.extra_id]);
             });
 
-            // Attach extras to each booking
+            // Attach extras and group
             assignments.forEach(a => {
                 if (!a.booking) a.booking = {};
                 a.booking.booking_extras = extrasMap[a.booking_id] || [];
             });
 
-            // 4️⃣ Group assignments by booking_id
             const grouped = assignments.reduce((acc, a) => {
                 if (!acc[a.booking_id]) acc[a.booking_id] = [];
                 acc[a.booking_id].push(a);
@@ -307,7 +369,7 @@
                 (a, b) => b[0].assignment_id - a[0].assignment_id
             );
 
-            // 5️⃣ Render each booking group
+            // Render UI
             assignmentsContainer.innerHTML = "";
 
             groupedValues.forEach(group => {
@@ -348,109 +410,329 @@
                 assignmentsContainer.appendChild(div);
             });
 
-            // 6️⃣ Stats
+            // Stats
             document.getElementById("totalAssignments").textContent = assignments.length;
             const activeStaff = new Set(assignments.map(a => a.staff_id));
             document.getElementById("activeStaff").textContent = activeStaff.size;
             const upcomingEvents = assignments.filter(a => new Date(a.booking?.event_date) >= new Date());
             document.getElementById("upcomingEvents").textContent = upcomingEvents.length;
+
+            // Update local assignments copy
+            allAssignments = assignments;
         }
 
-        loadStaffAssignments();
-        // 🧩 Delete specific staff assignment
-            document.addEventListener("click", async (e) => {
-                if (e.target.closest(".delete-booking-btn")) {
-                    const bookingId = e.target.closest(".delete-booking-btn").dataset.bookingId;
-                    if (!confirm("Are you sure you want to delete all staff assignments for this event?")) return;
+        // ---------------------------
+        // Calendar view: build events only for bookings that have staff assignments
+        // ---------------------------
+        async function initCalendarView() {
+            // Ensure latest assignments & booking extras are loaded
+            const { data: assignments, error } = await supabaseClient
+                .from("staff_assignment")
+                .select(`
+                    assignment_id,
+                    booking_id,
+                    staff_id,
+                    role_assignment,
+                    status,
+                    booking:booking_id(event_type, event_date, location, guest_count)
+                `);
 
-                    const { error } = await supabaseClient
-                        .from("staff_assignment")
-                        .delete()
-                        .eq("booking_id", bookingId);
+            if (error) {
+                console.error("Error loading staff assignments for calendar:", error.message);
+                return;
+            }
 
-                    if (error) {
-                        alert("Error deleting assignments: " + error.message);
-                        return;
+            if (!assignments || assignments.length === 0) {
+                // No assignments => no events
+                renderCalendar([]);
+                return;
+            }
+
+            // Only bookings that have at least one assignment
+            const bookingIds = [...new Set(assignments.map(a => a.booking_id))];
+
+            // load booking extras for these booking ids
+            let bookingExtras = [];
+            if (bookingIds.length > 0) {
+                const beResp = await supabaseClient
+                    .from("booking_extra")
+                    .select("booking_id, extra_id")
+                    .in("booking_id", bookingIds);
+                if (!beResp.error && beResp.data) bookingExtras = beResp.data;
+            }
+
+            const extraIds = [...new Set(bookingExtras.map(be => be.extra_id))];
+            let extras = [];
+            if (extraIds.length > 0) {
+                const exResp = await supabaseClient
+                    .from("extra")
+                    .select("extra_id, extra_name")
+                    .in("extra_id", extraIds);
+                if (!exResp.error && exResp.data) extras = exResp.data;
+            }
+
+            const extraNameMap = {};
+            extras.forEach(e => extraNameMap[e.extra_id] = e.extra_name);
+
+            const extrasMap = {};
+            bookingExtras.forEach(be => {
+                if (!extrasMap[be.booking_id]) extrasMap[be.booking_id] = [];
+                extrasMap[be.booking_id].push(extraNameMap[be.extra_id]);
+            });
+
+            // Group assignments by booking id (so we can count assigned staff per booking)
+            const grouped = assignments.reduce((acc, a) => {
+                if (!acc[a.booking_id]) acc[a.booking_id] = [];
+                acc[a.booking_id].push(a);
+                return acc;
+            }, {});
+
+            // Build calendar events array
+            const events = Object.entries(grouped).map(([bookingId, groupArr]) => {
+                const any = groupArr[0];
+                const booking = any.booking || {};
+                const eventDate = booking.event_date ? booking.event_date : null;
+                const eventType = booking.event_type || "Event";
+                const extrasList = (extrasMap[parseInt(bookingId)] || []).join(", ");
+                const assignedCount = groupArr.length;
+
+                // Build title per your request
+                const extrasText = extrasList ? ` – ${extrasList}` : "";
+                const title = `${eventType}${extrasText} (${assignedCount} staff)`;
+
+                return {
+                    id: `booking-${bookingId}`,
+                    title,
+                    start: eventDate, // FullCalendar accepts ISO date; this should be okay if stored as ISO in DB
+                    allDay: true,
+                    extendedProps: {
+                        booking_id: bookingId,
+                        assignedCount,
+                        event_type: eventType,
+                        extras: extrasList,
+                        location: booking.location || '',
+                        guest_count: booking.guest_count || 0
                     }
+                };
+            });
 
-                    alert("Assignments deleted successfully!");
-                    location.reload();
+            renderCalendar(events);
+        }
+
+        // Load initial data
+        await loadBookings();
+        await loadStaffAssignmentsList();
+
+        // renderCalendar: create/destroy calendar instance as needed
+        function renderCalendar(events) {
+            const calendarEl = document.getElementById('calendar');
+
+            // Clear previous innerHTML (to ensure clean mount)
+            calendarEl.innerHTML = '';
+
+            // Destroy previous instance if exists
+            if (calendarInstance) {
+                calendarInstance.destroy();
+                calendarInstance = null;
+            }
+
+            // Create a new FullCalendar instance
+            calendarInstance = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: ''
+                },
+                events: events,
+                height: 'auto',
+                dayMaxEventRows: 3,
+                eventClick: function (info) {
+                    // When clicking an event on the calendar, open assigned staff modal for that booking
+                    const bookingId = info.event.extendedProps.booking_id;
+                    if (!bookingId) return;
+
+                    // Fetch staff assignments for that booking and display
+                    openAssignedStaffModal(bookingId);
+                },
+                eventDidMount: function (info) {
+                    // Optional: small tooltip via title attribute (fullcalendar sets title by default)
+                    if (info.event.extendedProps) {
+                        const props = info.event.extendedProps;
+                        const tooltip = `${props.event_type}\n${props.extras}\n${props.assignedCount} staff\n${props.location || ''}`;
+                        info.el.setAttribute('title', tooltip);
+                    }
                 }
             });
 
+            calendarInstance.render();
+        }
 
-        // 🧩 Open Assigned Staff Modal
-        document.addEventListener("click", async (e) => {
-            if (e.target.closest(".assigned-staff-btn")) {
-                const bookingId = e.target.closest(".assigned-staff-btn").dataset.bookingId;
+        // helper to open assigned staff modal (used by calendar event click)
+        async function openAssignedStaffModal(bookingId) {
+            const staffListModal = document.getElementById("staffListModal");
+            const staffListContent = document.getElementById("staffListContent");
+            staffListContent.innerHTML = "<p class='text-gray-500'>Loading...</p>";
+            staffListModal.classList.remove("hidden");
 
-                const staffListModal = document.getElementById("staffListModal");
-                const staffListContent = document.getElementById("staffListContent");
-                staffListContent.innerHTML = "<p class='text-gray-500'>Loading...</p>";
-                staffListModal.classList.remove("hidden");
+            const { data, error } = await supabaseClient
+                .from("staff_assignment")
+                .select(`
+                    role_assignment,
+                    status,
+                    staff:staff_id(first_name, last_name, position)
+                `)
+                .eq("booking_id", bookingId);
 
-                // Fetch all staff for that booking
-                const { data, error } = await supabaseClient
-                    .from("staff_assignment")
-                    .select(`
-                        role_assignment,
-                        status,
-                        staff:staff_id(first_name, last_name, position)
-                    `)
-                    .eq("booking_id", bookingId);
-
-                    if (error) {
-                        staffListContent.innerHTML = `<p class="text-red-500">Error loading staff: ${error.message}</p>`;
-                        return;
-                    }
-
-                    if (!data || data.length === 0) {
-                        staffListContent.innerHTML = `<p class="text-gray-500">No staff assigned for this event.</p>`;
-                        return;
-                    }
-
-                // Render staff list
-                staffListContent.innerHTML = data.map(s => `
-                    <div class="border-b py-2">
-                        <p class="font-medium">${s.staff?.first_name || "Unknown"} ${s.staff?.last_name || ""}</p>
-                        <p class="text-sm text-gray-600">${s.staff?.position || "No position"}</p>
-                        <p class="text-sm text-gray-500">Role: ${s.role_assignment || "-"} • Status: ${s.status || "-"}</p>
-                    </div>
-                `).join("");
+            if (error) {
+                staffListContent.innerHTML = `<p class="text-red-500">Error loading staff: ${error.message}</p>`;
+                return;
             }
-        });
 
-        // Close modal
+            if (!data || data.length === 0) {
+                staffListContent.innerHTML = `
+                    <p class="font-semibold mb-2">Booking ID: ${bookingId}</p>
+                    <p class="text-gray-500">No staff assigned for this event.</p>`;
+                return;
+            }
+
+            // Render staff list
+            staffListContent.innerHTML = `
+                <p class="font-semibold mb-2">Booking ID: ${bookingId}</p>
+                ${data.map(s => `
+                <div class="border-b py-2">
+                    <p class="font-medium">${s.staff?.first_name || "Unknown"} ${s.staff?.last_name || ""}</p>
+                    <p class="text-sm text-gray-600">${s.staff?.position || "No position"}</p>
+                    <p class="text-sm text-gray-500">Role: ${s.role_assignment || "-"} • Status: ${s.status || "-"}</p>
+                </div>
+                `).join("")}
+            `;
+        }
+
+        // Close staff list modal
         document.getElementById("closeStaffListModal").addEventListener("click", () => {
             document.getElementById("staffListModal").classList.add("hidden");
         });
 
-        // Modal controls
-        const modal = document.getElementById("assignmentModal");
-        [document.getElementById("createAssignmentBtn"), document.getElementById("createFirstBtn")].forEach(btn =>
-            btn.addEventListener("click", () => modal.classList.remove("hidden"))
-        );
-        
-        document.getElementById("closeModal").addEventListener("click", () => {
-            // Hide the modal
-            modal.classList.add("hidden");
+        // ---------------------------
+        // Toggle view buttons
+        // ---------------------------
+        const listViewBtn = document.getElementById("listViewBtn");
+        const calendarViewBtn = document.getElementById("calendarViewBtn");
+        const listView = document.getElementById("listView");
+        const calendarView = document.getElementById("calendarView");
 
+        // Helper to set active button style
+        function setActiveViewButton(activeBtn) {
+            [listViewBtn, calendarViewBtn].forEach(b => {
+                b.classList.remove('bg-bardeli-orange', 'text-white');
+                b.classList.add('bg-white', 'text-black-700');
+            });
+            activeBtn.classList.remove('bg-white', 'text-black-700');
+            activeBtn.classList.add('bg-bardeli-orange', 'text-white');
+        }
+
+        // Default: List view active
+        setActiveViewButton(listViewBtn);
+
+        listViewBtn.addEventListener("click", async () => {
+            listView.classList.remove('hidden');
+            calendarView.classList.add('hidden');
+            setActiveViewButton(listViewBtn);
+
+            // Refresh list data
+            await loadStaffAssignmentsList();
+        });
+
+        calendarViewBtn.addEventListener("click", async () => {
+            listView.classList.add('hidden');
+            calendarView.classList.remove('hidden');
+            setActiveViewButton(calendarViewBtn);
+
+            // Initialize calendar with current assignment data
+            await initCalendarView();
+        });
+
+        // ---------------------------
+        // Other existing functionality: delete, assigned staff modal from list, modals, event search, add staff rows, submit assignments
+        // (mostly copied/adjusted from your original code)
+        // ---------------------------
+
+        // Delete specific staff assignment(s) (by booking)
+        document.addEventListener("click", async (e) => {
+            const delBtn = e.target.closest(".delete-booking-btn");
+            if (delBtn) {
+                const bookingId = delBtn.dataset.bookingId;
+                if (!confirm("Are you sure you want to delete all staff assignments for this event?")) return;
+
+                const { error } = await supabaseClient
+                    .from("staff_assignment")
+                    .delete()
+                    .eq("booking_id", bookingId);
+
+                if (error) {
+                    alert("Error deleting assignments: " + error.message);
+                    return;
+                }
+
+                alert("Assignments deleted successfully!");
+                // refresh both views to be safe
+                await loadStaffAssignmentsList();
+                if (!calendarView.classList.contains('hidden')) await initCalendarView();
+            }
+        });
+
+        // Open Assigned Staff Modal from list items
+        document.addEventListener("click", async (e) => {
+            const assignedBtn = e.target.closest(".assigned-staff-btn");
+            if (assignedBtn) {
+                const bookingId = assignedBtn.dataset.bookingId;
+                await openAssignedStaffModal(bookingId);
+            }
+        });
+
+        // Modal openers
+        const modal = document.getElementById("assignmentModal");
+        const createAssignmentBtn = document.getElementById("createAssignmentBtn");
+        const createFirstBtn = document.getElementById("createFirstBtn");
+
+        // Only add listeners if elements exist
+        if (createAssignmentBtn) {
+            createAssignmentBtn.addEventListener("click", () => modal.classList.remove("hidden"));
+        }
+
+        if (createFirstBtn) {
+            createFirstBtn.addEventListener("click", () => modal.classList.remove("hidden"));
+        }
+
+        const createBtns = [
+            document.getElementById("createAssignmentBtn"),
+            document.getElementById("createFirstBtn")
+        ];
+
+        createBtns.forEach(btn => {
+            if (btn) { // ⚡ only add listener if the button exists
+                btn.addEventListener("click", () => modal.classList.remove("hidden"));
+            }
+        });
+
+
+        document.getElementById("closeModal").addEventListener("click", () => {
+            modal.classList.add("hidden");
             // Clear previously typed inputs
             document.getElementById("eventSearch").value = "";
             document.getElementById("event-id").value = "";
             document.getElementById("staffAssignments").innerHTML = "";
-
-            // Hide and clear the event search results dropdown
             const eventResults = document.getElementById("eventResults");
             eventResults.classList.add("hidden");
             eventResults.innerHTML = "";
         });
 
-        document.getElementById("cancelBtn").addEventListener("click", () => modal.classList.add("hidden"));
+        document.getElementById("cancelBtn").addEventListener("click", () => {
+            modal.classList.add("hidden");
+        });
 
-        await loadBookings();
-
-        // Event search
+        // Event search logic (uses allBookings loaded earlier)
         const eventInput = document.getElementById("eventSearch");
         const eventResults = document.getElementById("eventResults");
         const hiddenEventId = document.getElementById("event-id");
@@ -494,10 +776,9 @@
             }
 
             eventResults.classList.toggle("hidden", filteredBookings.length === 0);
-
         });
 
-        // Staff & Role Assignments
+        // Staff assignment rows logic
         const staffAssignments = document.getElementById("staffAssignments");
         document.getElementById("addStaffBtn").addEventListener("click", addStaffRow);
 
@@ -507,8 +788,7 @@
 
             div.innerHTML = `
                 <select class="roleSelect border px-3 py-2 rounded flex-1">
-
-                    <option  value="" disabled ${existing ? "" : "selected"}>Select Role</option>
+                    <option value="" disabled ${existing ? "" : "selected"}>Select Role</option>
                     <option value="Chef">Chef</option>
                     <option value="Server">Server</option>
                     <option value="Bartender">Bartender</option>
@@ -522,16 +802,14 @@
             const roleSelect = div.querySelector(".roleSelect");
             const staffSelect = div.querySelector(".staffSelect");
 
-            // Remove row (Visually)
             const removeBtn = div.querySelector(".removeStaff");
             removeBtn.addEventListener("click", () => {
                 div.remove();
             });
 
-            // Populate role & staff if existing
+            // Populate if existing
             if (existing) {
                 roleSelect.value = existing.role_assignment || "";
-                 
                 const filteredStaff = allStaff.filter(s => s.position === existing.role_assignment);
                 staffSelect.innerHTML = '<option value="">Select Staff</option>';
                 filteredStaff.forEach(s => {
@@ -544,7 +822,7 @@
                 staffSelect.disabled = false;
             }
 
-            // Update staff based on role for new rows
+            // Change handler
             roleSelect.addEventListener("change", () => {
                 const role = roleSelect.value;
                 staffSelect.innerHTML = '<option value="">Select Staff</option>';
@@ -561,14 +839,21 @@
             staffAssignments.appendChild(div);
         }
 
-        // Populate existing staff assignments
+        // Populate existing staff assignment rows for the selected booking in modal
         async function populateStaffAssignments(bookingId) {
             staffAssignments.innerHTML = "";
-            const existing = allAssignments.filter(a => a.booking_id == bookingId);
-            existing.forEach(a => addStaffRow(a));
+            // refresh local assignments (so it reflects DB)
+            const { data, error } = await supabaseClient
+                .from("staff_assignment")
+                .select('*')
+                .eq('booking_id', bookingId);
+
+            if (!error && data) {
+                data.forEach(a => addStaffRow(a));
+            }
         }
 
-        // Form submit
+        // Form submit: create staff_assignment rows with double-booking checks (copied/adapted logic)
         document.getElementById("assignmentForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             const eventId = hiddenEventId.value;
@@ -583,64 +868,62 @@
 
             if (staffData.length === 0) return alert("Please add at least one staff assignment.");
 
-            // 🧩 1️⃣ Get this booking's event date
             const currentBooking = allBookings.find(b => b.booking_id == eventId);
             if (!currentBooking) return alert("Invalid booking selected.");
             const eventDate = currentBooking.event_date;
 
-            // 🧩 2️⃣ Check for double-bookings before inserting
+            // Check double-booking
             for (const staff of staffData) {
                 const { staffId } = staff;
-
-                // Check if this staff is already assigned to another booking on the same day
                 const { data: existingAssignments, error } = await supabaseClient
                     .from("staff_assignment")
                     .select(`
-                        assignment_id,
-                        booking:booking_id(event_date)
-                    `)
+                    assignment_id,
+                    booking:booking_id(event_date)
+                `)
                     .eq("staff_id", staffId);
 
-                    if (error) {
-                        console.error("Error checking staff availability:", error.message);
-                        return alert("Error verifying staff availability.");
-                    }
+                if (error) {
+                    console.error("Error checking staff availability:", error.message);
+                    return alert("Error verifying staff availability.");
+                }
 
-                    // If any assignment has the same event_date (except current event)
-                    const hasConflict = existingAssignments.some(a =>
-                        a.booking && a.booking.event_date === eventDate && a.booking_id != eventId //a.booking.event_time === currentBooking.event_time && - for time (just incase)
-                    );
+                const hasConflict = existingAssignments.some(a =>
+                    a.booking && a.booking.event_date === eventDate && a.booking_id != eventId
+                );
 
-                    if (hasConflict) {
-                        const staffMember = allStaff.find(s => s.staff_id == staffId);
-                        const name = staffMember
-                            ? `${staffMember.first_name} ${staffMember.last_name}`
-                            : `Staff ID ${staffId}`;
-                        alert(`⚠️ ${name} is already assigned to another event on ${new Date(eventDate).toLocaleDateString()}.`);
-                        return; // Stop submission
-                    }
+                if (hasConflict) {
+                    const staffMember = allStaff.find(s => s.staff_id == staffId);
+                    const name = staffMember
+                        ? `${staffMember.first_name} ${staffMember.last_name}`
+                        : `Staff ID ${staffId}`;
+                    alert(`⚠️ ${name} is already assigned to another event on ${new Date(eventDate).toLocaleDateString()}.`);
+                    return; // Stop submission
+                }
             }
 
-            // 🧩 3️⃣ If no conflicts, proceed with normal insertion
+            // Insert new assignments (avoid duplicates)
+            await loadAssignments(); // refresh allAssignments
             const insertData = staffData
-            .filter(a =>
-                !allAssignments.find(existing =>
-                    existing.staff_id == a.staffId &&
-                    existing.role_assignment == a.role &&
-                    existing.booking_id == eventId
+                .filter(a =>
+                    !allAssignments.find(existing =>
+                        existing.staff_id == a.staffId &&
+                        existing.role_assignment == a.role &&
+                        existing.booking_id == eventId
+                    )
                 )
-            )
-            .map(a => ({
-                booking_id: parseInt(eventId),
-                staff_id: parseInt(a.staffId),
-                role_assignment: a.role,
-                status: 'assigned'
-            }));
+                .map(a => ({
+                    booking_id: parseInt(eventId),
+                    staff_id: parseInt(a.staffId),
+                    role_assignment: a.role,
+                    status: 'assigned'
+                }));
 
             if (insertData.length > 0) {
                 const { error } = await supabaseClient.from('staff_assignment').insert(insertData);
                 if (error) return alert("Error assigning staff: " + error.message);
-                await loadAssignments(); // refresh assignments
+                // refresh caches
+                await loadAssignments();
             }
 
             alert("✅ Staff assigned successfully!");
@@ -648,10 +931,33 @@
             staffAssignments.innerHTML = "";
             hiddenEventId.value = "";
             eventInput.value = "";
-            location.reload();
+
+            // refresh both views
+            await loadStaffAssignmentsList();
+            if (!calendarView.classList.contains('hidden')) await initCalendarView();
+
         });
-        
+
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            const calendarEl = document.getElementById('calendar');
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 650,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
 </body>
+
 </html>
