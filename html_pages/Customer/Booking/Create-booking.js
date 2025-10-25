@@ -47,7 +47,7 @@ function showToast(message) {
 async function fetchMenus() {
   const { data, error } = await supabase
     .from('menu')
-    .select('menu_id, menu_name, description, menu_price')
+    .select('menu_id, menu_name, description, menu_price, menu_image')
     .order('menu_name', { ascending: true });
 
   if (error) {
@@ -106,6 +106,7 @@ function renderFixedMenus() {
       </div>
       <div class="mt-3 flex items-center justify-between">
         <span class="font-semibold">R${parseFloat(menu.menu_price).toFixed(2)} / person</span>
+        <button type="button" class="px-3 py-1 bg-blue-600 text-white rounded view-menu-btn">View Menu</button>
         <button type="button" class="px-3 py-1 bg-orange-600 text-white rounded select-menu-btn">Select</button>
       </div>
     `;
@@ -115,6 +116,12 @@ function renderFixedMenus() {
       e.preventDefault();
       toggleFixedMenu(menu);
     });
+
+    // "View Menu" button logic
+  card.querySelector('.view-menu-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    showMenuImage(menu);
+  });
 
     menuList.appendChild(card);
   });
@@ -737,6 +744,37 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+});
+
+function showMenuImage(menu) {
+  const modal = document.getElementById('menuImageModal');
+  const img = document.getElementById('menuImageDisplay');
+
+  if (!modal || !img) return;
+
+  if (menu.menu_image) {
+    img.src = menu.menu_image;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  } else {
+    alert('No image available for this menu.');
+  }
+}
+
+document.getElementById('closeMenuImageModal')?.addEventListener('click', () => {
+  const modal = document.getElementById('menuImageModal');
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+});
+
+// Optional: close modal on outside click
+document.getElementById('menuImageModal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'menuImageModal') {
+    e.target.classList.add('hidden');
+    e.target.classList.remove('flex');
+  }
 });
 
 // --- Start booking setup when the page loads ---
