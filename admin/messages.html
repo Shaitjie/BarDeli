@@ -312,6 +312,11 @@
         document.addEventListener("DOMContentLoaded", () => {
             loadNotifications();
             loadMessageStats();
+
+            document.getElementById("title").addEventListener("input", (e) => {
+                e.target.value = e.target.value.toUpperCase();
+            });
+
         });
 
         // Send Notification
