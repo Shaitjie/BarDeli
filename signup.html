@@ -117,6 +117,9 @@
 
 		// Phone Validation
 		const phoneInput = document.getElementById("phone");
+		let isRefocusingPhone = false; // 👈 Prevents the loop
+
+		// Keep input clean while typing
 		phoneInput.addEventListener("input", () => {
 			// Remove non-digits
 			phoneInput.value = phoneInput.value.replace(/\D/g, '');
@@ -129,6 +132,26 @@
 			// Limit length to 10
 			if (phoneInput.value.length > 10) {
 				phoneInput.value = phoneInput.value.slice(0, 10);
+			}
+		});
+
+		// Validate only when leaving the field
+		phoneInput.addEventListener("blur", () => {
+			// 🚫 Skip validation if we just re-focused programmatically
+			if (isRefocusingPhone) return;
+
+			if (phoneInput.value.length !== 10) {
+				alert("Please enter a valid 10-digit phone number starting with 0.");
+				phoneInput.value = "";
+
+				// 🔒 Prevent loop
+				isRefocusingPhone = true;
+				phoneInput.focus();
+
+				// 🕑 Allow blur again after short delay
+				setTimeout(() => {
+					isRefocusingPhone = false;
+				}, 200);
 			}
 		});
 
