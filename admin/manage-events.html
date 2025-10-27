@@ -263,8 +263,88 @@
                 </div>
             </div>
         </div>
+        
     </div>
 
+    <!-- Modify Booking Modal -->
+    <div id="modifyModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <form id="modifyForm" class="flex flex-col lg:flex-row gap-6 bg-white rounded-lg p-6 w-full max-w-4xl">
+            
+            <!-- Left Column -->
+            <div class="flex-1 space-y-4">
+                <!-- Modal Heading -->
+                <h2 class="text-2xl font-semibold text-bardeli-orange mb-4">Modify Booking</h2>
+
+                <input type="hidden" id="modify-booking-id">
+    
+                <div>
+                    <label class="block font-semibold mb-1">Event Date</label>
+                    <input type="date" id="modify-date"
+                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                </div>
+    
+                <div>
+                    <label class="block font-semibold mb-1">Event Time</label>
+                    <input type="time" id="modify-time"
+                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                </div>
+    
+                <div>
+                    <label class="block font-semibold mb-1">Location</label>
+                    <input type="text" id="modify-location"
+                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                </div>
+    
+                <div>
+                    <label class="block font-semibold mb-1">Number of Guests</label>
+                    <input type="number" id="modify-guests"
+                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange" min="1">
+                </div>
+    
+                <div>
+                    <label class="block font-semibold mb-1">Menu</label>
+                    <select id="modify-menu"
+                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                        <option value="">Select Menu</option>
+                    </select>
+                </div>
+    
+                <div>
+                    <label class="block font-semibold mb-1">Extras</label>
+                    <div id="modify-extras-container" class="flex flex-wrap gap-2">
+                        <!-- Checkboxes populated via JS -->
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Right Column -->
+            <div class="flex-1 space-y-4 bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-bardeli-orange mb-2">Booking Summary</h3>
+    
+                <div>
+                    <label class="block font-semibold mb-1">Total Cost (R)</label>
+                    <input type="text" id="modify-total-cost" class="w-full border rounded-lg px-3 py-2 bg-gray-100"
+                        readonly>
+                </div>
+    
+                <div>
+                    <label class="block font-semibold mb-1">Deposit Paid (R)</label>
+                    <input type="text" id="modify-deposit-paid" class="w-full border rounded-lg px-3 py-2 bg-gray-100"
+                        readonly>
+                </div>
+    
+                <div class="mt-4 flex justify-end gap-3">
+                    <button type="button" onclick="closeModifyModal()"
+                        class="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded-lg">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-bardeli-orange hover:bg-bardeli-dark text-white rounded-lg">Save
+                        Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    
     <!-- Script -->
     <script type="module">
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
@@ -276,6 +356,7 @@
         const bucketName = "payment-proofs";
         let bookings = [];
         let calendarInstance = null; // keep ref to destroy when reloading
+        let calendar = null;
 
         document.addEventListener("DOMContentLoaded", () => {
             loadBookings();
@@ -319,7 +400,9 @@
                 return;
             }
 
-            bookings = data || [];
+            // Filter out cancelled bookings
+            bookings = (data || []).filter(b => b.status !== "Cancelled");
+
             displayBookings(bookings);
             loadCalendar(bookings);
         }
@@ -365,6 +448,10 @@
                     <td class="px-6 py-3 border text-center">
                         <button onclick="openAssignmentModal(${b.booking_id})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg"> Assign Staff </button>
                     </td>
+                    <td class="px-6 py-3 border text-center">
+                        <button onclick="openModifyModal(${b.booking_id})" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg">
+                        Modify</button>
+                    </td>
                 `;
 
                 tbody.appendChild(tr);
@@ -391,7 +478,8 @@
                     if (booking) booking.status = newStatus;
                     e.target.style.backgroundColor = getStatusColor(newStatus);
                     alert("Status updated successfully!");
-
+                    
+                    //Send notification to user
                     if (userId) {
                         const title = "STATUS CHANGED";
                         const message = `Your booking status has been changed from ${oldStatus} to ${newStatus}.`;
@@ -401,9 +489,299 @@
 
                         if (!notifError) alert("Automatic status change notification sent.");
                     }
+
+                    // 🔹 Reload page automatically if status is "Cancelled"
+                    if (newStatus === "Cancelled") {
+                        alert("Booking has been cancelled. The page will reload.");
+                        location.reload();
+                    }
                 });
             });
         }
+
+        
+
+        // Handle Modify Form Submission
+        document.addEventListener("DOMContentLoaded", () => {
+            // Open Modify Booking Modal
+            window.openModifyModal = async function (bookingId) {
+                const booking = bookings.find(b => b.booking_id == bookingId);
+                if (!booking) return alert("Booking not found");
+
+                // Populate current booking values
+                document.getElementById("modify-booking-id").value = booking.booking_id;
+                document.getElementById("modify-date").value = booking.event_date || "";
+                document.getElementById("modify-time").value = booking.event_time || "";
+                document.getElementById("modify-location").value = booking.location || "";
+                document.getElementById("modify-guests").value = booking.guest_count || "";
+
+                // Load menu options and select current menu
+                try {
+                    const { data: currentMenu, error } = await supabase
+                        .from("booking_menu")
+                        .select("menu_id")
+                        .eq("booking_id", bookingId)
+                        .maybeSingle();
+                    if (error) throw error;
+
+                    await loadMenuOptions(currentMenu?.menu_id || null);
+                } catch (err) {
+                    console.error("Error loading menu:", err.message || err);
+                }
+
+                // Load selected extras for the booking as checkboxes
+                try {
+                    const { data: currentExtras } = await supabase
+                        .from("booking_extra")
+                        .select("extra_id")
+                        .eq("booking_id", bookingId);
+                    const selectedExtras = currentExtras?.map(e => e.extra_id) || [];
+                    await loadExtrasCheckboxes(selectedExtras);
+
+                    // Attach updateCosts listener to the dynamically created checkboxes
+                    document.querySelectorAll(".modify-extra").forEach(e => {
+                        e.addEventListener("change", updateCosts);
+                    });
+
+                } catch (err) {
+                    console.error("Error loading extras:", err);
+                }
+
+                // Update costs initially
+                updateCosts();
+
+                // Show modal
+                document.getElementById("modifyModal").classList.remove("hidden");
+            };
+
+            // Close Modal
+            window.closeModifyModal = function () {
+                document.getElementById("modifyModal").classList.add("hidden");
+            };
+
+            const modifyForm = document.getElementById("modifyForm");
+            if (modifyForm) {
+                modifyForm.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+
+                    const bookingId = document.getElementById("modify-booking-id").value;
+                    const newDate = document.getElementById("modify-date").value;
+                    const newTime = document.getElementById("modify-time").value;
+                    const newLocation = document.getElementById("modify-location").value;
+                    const newGuests = parseInt(document.getElementById("modify-guests").value, 10);
+                    const newMenu = document.getElementById("modify-menu").value;
+
+                    // Update booking info
+                    const { error: bookingError } = await supabase
+                        .from("booking")
+                        .update({ event_date: newDate, event_time: newTime, location: newLocation, guest_count: newGuests })
+                        .eq("booking_id", bookingId);
+
+                    if (bookingError) return alert("Error updating booking: " + bookingError.message);
+
+                    // Update menu selection
+                    if (newMenu) {
+                        try {
+                            // Check if a booking_menu row already exists
+                            const { data: existingMenu, error: checkError } = await supabase
+                                .from("booking_menu")
+                                .select("booking_id")
+                                .eq("booking_id", bookingId)
+                                .single();
+
+                            if (checkError && checkError.code !== "PGRST116") { // PGRST116 = no rows found
+                                throw checkError;
+                            }
+
+                            if (existingMenu) {
+                                // Row exists, update it
+                                const { error: updateError } = await supabase
+                                    .from("booking_menu")
+                                    .update({ menu_id: newMenu })
+                                    .eq("booking_id", bookingId);
+
+                                if (updateError) throw updateError;
+                            } else {
+                                // Row does not exist, insert new
+                                const { error: insertError } = await supabase
+                                    .from("booking_menu")
+                                    .insert({ booking_id: bookingId, menu_id: newMenu });
+
+                                if (insertError) throw insertError;
+                            }
+
+                            alert("Menu updated successfully!");
+                        } catch (err) {
+                            console.error("Error updating menu:", err);
+                            alert("Error updating menu: " + err.message);
+                        }
+                    }
+
+                    const selectedExtras = Array.from(document.querySelectorAll(".modify-extra:checked")).map(checkbox => parseInt(checkbox.value, 10));
+
+                    // Remove old extras
+                    await supabase.from("booking_extra").delete().eq("booking_id", bookingId);
+
+                    // Insert new extras
+                    if (selectedExtras.length > 0) {
+                        const extrasInsert = selectedExtras.map(extra_id => ({ booking_id: bookingId, extra_id }));
+                        const { error: extrasError } = await supabase.from("booking_extra").insert(extrasInsert);
+                        if (extrasError) return alert("Error updating extras: " + extrasError.message);
+                    }
+
+                    // Fetch menu price
+                    const { data: menuData } = await supabase
+                        .from("menu")
+                        .select("menu_price")
+                        .eq("menu_id", newMenu)
+                        .maybeSingle();
+
+                    const menuPrice = menuData?.menu_price || 0;
+
+                    // Fetch extras prices
+                    let extrasTotal = 0;
+                    if (selectedExtras.length > 0) {
+                        const { data: extrasData } = await supabase
+                            .from("extra")
+                            .select("extra_price")
+                            .in("extra_id", selectedExtras);
+                        extrasTotal = extrasData.reduce((sum, e) => sum + (e.extra_price || 0), 0);
+                    }
+
+                    // Calculate total_cost and deposit_paid (assuming deposit is 50%)
+                    const totalCost = (menuPrice * newGuests) + extrasTotal;
+                    const depositPaid = totalCost * 0.5;
+
+                    // Update booking with new costs
+                    const { error: costError } = await supabase
+                        .from("booking")
+                        .update({ total_cost: totalCost, deposit_paid: depositPaid })
+                        .eq("booking_id", bookingId);
+
+                    if (costError) return alert("Error updating costs: " + costError.message);
+
+
+                    alert("Booking updated successfully!");
+                    closeModifyModal();
+                    loadBookings(); // Refresh table and calendar
+
+                    // --- SEND NOTIFICATION TO CUSTOMER ABOUT MODIFICATION---
+                    try {
+                        // Find the user ID of the booking
+                        const { data: bookingData, error: bookingError } = await supabase
+                            .from("booking")
+                            .select("user_id")
+                            .eq("booking_id", bookingId)
+                            .maybeSingle();
+
+                        if (bookingError) throw bookingError;
+
+                        const userId = bookingData?.user_id;
+                        if (userId) {
+                            const title = "BOOKING MODIFIED";
+                            const message = `Your booking (#${bookingId}) has been updated by the admin. Please check the details by the bookings menu item.`;
+                            const { error: notifError } = await supabase
+                                .from("notification")
+                                .insert([{ user_id: userId, booking_id: bookingId, title, message }]);
+
+                            if (notifError) throw notifError;
+
+                            alert("Notification sent to customer.");
+                        }
+                    } catch (err) {
+                        console.error("Error sending notification:", err);
+                    }
+                });
+            }
+        })
+
+        async function loadMenuOptions(selectedMenuId = null) {
+            const { data: menus, error } = await supabase.from("menu").select("menu_id, menu_name");
+            if (error) {
+                console.error("Error loading menus:", error);
+                return;
+            }
+
+            const menuSelect = document.getElementById("modify-menu");
+            menuSelect.innerHTML = '<option value="">Select Menu</option>';
+
+            menus.forEach(menu => {
+                const option = document.createElement("option");
+                option.value = menu.menu_id;
+                option.textContent = menu.menu_name;
+                if (menu.menu_id === selectedMenuId) option.selected = true;
+                menuSelect.appendChild(option);
+            });
+        }
+
+        async function loadExtras(selectedExtras = []) {
+            const { data: extras, error } = await supabase.from("extra").select("extra_id, extra_name");
+            if (error) return console.error("Error loading extras:", error);
+
+            const extrasSelect = document.getElementById("modify-extras");
+            extrasSelect.innerHTML = "";
+
+            extras.forEach(extra => {
+                const option = document.createElement("option");
+                option.value = extra.extra_id;
+                option.textContent = extra.extra_name;
+                if (selectedExtras.includes(extra.extra_id)) option.selected = true;
+                extrasSelect.appendChild(option);
+            });
+        }
+
+        async function loadExtrasCheckboxes(selectedExtras = []) {
+            // Fetch extras from Supabase
+            const { data: extras, error } = await supabase
+                .from("extra")
+                .select("extra_id, extra_name");
+
+            if (error) return console.error("Error loading extras:", error);
+
+            const container = document.getElementById("modify-extras-container");
+            container.innerHTML = ""; // Clear previous content
+
+            extras.forEach(extra => {
+                const label = document.createElement("label");
+                label.className = "inline-flex items-center gap-2 p-1 border rounded";
+
+                label.innerHTML = `
+                    <input type="checkbox" class="modify-extra" value="${extra.extra_id}"
+                    ${selectedExtras.includes(extra.extra_id) ? "checked" : ""}>
+                    ${extra.extra_name}
+                `;
+
+                container.appendChild(label);
+            });
+        }
+
+        async function updateCosts() {
+            const newMenu = document.getElementById("modify-menu").value;
+            const newGuests = parseInt(document.getElementById("modify-guests").value) || 1;
+            const selectedExtras = Array.from(document.querySelectorAll(".modify-extra:checked")).map(e => e.value);
+
+            // Get menu price
+            const { data: menuData } = await supabase.from("menu").select("menu_price").eq("menu_id", newMenu).maybeSingle();
+            const menuPrice = menuData?.menu_price || 0;
+
+            // Get extras prices
+            let extrasTotal = 0;
+            if (selectedExtras.length > 0) {
+                const { data: extrasData } = await supabase.from("extra").select("extra_price").in("extra_id", selectedExtras);
+                extrasTotal = extrasData.reduce((sum, e) => sum + (e.extra_price || 0), 0);
+                }
+
+            const totalCost = (menuPrice * newGuests) + extrasTotal;
+            const depositPaid = totalCost * 0.5;
+
+            // Show in modal
+            document.getElementById("modify-total-cost").value = totalCost.toFixed(2);
+            document.getElementById("modify-deposit-paid").value = depositPaid.toFixed(2);
+        }
+
+        document.getElementById("modify-menu").addEventListener("change", updateCosts);
+        document.getElementById("modify-guests").addEventListener("input", updateCosts);
+        document.querySelectorAll(".modify-extra").forEach(e => e.addEventListener("change", updateCosts));
 
         // Filters
         function setupFilters() {
@@ -435,6 +813,8 @@
                 });
             }
         }
+
+        
 
         // Toggle view
         function setupViewToggle() {
@@ -469,14 +849,14 @@
             });
         }
 
-        let calendar;
-
         // Calendar
         function loadCalendar(list) {
             const calendarEl = document.getElementById("calendar");
             if (!calendarEl) return;
 
-            const events = list.map((b) => ({
+            const events = list
+            .filter(b => b.status !== "Cancelled") // <-- exclude cancelled bookings
+            .map((b) => ({
                 id: b.booking_id,
                 title: `${b.event_name || "Event"} (${b.users?.first_name || ""})`,
                 start: b.event_date,
@@ -581,7 +961,7 @@
                     .from("booking_menu")
                     .select("menu:menu_id(menu_name)")
                     .eq("booking_id", booking.booking_id)
-                    .single();
+                    .maybeSingle();
 
                 const { data: extrasData } = await supabase
                     .from("booking_extra")
@@ -692,17 +1072,17 @@
                 const newRow = document.createElement("div");
                 newRow.className = "flex gap-3 assignment-row";
                 newRow.innerHTML = `
-    <select class="role-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
-      <option value="">Select Role</option>
-      <option value="Chef">Chef</option>
-      <option value="Server">Server</option>
-      <option value="Bartender">Bartender</option>
-    </select>
-    <select class="staff-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
-      <option value="">Select Staff</option>
-    </select>
-    <button type="button" class="remove-row text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
-  `;
+                    <select class="role-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                        <option value="">Select Role</option>
+                        <option value="Chef">Chef</option>
+                        <option value="Server">Server</option>
+                        <option value="Bartender">Bartender</option>
+                    </select>
+                    <select class="staff-select flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-bardeli-orange">
+                        <option value="">Select Staff</option>
+                    </select>
+                    <button type="button" class="remove-row text-red-500 hover:text-red-700 font-bold text-lg">&times;</button>
+                `;
                 container.appendChild(newRow);
                 updateStaffOptions();
             });
